@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     fetchStats() {
-      fetch("http://localhost:3000/api/stats")
+      fetch("http://localhost:8044/api/stats")
         .then((res) => res.json())
         .then((data) => {
           this.stats = data;
@@ -50,7 +50,7 @@ export default {
   },
   mounted() {
     this.fetchStats();
-    this.socket = io("http://localhost:3000");
+    this.socket = io("http://localhost:8044");
     this.socket.on("statsUpdated", this.fetchStats);
   },
   beforeUnmount() {
