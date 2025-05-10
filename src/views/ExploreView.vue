@@ -1,0 +1,3 @@
+<template>
+   Explore Page
+</template>
