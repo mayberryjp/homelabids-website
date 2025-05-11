@@ -1,10 +1,3 @@
 <template>
-  <div id="app">
-    <main>
-      <router-view></router-view>
-    </main>
-  </div>
+  <router-view></router-view>
 </template>
-
-<script setup lang="ts">
-</script>
