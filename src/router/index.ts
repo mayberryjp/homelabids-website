@@ -1,34 +1,26 @@
 import { createRouter, createWebHistory } from "vue-router";
+import privateRoutes from "./routes/privateRoutes";
+import publicRoutes from "./routes/publicRoutes";
+import errorRoutes from "./routes/errorRoutes";
 
-import LoginView from "@/views/auth/LoginView.vue";
-import RegistrationView from "@/views/auth/RegistrationView.vue";
-import ExploreView from "@/views/ExploreView.vue";
-import SettingsView from "@/views/SettingsView.vue";
-import AppLayout from "@/components/layout/AppLayout.vue";
-import DashboardView from "@/views/DashboardView.vue";
-
-const privateRoutes = [
-  {
-    path: "/app",
-    component: AppLayout,
-    children: [
-      { path: "", component: DashboardView },
-      { path: "explore", component: ExploreView },
-      { path: "settings", component: SettingsView },
-    ],
-  },
-];
-
-const publicRoutes = [
-  { path: "/login", component: LoginView },
-  { path: "/register", component: RegistrationView },
-];
-
-const routes = [...publicRoutes, ...privateRoutes];
+const routes = [...publicRoutes, ...privateRoutes, ...errorRoutes];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// Global error handling
+router.onError((error) => {
+  console.error("Router error:", error);
+  router.push({
+    name: "error",
+    query: {
+      title: "Navigation Error",
+      message: "An error occurred while loading the page.",
+      errorCode: "500",
+    },
+  });
 });
 
 export default router;
