@@ -6,7 +6,7 @@ import SettingsView from "@/views/SettingsView.vue";
 
 const privateRoutes: RouteRecordRaw[] = [
   {
-    path: "/app",
+    path: "/",
     component: AppLayout,
     children: [
       { path: "", name: "dashboard", component: DashboardView },

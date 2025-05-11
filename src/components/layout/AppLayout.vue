@@ -1,55 +1,35 @@
 <template>
   <v-app>
     <!-- Header -->
-    <v-app-bar color="#181b22" dark app elevation="1">
-      <v-spacer></v-spacer>
-
-      <div class="d-flex align-center">
-        <v-btn 
-          :to="{ path: '/app/explore' }" 
-          variant="text" 
-          class="mx-2" 
-          rounded
-          :color="$route.path === '/app/explore' ? 'rose' : ''"
-        >
-          <v-icon start>mdi-page-layout-header</v-icon>
-          Status Pages
-        </v-btn>
-
-        <v-btn 
-          :to="{ path: '/app' }" 
-          variant="text"
-          class="mx-2" 
-          rounded
-          :color="$route.path === '/app' ? 'rose' : ''"
-        >
-          <v-icon start>mdi-view-dashboard</v-icon>
-          Dashboard
-        </v-btn>
-      </div>
-    </v-app-bar>
+    <AppHeader />
 
     <!-- Main Content -->
     <v-main>
       <v-container fluid>
-        <router-view></router-view>
+        <v-row style="min-height: 100%">
+          <!-- Left Panel -->
+          <v-col cols="3">
+            <v-sheet class="rounded" height="100%" color="background-100">
+            </v-sheet>
+          </v-col>
+
+          <!-- Right Panel (Main Content) -->
+          <v-col cols="9">
+            <router-view></router-view>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "AppLayout",
-});
+<script setup lang="ts">
+import AppHeader from "@/components/layout/AppHeader.vue";
 </script>
 
 <style scoped>
-.v-app-bar {
-  border-bottom: 0px !important;
-  box-shadow: none !important;
+.v-container {
+  height: 100%;
 }
 
 .v-main {
