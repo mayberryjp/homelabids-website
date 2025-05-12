@@ -9,8 +9,7 @@
         <v-row style="min-height: 100%">
           <!-- Left Panel -->
           <v-col cols="3">
-            <v-sheet class="rounded" height="100%" color="background-100">
-            </v-sheet>
+            <HostList />
           </v-col>
 
           <!-- Right Panel (Main Content) -->
@@ -25,6 +24,7 @@
 
 <script setup lang="ts">
 import AppHeader from "@/components/layout/AppHeader.vue";
+import HostList from "@/components/base/HostList.vue";
 </script>
 
 <style scoped>
