@@ -18,7 +18,7 @@ const vuetify = createVuetify({
     defaultTheme: "customTheme",
     themes: {
       customTheme: {
-        dark: false,
+        dark: true,
         colors: {
           blush: "#f7e1e1",
           orange: "#e18a36",

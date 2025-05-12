@@ -15,12 +15,20 @@
         <v-icon start>{{ item.icon }}</v-icon>
         {{ item.title }}
       </v-btn>
+
+      <!-- Notification Bell Component -->
+      <AppNotifications />
+
+      <!-- Profile Dropdown Component -->
+      <AppProfileMenu />
     </div>
   </v-app-bar>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import AppNotifications from '@/components/layout/AppNotifications.vue';
+import AppProfileMenu from '@/components/layout/AppProfileMenu.vue';
 
 const menuItems = ref([
   {
