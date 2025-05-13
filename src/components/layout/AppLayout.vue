@@ -8,12 +8,12 @@
       <v-container fluid>
         <v-row style="min-height: 100%">
           <!-- Left Panel -->
-          <v-col cols="3">
+          <v-col cols="12" lg="3">
             <HostList />
           </v-col>
 
           <!-- Right Panel (Main Content) -->
-          <v-col cols="9">
+          <v-col cols="12" lg="9">
             <router-view></router-view>
           </v-col>
         </v-row>
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import AppHeader from "@/components/layout/AppHeader.vue";
-import HostList from "@/components/base/HostList.vue";
+import HostList from "@/components/dashboard/HostList.vue";
 </script>
 
 <style scoped>

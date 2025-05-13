@@ -36,3 +36,16 @@ export const getAlertSeverity = (alertCount: number): AlertSeverity => {
     return "alert-critical";
   }
 };
+
+export interface Alert {
+  id: string;
+  ip_address: string;
+  flow: string;
+  category: string;
+  enrichment_1: string;
+  enrichment_2: string;
+  times_seen: number;
+  first_seen: string;
+  last_seen: string;
+  acknowledged: boolean;
+}

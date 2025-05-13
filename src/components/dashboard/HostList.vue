@@ -73,7 +73,7 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
+  min-width: 60px;
   height: 24px;
   border-radius: 12px;
   color: white;

@@ -1,6 +1,6 @@
 import api from "./api";
 
-export const getAlerts = async () => {
+export const getRecentAlerts = async () => {
   try {
     const response = await api.get("/alerts/recent");
     return response.data;

@@ -1,12 +1,17 @@
-import { getLocalhosts, getAlertSummary } from "@/services/alerts";
+import {
+  getLocalhosts,
+  getAlertSummary,
+  getRecentAlerts,
+} from "@/services/alerts";
 import type { Localhost } from "@/types/localhosts";
-import type { AlertsSummary } from "@/types/alerts";
+import type { AlertsSummary, Alert } from "@/types/alerts";
 import { defineStore } from "pinia";
 import { ref, onMounted } from "vue";
 
 export const useHostsStore = defineStore("hosts", () => {
   const localhosts = ref<Localhost[]>([]);
   const alertsSummary = ref<AlertsSummary>([]);
+  const alertsRecent = ref<Alert[]>([]);
 
   const fetchLocalhosts = async () => {
     try {
@@ -28,10 +33,28 @@ export const useHostsStore = defineStore("hosts", () => {
     }
   };
 
+  const fetchRecentAlerts = async () => {
+    try {
+      const response = await getRecentAlerts();
+      alertsRecent.value = response;
+    } catch (error) {
+      console.error("Error fetching recent alerts:", error);
+      throw error;
+    }
+  };
+
   onMounted(() => {
     fetchLocalhosts();
     fetchAlertSummary();
+    fetchRecentAlerts();
   });
 
-  return { localhosts, alertsSummary, fetchLocalhosts, fetchAlertSummary };
+  return {
+    localhosts,
+    alertsSummary,
+    alertsRecent,
+    fetchLocalhosts,
+    fetchAlertSummary,
+    fetchRecentAlerts,
+  };
 });
