@@ -1,5 +1,17 @@
 <template>
   <v-app-bar color="background-100" dark app elevation="1">
+  
+      <!-- Product Logo and Name (Left Justified) -->
+    <div class="product-branding d-flex align-center">
+      <img src="/logo.png" alt="Product Logo" width="32px" height="32px" class="me-2" />
+      <v-img
+        src="/logo.png"
+        alt="Product Logo"
+        class="me-2"
+      ></v-img>
+      <span class="product-name text-h6">Homelab IDS</span>
+    </div>
+
     <v-spacer></v-spacer>
 
     <div class="d-flex align-center">
@@ -49,4 +61,25 @@ const menuItems = ref([
   border-bottom: 0px !important;
   box-shadow: none !important;
 }
+
+.product-name {
+  color: #cf8e13;
+  font-weight: 700;
+  font-size: 1.5rem !important;
+  text-align: start;
+  line-height: 36px;
+  font-size: 24px;
+  text-size-adjust: 100%;
+  letter-spacing: 0.05em !important;
+}
+
+.v-app-bar {
+  border-bottom: 0px !important;
+  box-shadow: none !important;
+}
+
+.product-branding {
+  margin-left: 35px;
+}
+
 </style>

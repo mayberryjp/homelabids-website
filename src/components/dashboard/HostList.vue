@@ -107,8 +107,12 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
 
 .alert-bar {
   width: 5px;
-  height: 20px;
-  border-radius: 1px;
+  height: 16px;
+  margin: 1px;
+  border-radius: 50rem;
+  display: inline-block;
+  box-sizing: border-box;
+  --hover-scale: 1.5;
 }
 
 .alert-none {

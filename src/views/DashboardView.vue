@@ -48,32 +48,32 @@ const quickStats = ref({
 // Status stats computed from quickStats
 const statusStats = computed(() => [
   {
-    label: "Hosts Acked",
+    label: "Hosts",
     value: quickStats.value.acknowledged_localhosts_count || 0,
     color: "text-green-accent-3",
   },
   {
-    label: "Hosts Unacked",
+    label: "Hosts",
     value: quickStats.value.unacknowledged_localhosts_count || 0,
     color: "text-red",
   },
   {
-    label: "Alerts Acked",
+    label: "Alerts",
     value: quickStats.value.acknowledged_alerts || 0,
     color: "text-green-accent-3",
   },
   {
-    label: "Alerts Unacked",
+    label: "Alerts",
     value: quickStats.value.unacknowledged_alerts || 0,
     color: "text-red",
   },
   {
-    label: "Total Alerts",
+    label: "Alerts",
     value: quickStats.value.total_alerts || 0,
     color: "text-grey",
   },
   {
-    label: "Whitelist Count",
+    label: "IgnoreLists",
     value: quickStats.value.whitelist_count || 0,
     color: "text-grey",
   },
@@ -100,4 +100,43 @@ onMounted(() => {
   background-color: transparent;
   height: 100%;
 }
+
+.text-red{
+   color: #dc3545 !important;
+    font-size: 30px;
+    font-weight: 700;
+    display: block;
+    font-family: BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol, noto color emoji;
+}
+
+.text-md-h3{
+  font-size: 30px !important;
+    font-weight: 700;
+    display: block;
+    font-family: BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol, noto color emoji;
+
+}
+
+.text-green-accent-3{
+   color: #5cdd8b !important;
+    font-size: 30px;
+    font-weight: 700;
+    display: block;
+    font-family: BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol, noto color emoji;
+}
+
+ .text-subtitle-1{
+  font-size: 1.75rem;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-weight: 500;
+    line-height: 45px;
+    text-size-adjust: 100%;
+    font-size: 28px !important;
+    font-weight: 500;
+    display: block;
+    color: rgb(177, 184, 192);
+    font-family: BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol, noto color emoji;
+
+ }
 </style>
