@@ -1,7 +1,6 @@
 export interface Action {
-  id: string | number;
-  text: string;
+  action_id: number;
+  action_text: string;
   acknowledged: number;
-  timestamp?: string;
-  // Add other relevant fields as needed
+  insert_date: string;
 }

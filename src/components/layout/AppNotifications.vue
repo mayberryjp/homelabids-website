@@ -1,15 +1,7 @@
 <template>
-  <v-menu
-    location="bottom"
-    :close-on-content-click="false"
-  >
+  <v-menu location="bottom" :close-on-content-click="false">
     <template v-slot:activator="{ props }">
-      <v-btn
-        icon
-        v-bind="props"
-        class="mx-2"
-        @click="refreshActions"
-      >
+      <v-btn icon v-bind="props" class="mx-2" @click="refreshActions">
         <v-badge
           :content="unacknowledgedCount"
           :value="unacknowledgedCount"
@@ -20,7 +12,7 @@
       </v-btn>
     </template>
 
-    <v-card min-width="300">
+    <v-card :width="$vuetify.display.xs ? '300px' : '400px'">
       <v-card-title class="d-flex align-center">
         Notifications
         <v-spacer></v-spacer>
@@ -32,25 +24,33 @@
           :loading="loading"
         ></v-btn>
       </v-card-title>
-      
+
       <v-divider></v-divider>
-      
+
       <v-card-text class="pa-0">
         <v-list v-if="actions.length > 0">
           <v-list-item
             v-for="action in actions"
-            :key="action.id"
-            :class="{ 'unacknowledged': action.acknowledged === 1 }"
+            :key="action.action_id"
+            :class="{ unacknowledged: action.acknowledged === 1 }"
           >
             <template v-slot:prepend>
-              <v-icon 
+              <v-icon
                 :color="action.acknowledged === 1 ? 'error' : ''"
-                :icon="action.acknowledged === 1 ? 'mdi-alert-circle' : 'mdi-check-circle'"
+                :icon="
+                  action.acknowledged === 1
+                    ? 'mdi-alert-circle'
+                    : 'mdi-check-circle'
+                "
               ></v-icon>
             </template>
 
-            <v-list-item-title>{{ action.text }}</v-list-item-title>
+            <v-list-item-title class="two-line-text">{{ action.action_text }}</v-list-item-title>
             
+            <v-list-item-subtitle class="text-caption">
+              {{ formatRelativeTime(action.insert_date) }}
+            </v-list-item-subtitle>
+
             <template v-slot:append>
               <v-btn
                 v-if="action.acknowledged === 1"
@@ -58,7 +58,7 @@
                 size="small"
                 color="primary"
                 @click="acknowledgeAlert(action)"
-                :loading="acknowledging === action.id"
+                :loading="acknowledging === action.action_id"
               >
                 Acknowledge
               </v-btn>
@@ -77,15 +77,16 @@
 import { ref, computed, onMounted } from "vue";
 import { getActions, acknowledgeAction } from "@/services/actions";
 import type { Action } from "@/types/actions";
+import { formatDateTime, formatRelativeTime } from "@/utils/date";
 
 // Notifications data
 const actions = ref<Action[]>([]);
 const loading = ref(false);
-const acknowledging = ref<string | number | null>(null);
+const acknowledging = ref<number | null>(null);
 
 // Get unacknowledged count
 const unacknowledgedCount = computed(() => {
-  return actions.value.filter(action => action.acknowledged === 1).length;
+  return actions.value.filter((action) => action.acknowledged === 1).length;
 });
 
 // Fetch actions from API
@@ -103,9 +104,9 @@ const refreshActions = async () => {
 
 // Acknowledge an alert
 const acknowledgeAlert = async (action: Action) => {
-  acknowledging.value = action.id;
+  acknowledging.value = action.action_id;
   try {
-    await acknowledgeAction(action.id);
+    await acknowledgeAction(action.action_id);
     // Update the local list
     action.acknowledged = 0;
   } catch (error) {
@@ -120,3 +121,20 @@ onMounted(() => {
   refreshActions();
 });
 </script>
+
+<style scoped>
+.unacknowledged {
+  background-color: rgba(var(--v-theme-error), 0.05);
+}
+
+.two-line-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 1.4;
+  max-height: 2.8em;
+}
+</style>

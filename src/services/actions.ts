@@ -10,14 +10,14 @@ export const getActions = async () => {
   }
 };
 
-export const acknowledgeAction = async (actionId: string | number) => {
+export const acknowledgeAction = async (action_id: number) => {
   try {
-    const response = await api.put(`/actions/${actionId}`, {
+    const response = await api.put(`/actions/${action_id}`, {
       acknowledged: 0,
     });
     return response.data;
   } catch (error) {
-    console.error("Error acknowledging action:", error);
+    console.error(`Error acknowledging action ${action_id}:`, error);
     throw error;
   }
 };
