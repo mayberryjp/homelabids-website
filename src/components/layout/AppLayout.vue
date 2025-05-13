@@ -36,4 +36,5 @@ import HostList from "@/components/dashboard/HostList.vue";
   background-color: #0a0c10;
   color: rgba(255, 255, 255, 0.87);
 }
+
 </style>

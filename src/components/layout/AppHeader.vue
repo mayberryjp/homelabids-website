@@ -4,11 +4,12 @@
       <!-- Product Logo and Name (Left Justified) -->
     <div class="product-branding d-flex align-center">
       <img src="/logo.png" alt="Product Logo" width="32px" height="32px" class="me-2" />
-      <v-img
+      <!--- this v-img tag didn't work for some reason so i changed it to a standard img tag <v-img
         src="/logo.png"
         alt="Product Logo"
         class="me-2"
-      ></v-img>
+      ></v-img> 
+    -->
       <span class="product-name text-h6">Homelab IDS</span>
     </div>
 
@@ -80,6 +81,15 @@ const menuItems = ref([
 
 .product-branding {
   margin-left: 35px;
+  margin-top: 5px;
+}
+
+.mx-2 {
+  text-transform: capitalize;
+  color: #b1b8c0;
+  font-size: 16px !important;
+  font-weight: 400;
+  letter-spacing: 0em !important;
 }
 
 </style>

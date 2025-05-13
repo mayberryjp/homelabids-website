@@ -1,5 +1,5 @@
 <template>
-  <v-sheet rounded="lg" height="100%" color="background-100">
+  <v-sheet rounded="lg" height="100%" color="#0d1117">
     <v-list>
       <v-list-item
         v-for="host in hosts.localhosts"
@@ -11,7 +11,7 @@
             class="status-indicator"
             :class="host.acknowledged ? 'acknowledged' : 'unacknowledged'"
           >
-            {{ host.acknowledged ? "Known" : "Unknown" }}
+            {{ host.acknowledged ? "OK" : "NEW" }}
           </div>
           <div class="host-info ml-2">
             {{
@@ -75,14 +75,13 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 60px;
+  min-width: 44px;
   height: 24px;
   border-radius: 50rem !important;
   color: black;;
   font-size: 12px;
   font-weight: bold;
-  display: inline-block;
-  padding: .35em .65em;
+
 }
 
 .acknowledged {
@@ -90,7 +89,7 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
 }
 
 .unacknowledged {
-  background-color: #f44336;
+  background-color: #cf8e13;
 }
 
 .host-info {

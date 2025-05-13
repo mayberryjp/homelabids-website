@@ -1,7 +1,7 @@
 <template>
-  <v-sheet rounded="lg" height="100%" color="background-100">
+  <v-sheet rounded="lg" height="100%" color="#090c10">
     <v-card-title class="d-flex align-center px-4 py-3">
-      <span class="text-h6">Recent Alerts</span>
+      <span class="text-h6">Recent Detections</span>
       <v-spacer></v-spacer>
       <v-btn
         icon="mdi-refresh"
@@ -106,5 +106,34 @@ const refreshAlerts = async () => {
 
 .text-h6{
   color: #b1b8c0;
+}
+
+
+:deep(.v-data-table) {
+  background-color: transparent !important;
+}
+
+/* Change the entire table background */
+:deep(.v-table) {
+  background-color: #0d1117 !important; /* Replace with your desired color */
+}
+
+/* Ensure the inner wrapper also has the background color */
+:deep(.v-table .v-table__wrapper) {
+  background-color: #0d1117 !important; /* Use the same color */
+}
+
+/* Style for table header */
+:deep(.v-data-table .v-data-table-header) {
+  background-color: #0d1117 !important; /* Use the same or slightly different color */
+}
+
+.alerts-table {
+  color: #b1b8c0;
+}
+
+.text-h6 {
+  color: #b1b8c0;
+  font-size: 32px !important;
 }
 </style>

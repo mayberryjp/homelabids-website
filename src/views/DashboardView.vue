@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row class="bg-background-100 ma-0 rounded-lg">
+    <v-row class="quickstats-background ma-0 rounded-lg">
       <!-- Status Cards -->
       <v-col
         cols="12"
@@ -138,5 +138,10 @@ onMounted(() => {
     color: rgb(177, 184, 192);
     font-family: BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol, noto color emoji;
 
+ }
+
+ .quickstats-background {
+  background-color: #0d1117 !important;
+  color: rgba(255, 255, 255, 0.87);
  }
 </style>
