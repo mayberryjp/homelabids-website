@@ -16,7 +16,7 @@
     <v-data-table
       :headers="headers"
       :items="recentAlerts"
-      :items-per-page="10"
+      :items-per-page="50"
       class="alerts-table"
       density="compact"
     >
@@ -64,8 +64,10 @@ const loading = ref(false);
 
 // Table headers
 const headers = [
-  { title: "ID", key: "id", sortable: true },
-  { title: "IP Address", key: "ip_address", sortable: true },
+  { title: "Category", key: "category", sortable: true },
+  { title: "Local IP Address", key: "ip_address", sortable: true },
+  { title: "Info 1", key: "enrichment_1", sortable: true },
+  { title: "Info 2", key: "enrichment_2", sortable: true },
   {
     title: "Acknowledged",
     key: "acknowledged",
@@ -73,7 +75,6 @@ const headers = [
     sortable: true,
   },
   { title: "Last Seen", key: "last_seen", sortable: true },
-  { title: "Category", key: "category", sortable: true },
 ];
 
 // Get the most recent 25 alerts, sorted by last_seen timestamp
@@ -83,7 +84,7 @@ const recentAlerts = computed(() => {
       (a, b) =>
         new Date(b.last_seen).getTime() - new Date(a.last_seen).getTime()
     )
-    .slice(0, 25);
+    .slice(0, 50);
 });
 
 // Function to refresh the alerts data

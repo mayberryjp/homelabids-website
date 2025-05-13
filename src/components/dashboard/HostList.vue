@@ -11,7 +11,7 @@
             class="status-indicator"
             :class="host.acknowledged ? 'acknowledged' : 'unacknowledged'"
           >
-            {{ host.acknowledged ? "100%" : "99.44%" }}
+            {{ host.acknowledged ? "Known" : "Unknown" }}
           </div>
           <div class="host-info ml-2">
             {{
