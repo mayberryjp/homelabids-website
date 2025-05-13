@@ -16,7 +16,7 @@
     <v-data-table
       :headers="headers"
       :items="recentAlerts"
-      :items-per-page="10"
+      :items-per-page="50"
       class="alerts-table"
       density="compact"
     >
@@ -37,7 +37,7 @@
           :color="item.acknowledged ? 'green' : 'red'"
           text-color="white"
         >
-          {{ item.acknowledged ? "1" : "0" }}
+          {{ item.acknowledged ? "Yes" : "No" }}
         </v-chip>
       </template>
 
@@ -60,7 +60,9 @@ const loading = ref(false);
 // Table headers
 const headers = [
   { title: "Category", key: "category", sortable: true },
-  { title: "IP Address", key: "ip_address", sortable: true },
+  { title: "Local IP Address", key: "ip_address", sortable: true },
+  { title: "Info 1", key: "enrichment_1", sortable: true },
+  { title: "Info 2", key: "enrichment_2", sortable: true },
   {
     title: "Acknowledged",
     key: "acknowledged",
@@ -77,7 +79,7 @@ const recentAlerts = computed(() => {
       (a, b) =>
         new Date(b.last_seen).getTime() - new Date(a.last_seen).getTime()
     )
-    .slice(0, 25);
+    .slice(0, 50);
 });
 
 // Function to refresh the alerts data
