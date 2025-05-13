@@ -143,5 +143,6 @@ onMounted(() => {
  .quickstats-background {
   background-color: #0d1117 !important;
   color: rgba(255, 255, 255, 0.87);
+  padding: 5px;
  }
 </style>
