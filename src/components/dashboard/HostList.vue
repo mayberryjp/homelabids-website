@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="rounded" height="100%" color="background-100">
+  <v-sheet rounded="lg" height="100%" color="background-100">
     <v-list>
       <v-list-item
         v-for="host in hosts.localhosts"

@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="rounded" height="100%" color="background-100">
+  <v-sheet rounded="lg" height="100%" color="background-100">
     <v-card-title class="d-flex align-center px-4 py-3">
       <span class="text-h6">Recent Alerts</span>
       <v-spacer></v-spacer>

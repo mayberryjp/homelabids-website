@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row class="bg-background-100 ma-0">
+    <v-row class="bg-background-100 ma-0 rounded-lg">
       <!-- Status Cards -->
       <v-col
         cols="12"
