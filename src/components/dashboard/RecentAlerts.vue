@@ -37,7 +37,7 @@
           :color="item.acknowledged ? 'green' : 'red'"
           text-color="white"
         >
-          {{ item.acknowledged ? "1" : "0" }}
+          {{ item.acknowledged ? "Yes" : "No" }}
         </v-chip>
       </template>
 
