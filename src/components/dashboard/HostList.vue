@@ -67,6 +67,8 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
 .host-list-item {
   margin-bottom: 8px;
   padding: 8px 16px;
+  color: #b1b8c0;
+  text-transform: uppercase;
 }
 
 .status-indicator {
@@ -75,14 +77,16 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
   justify-content: center;
   min-width: 60px;
   height: 24px;
-  border-radius: 12px;
-  color: white;
+  border-radius: 50rem !important;
+  color: black;;
   font-size: 12px;
   font-weight: bold;
+  display: inline-block;
+  padding: .35em .65em;
 }
 
 .acknowledged {
-  background-color: #4caf50;
+  background-color: #5cdd8b;
 }
 
 .unacknowledged {
@@ -108,7 +112,7 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
 }
 
 .alert-none {
-  background-color: #4caf50;
+  background-color: #5cdd8b;
 }
 
 .alert-low {

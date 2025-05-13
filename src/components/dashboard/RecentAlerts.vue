@@ -99,4 +99,12 @@ const refreshAlerts = async () => {
 :deep(.v-data-table) {
   background-color: transparent !important;
 }
+
+.alerts-table {
+  color: #b1b8c0;
+}
+
+.text-h6{
+  color: #b1b8c0;
+}
 </style>
