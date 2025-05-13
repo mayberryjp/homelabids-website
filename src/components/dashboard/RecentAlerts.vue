@@ -20,9 +20,9 @@
       class="alerts-table"
       density="compact"
     >
-      <!-- ID Column -->
-      <template v-slot:item.id="{ item }">
-        <span class="font-weight-medium">{{ item.id }}</span>
+      <!-- Category Column -->
+      <template v-slot:item.category="{ item }">
+        <span class="text-caption">{{ item.category }}</span>
       </template>
 
       <!-- IP Address Column -->
@@ -45,11 +45,6 @@
       <template v-slot:item.last_seen="{ item }">
         {{ formatDateTime(item.last_seen) }}
       </template>
-
-      <!-- Category Column -->
-      <template v-slot:item.category="{ item }">
-        <span class="text-caption">{{ item.category }}</span>
-      </template>
     </v-data-table>
   </v-sheet>
 </template>
@@ -64,7 +59,7 @@ const loading = ref(false);
 
 // Table headers
 const headers = [
-  { title: "ID", key: "id", sortable: true },
+  { title: "Category", key: "category", sortable: true },
   { title: "IP Address", key: "ip_address", sortable: true },
   {
     title: "Acknowledged",
@@ -73,7 +68,6 @@ const headers = [
     sortable: true,
   },
   { title: "Last Seen", key: "last_seen", sortable: true },
-  { title: "Category", key: "category", sortable: true },
 ];
 
 // Get the most recent 25 alerts, sorted by last_seen timestamp
