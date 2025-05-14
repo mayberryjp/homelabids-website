@@ -27,7 +27,10 @@
 
       <!-- IP Address Column -->
       <template v-slot:item.ip_address="{ item }">
-        {{ item.ip_address }}
+        <div>
+          <div v-if="item.local_description">{{ item.local_description }} ({{ item.ip_address }})</div>
+          <div v-else>{{ item.ip_address }}</div>
+        </div>
       </template>
 
       <!-- Acknowledged Column -->

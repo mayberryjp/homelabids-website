@@ -48,4 +48,5 @@ export interface Alert {
   first_seen: string;
   last_seen: string;
   acknowledged: boolean;
+  local_description: string;
 }
