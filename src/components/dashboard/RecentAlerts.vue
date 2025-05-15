@@ -1,7 +1,7 @@
 <template>
   <v-sheet rounded="lg" height="100%" color="#090c10">
     <v-card-title class="d-flex align-center px-4 py-3">
-      <span class="text-h6">Recent Detections</span>
+      <span class="text-h6">Most Recent Detections</span>
       <v-spacer></v-spacer>
       <v-btn
         icon="mdi-refresh"
@@ -62,10 +62,10 @@ const loading = ref(false);
 
 // Table headers
 const headers = [
-  { title: "Category", key: "category", sortable: true },
-  { title: "Local IP Address", key: "ip_address", sortable: true },
-  { title: "Info 1", key: "enrichment_1", sortable: true },
-  { title: "Info 2", key: "enrichment_2", sortable: true },
+  { title: "Detection Category", key: "category", sortable: true },
+  { title: "Local Host", key: "ip_address", sortable: true },
+  { title: "Details", key: "enrichment_1", sortable: true },
+  { title: "Details", key: "enrichment_2", sortable: true },
   {
     title: "Acknowledged",
     key: "acknowledged",

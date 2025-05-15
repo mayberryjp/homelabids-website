@@ -15,6 +15,7 @@
           class="text-center pa-4 bg-transparent border-none"
         >
           <div class="text-subtitle-1 mb-1">{{ stat.label }}</div>
+          <div class="stat-description mb-1">{{ stat.description || '' }}</div>
           <div :class="['text-h5 text-sm-h4 text-md-h3', stat.color]">
             {{ stat.value }}
           </div>
@@ -49,31 +50,37 @@ const quickStats = ref({
 const statusStats = computed(() => [
   {
     label: "Hosts",
+    description: "Acknowledged",
     value: quickStats.value.acknowledged_localhosts_count || 0,
     color: "text-green-accent-3",
   },
   {
     label: "Hosts",
+    description: "Unacknowledged",
     value: quickStats.value.unacknowledged_localhosts_count || 0,
     color: "text-red",
   },
   {
     label: "Alerts",
+    description: "Acknowledged",
     value: quickStats.value.acknowledged_alerts || 0,
     color: "text-green-accent-3",
   },
   {
     label: "Alerts",
+    description: "Unacknowledged",
     value: quickStats.value.unacknowledged_alerts || 0,
     color: "text-red",
   },
   {
     label: "Alerts",
+    description: "Total",
     value: quickStats.value.total_alerts || 0,
     color: "text-grey",
   },
   {
     label: "IgnoreLists",
+    description: "Total",
     value: quickStats.value.whitelist_count || 0,
     color: "text-grey",
   },
@@ -145,4 +152,12 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.87);
   padding: 5px;
  }
+
+.stat-description {
+  font-size: 14px;
+  color: #8b949e;
+  font-weight: 400;
+  line-height: 1.2;
+  font-family: BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif;
+}
 </style>
