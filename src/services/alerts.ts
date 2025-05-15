@@ -10,15 +10,7 @@ export const getRecentAlerts = async () => {
   }
 };
 
-export const getLocalhosts = async () => {
-  try {
-    const response = await api.get("localhosts");
-    return response;
-  } catch (error) {
-    console.error("Error fetching localhosts:", error);
-    throw error;
-  }
-};
+
 
 export const getAlertSummary = async () => {
   try {

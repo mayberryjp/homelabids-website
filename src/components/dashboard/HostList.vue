@@ -5,6 +5,7 @@
         v-for="host in hosts.localhosts"
         :key="host.ip_address"
         class="host-list-item"
+        @click="hostClickHandler(host)"
       >
         <div class="d-flex align-center w-100">
           <div
@@ -18,14 +19,7 @@
               host.local_description || host.dhcp_hostname || host.ip_address
             }}
           </div>
-          <div class="alert-bars ml-auto">
-            <div
-              v-for="i in 12"
-              :key="i"
-              class="alert-bar"
-              :class="getAlertClass(host.ip_address, i)"
-            ></div>
-          </div>
+          <AlertBars :ip-address="host.ip_address" class="ml-auto" />
         </div>
       </v-list-item>
     </v-list>
@@ -34,28 +28,18 @@
 
 <script setup lang="ts">
 import { useHostsStore } from "@/stores/hosts";
-import { getAlertSeverity } from "@/types/alerts";
-import type { AlertSeverity } from "@/types/alerts";
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import AlertBars from "@/components/base/AlertBars.vue";
 
+const router = useRouter();
 const hosts = useHostsStore();
 
-// Create a map of IP addresses to alert items for O(1) lookups
-const alertsMap = computed(() => {
-  if (!hosts.alertsSummary) return new Map();
-  
-  return new Map(
-    hosts.alertsSummary.map(alert => [alert.ip, alert])
-  );
-});
-
-
-const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
-  const alertItem = alertsMap.value.get(ipAddress);
-  if (!alertItem) return 'alert-none';
-  
-  const alertCount = alertItem.alert_interval[hourIndex - 1] || 0;
-  return getAlertSeverity(alertCount);
+const hostClickHandler = (host: any) => {
+  router.push({
+    name: "host",
+    params: { ip_address: host.ip_address },
+  });
 };
 </script>
 
@@ -97,40 +81,5 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.alert-bars {
-  display: flex;
-  gap: 2px;
-}
-
-.alert-bar {
-  width: 5px;
-  height: 16px;
-  margin: 1px;
-  border-radius: 50rem;
-  display: inline-block;
-  box-sizing: border-box;
-  --hover-scale: 1.5;
-}
-
-.alert-none {
-  background-color: #5cdd8b;
-}
-
-.alert-low {
-  background-color: #ffeb3b;
-}
-
-.alert-medium {
-  background-color: #ff9800;
-}
-
-.alert-high {
-  background-color: #f44336;
-}
-
-.alert-critical {
-  background-color: #b71c1c;
 }
 </style>
