@@ -137,7 +137,7 @@ onMounted(() => {
     margin-top: 0;
     margin-bottom: .5rem;
     font-weight: 500;
-    line-height: 45px;
+    line-height: 25px;
     text-size-adjust: 100%;
     font-size: 28px !important;
     font-weight: 500;
