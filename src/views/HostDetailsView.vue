@@ -11,10 +11,10 @@
           <div class="d-flex flex-column flex-wrap">
             <!-- Host Title -->
             <div class="host-title me-4">
-              <h2 class="text-h4">
+              <h2 class="text-h4 text-grey custom-heading">
                 {{ localHostDetail.local_description }}
               </h2>
-              <div class="text-subtitle-1 text-grey">{{ ip_address }}</div>
+              <div class="text-subtitle-1 text-green">IP Address: {{ ip_address }}</div>
             </div>
 
             <div class="mt-2">
@@ -86,5 +86,20 @@ onMounted(async () => {
   to {
     opacity: 1;
   }
+}
+
+:deep(.custom-heading) {
+  text-transform: uppercase !important;
+  font-size: 32px !important;
+  font-weight: 500;
+  color: #b1b8c0 !important;
+  font-family: BlinkMacSystemFont, "segoe ui", Roboto, "helvetica neue", Arial, "noto sans", sans-serif, "apple color emoji", "segoe ui emoji", "segoe ui symbol", "noto color emoji";
+}
+
+.text-subtitle-1 {
+   color: rgb(92, 221, 139) !important;
+   font-size: 16px !important; 
+   font-weight: 700 !important;
+   margin-top: 3px;
 }
 </style>
