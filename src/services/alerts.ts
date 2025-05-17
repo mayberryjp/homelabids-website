@@ -21,3 +21,14 @@ export const getAlertSummary = async () => {
     throw error;
   }
 };
+
+
+export const getHostAlertDetails = async (ip_address: string) => {
+  try {
+    const response = await api.get(`/alerts/summary/${ip_address}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching alert details:", error);
+    throw error;
+  }
+};
