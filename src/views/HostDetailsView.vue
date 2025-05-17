@@ -31,8 +31,8 @@
         </v-card-text>
       </v-card>
 
-      <!-- Content goes here -->
-      <v-card color="#0d1117" v-if="trafficStats" class="pa-2">
+      <!-- Traffic Stats -->
+      <v-card color="#0d1117" v-if="trafficStats" class="pa-2 mb-4">
         <v-card-title class="text-white"
           >Network Traffic Statistics</v-card-title
         >
@@ -41,6 +41,18 @@
         >
         <HostAlertsChart :traffic-stats="trafficStats" />
       </v-card>
+      
+      <!-- Host-specific Alerts -->
+      <v-card color="#0d1117" v-if="recentHostAlerts.length" class="mb-4">
+        <RecentAlerts 
+          :alerts="recentHostAlerts"
+          title="Host Alerts"
+          :items-per-page="10"
+          :showRefreshButton="true"
+          :loading="recentAlertsLoading"
+          @refresh="fetchRecentHostAlerts(ip_address)"
+        />
+      </v-card>
     </div>
   </div>
 </template>
@@ -48,12 +60,14 @@
 <script setup lang="ts">
 import { getLocalhostDetail, getLocalhostTraffic } from "@/services/hosts";
 import { useRoute } from "vue-router";
-import { onMounted, watch, ref } from "vue";
+import { onMounted, watch, ref, computed } from "vue";
 import AlertBars from "@/components/base/AlertBars.vue";
 import AppLoader from "@/components/base/AppLoader.vue";
 import type { Localhost } from "@/types/localhosts";
-import { getHostAlertDetails } from "@/services/alerts";
+import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
 import HostAlertsChart from "@/components/host-details/HostAlertsChart.vue";
+import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
+import type { Alert } from "@/types/alerts";
 
 const route = useRoute();
 const ip_address = ref(route.params.ip_address as string);
@@ -61,6 +75,8 @@ const localHostDetail = ref<Localhost | null>(null);
 const alertDetail = ref(null);
 const trafficStats = ref(null);
 const isLoading = ref(true);
+const recentHostAlerts = ref<Alert[]>([]);
+const recentAlertsLoading = ref(false);
 
 const fetchLocalhostDetail = async (ip_address: string) => {
   isLoading.value = true;
@@ -101,18 +117,34 @@ const fetchTrafficStats = async (ip_address: string) => {
   }
 };
 
+
+const fetchRecentHostAlerts = async (ip_address: string) => {
+  recentAlertsLoading.value = true;
+  recentHostAlerts.value = [];
+  try {
+    const { data } = await getHostRecentAlerts(ip_address);
+    recentHostAlerts.value = data;
+  } catch (error) {
+    console.error("Error fetching localhost details:", error);
+  } finally {
+    recentAlertsLoading.value = false;
+  }
+};
+
 const updateData = async (ip_address: string) => {
   isLoading.value = true;
   try {
     await fetchLocalhostDetail(ip_address);
     await fetchAlertDetail(ip_address);
     await fetchTrafficStats(ip_address);
+    await fetchRecentHostAlerts(ip_address);
   } catch (error) {
     console.error("Error updating data:", error);
   } finally {
     isLoading.value = false;
   }
 };
+
 
 // Watch for changes in the route params to update the IP address
 watch(

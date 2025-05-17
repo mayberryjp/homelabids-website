@@ -1,13 +1,14 @@
 <template>
   <v-sheet rounded="lg" height="100%" color="#090c10">
     <v-card-title class="d-flex align-center px-4 py-3">
-      <span class="text-h6">Most Recent Detections</span>
+      <span class="text-h6">{{ title }}</span>
       <v-spacer></v-spacer>
       <v-btn
+        v-if="showRefreshButton"
         icon="mdi-refresh"
         variant="text"
         size="small"
-        @click="refreshAlerts"
+        @click="$emit('refresh')"
         :loading="loading"
       ></v-btn>
     </v-card-title>
@@ -15,8 +16,8 @@
 
     <v-data-table
       :headers="headers"
-      :items="recentAlerts"
-      :items-per-page="50"
+      :items="alerts"
+      :items-per-page="itemsPerPage"
       class="alerts-table"
       density="compact"
     >
@@ -28,7 +29,9 @@
       <!-- IP Address Column -->
       <template v-slot:item.ip_address="{ item }">
         <div>
-          <div v-if="item.local_description">{{ item.local_description }} ({{ item.ip_address }})</div>
+          <div v-if="item.local_description">
+            {{ item.local_description }} ({{ item.ip_address }})
+          </div>
           <div v-else>{{ item.ip_address }}</div>
         </div>
       </template>
@@ -53,12 +56,28 @@
 </template>
 
 <script setup lang="ts">
-import { useHostsStore } from "@/stores/hosts";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { formatDateTime } from "@/utils/date";
+import type { Alert } from "@/types/alerts";
 
-const hosts = useHostsStore();
-const loading = ref(false);
+// Define props for the component
+const props = defineProps<{
+  alerts: Alert[];
+  title?: string;
+  loading?: boolean;
+  showRefreshButton?: boolean;
+  itemsPerPage?: number;
+}>();
+
+// Define emits for the component
+const emit = defineEmits<{
+  (e: "refresh"): void;
+}>();
+
+// Default values for props
+const title = props.title || "Most Recent Detections";
+const loading = props.loading || false;
+const itemsPerPage = props.itemsPerPage || 50;
 
 // Table headers
 const headers = [
@@ -74,28 +93,6 @@ const headers = [
   },
   { title: "Last Seen", key: "last_seen", sortable: true },
 ];
-
-// Get the most recent 25 alerts, sorted by last_seen timestamp
-const recentAlerts = computed(() => {
-  return [...hosts.alertsRecent]
-    .sort(
-      (a, b) =>
-        new Date(b.last_seen).getTime() - new Date(a.last_seen).getTime()
-    )
-    .slice(0, 50);
-});
-
-// Function to refresh the alerts data
-const refreshAlerts = async () => {
-  loading.value = true;
-  try {
-    await hosts.fetchRecentAlerts();
-  } catch (error) {
-    console.error("Error refreshing alerts:", error);
-  } finally {
-    loading.value = false;
-  }
-};
 </script>
 
 <style scoped>
@@ -107,10 +104,9 @@ const refreshAlerts = async () => {
   color: #b1b8c0;
 }
 
-.text-h6{
+.text-h6 {
   color: #b1b8c0;
 }
-
 
 :deep(.v-data-table) {
   background-color: transparent !important;

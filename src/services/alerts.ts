@@ -10,8 +10,6 @@ export const getRecentAlerts = async () => {
   }
 };
 
-
-
 export const getAlertSummary = async () => {
   try {
     const response = await api.get("/alerts/summary");
@@ -22,13 +20,22 @@ export const getAlertSummary = async () => {
   }
 };
 
-
 export const getHostAlertDetails = async (ip_address: string) => {
   try {
     const response = await api.get(`/alerts/summary/${ip_address}`);
     return response;
   } catch (error) {
     console.error("Error fetching alert details:", error);
+    throw error;
+  }
+};
+
+export const getHostRecentAlerts = async (ip_address: string) => {
+  try {
+    const response = await api.get(`/alerts/recent/${ip_address}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching recent alerts:", error);
     throw error;
   }
 };
