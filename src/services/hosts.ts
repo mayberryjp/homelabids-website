@@ -29,3 +29,13 @@ export const getLocalhostTraffic = async (ip_address: string) => {
     throw error;
   }
 };
+
+export const deleteHost = async (ip_address: string) => {
+  try {
+    const response = await api.delete(`localhosts/${ip_address}`);
+    return response;
+  } catch (error) {
+    console.error("Error deleting host:", error);
+    throw error;
+  }
+};

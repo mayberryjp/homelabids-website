@@ -10,13 +10,18 @@
         <v-card-text>
           <div class="d-flex flex-column flex-wrap">
             <!-- Host Title -->
-            <div class="host-title me-4">
-              <h2 class="text-h4 text-grey custom-heading">
-                {{ localHostDetail.local_description ||  "Unclassified" }}
-              </h2>
-              <div class="text-subtitle-1 text-green">
-                IP Address: {{ ip_address }}
+            <div class="d-flex align-center justify-space-between">
+              <div class="host-title me-4">
+                <h2 class="text-h4 text-grey custom-heading">
+                  {{ localHostDetail.local_description || "Unclassified" }}
+                </h2>
+                <div class="text-subtitle-1 text-green">
+                  IP Address: {{ ip_address }}
+                </div>
               </div>
+
+              <!-- Add HostActions component here -->
+              <HostActions :ip-address="ip_address" />
             </div>
 
             <div class="mt-2">
@@ -73,6 +78,7 @@ import HostAlertsChart from "@/components/host-details/HostAlertsChart.vue";
 import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
 import type { Alert } from "@/types/alerts";
 import HostStats from "@/components/host-details/HostStats.vue";
+import HostActions from "@/components/host-details/HostActions.vue";
 
 const route = useRoute();
 const ip_address = ref(route.params.ip_address as string);
