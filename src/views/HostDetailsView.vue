@@ -31,6 +31,10 @@
         </v-card-text>
       </v-card>
 
+      <v-card color="#0d1117" class="mb-4">
+        <HostStats :host-detail="localHostDetail" />
+      </v-card>
+
       <!-- Traffic Stats -->
       <v-card color="#0d1117" v-if="trafficStats" class="pa-2 mb-4">
         <v-card-title class="text-white"
@@ -41,10 +45,10 @@
         >
         <HostAlertsChart :traffic-stats="trafficStats" />
       </v-card>
-      
+
       <!-- Host-specific Alerts -->
       <v-card color="#0d1117" v-if="recentHostAlerts.length" class="mb-4">
-        <RecentAlerts 
+        <RecentAlerts
           :alerts="recentHostAlerts"
           title="Host Alerts"
           :items-per-page="10"
@@ -68,6 +72,7 @@ import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
 import HostAlertsChart from "@/components/host-details/HostAlertsChart.vue";
 import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
 import type { Alert } from "@/types/alerts";
+import HostStats from "@/components/host-details/HostStats.vue";
 
 const route = useRoute();
 const ip_address = ref(route.params.ip_address as string);
@@ -117,7 +122,6 @@ const fetchTrafficStats = async (ip_address: string) => {
   }
 };
 
-
 const fetchRecentHostAlerts = async (ip_address: string) => {
   recentAlertsLoading.value = true;
   recentHostAlerts.value = [];
@@ -144,7 +148,6 @@ const updateData = async (ip_address: string) => {
     isLoading.value = false;
   }
 };
-
 
 // Watch for changes in the route params to update the IP address
 watch(
