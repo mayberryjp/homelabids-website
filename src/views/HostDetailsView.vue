@@ -12,7 +12,7 @@
             <!-- Host Title -->
             <div class="host-title me-4">
               <h2 class="text-h4 text-grey custom-heading">
-                {{ localHostDetail.local_description }}
+                {{ localHostDetail.local_description ||  "Unclassified" }}
               </h2>
               <div class="text-subtitle-1 text-green">
                 IP Address: {{ ip_address }}

@@ -3,14 +3,10 @@
   
       <!-- Product Logo and Name (Left Justified) -->
     <div class="product-branding d-flex align-center">
-      <img src="/logo.png" alt="Product Logo" width="32px" height="32px" class="me-2" />
-      <!--- this v-img tag didn't work for some reason so i changed it to a standard img tag <v-img
-        src="/logo.png"
-        alt="Product Logo"
-        class="me-2"
-      ></v-img> 
-    -->
-      <span class="product-name text-h6">Homelab IDS</span>
+      <router-link to="/" class="router-link">
+        <img src="/logo.png" alt="Product Logo" width="32px" height="32px" class="me-2" />
+        <span class="product-name text-h6">Homelab IDS</span>
+      </router-link>
     </div>
 
     <v-spacer></v-spacer>
@@ -90,6 +86,12 @@ const menuItems = ref([
   font-size: 16px !important;
   font-weight: 400;
   letter-spacing: 0em !important;
+}
+
+.router-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 </style>

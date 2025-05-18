@@ -83,8 +83,8 @@ const itemsPerPage = props.itemsPerPage || 50;
 const headers = [
   { title: "Detection Category", key: "category", sortable: true },
   { title: "Local Host", key: "ip_address", sortable: true },
-  { title: "Details", key: "enrichment_1", sortable: true },
-  { title: "Details", key: "enrichment_2", sortable: true },
+  { title: "Details", key: "alert_enrichment_1", sortable: true },
+  { title: "Details", key: "alert_enrichment_2", sortable: true },
   {
     title: "Acknowledged",
     key: "acknowledged",
