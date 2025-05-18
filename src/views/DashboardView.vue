@@ -83,12 +83,6 @@ const statusStats = computed(() => [
     color: "text-red",
   },
   {
-    label: "Alerts",
-    description: "Total",
-    value: quickStats.value.total_alerts || 0,
-    color: "text-grey",
-  },
-  {
     label: "IgnoreLists",
     description: "Total",
     value: quickStats.value.whitelist_count || 0,

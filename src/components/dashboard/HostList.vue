@@ -16,7 +16,7 @@
           </div>
           <div class="host-info ml-2">
             {{
-              host.local_description || host.dhcp_hostname || host.ip_address
+              host.local_description || host.ip_address
             }}
           </div>
           <AlertBars :ip-address="host.ip_address" class="ml-auto" />
