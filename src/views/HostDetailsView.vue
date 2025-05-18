@@ -24,13 +24,8 @@
               <HostActions :ip-address="ip_address" />
             </div>
 
-            <div class="mt-2">
-              <AlertBars
-                :ip-address="ip_address"
-                :bar-count="24"
-                :height="40"
-                :width="12"
-              />
+            <div style="max-width: 500px;">
+              <AlertBarChart v-if="alertDetail" :alert-data="alertDetail" />
             </div>
           </div>
         </v-card-text>
@@ -69,8 +64,7 @@
 <script setup lang="ts">
 import { getLocalhostDetail, getLocalhostTraffic } from "@/services/hosts";
 import { useRoute } from "vue-router";
-import { onMounted, watch, ref, computed } from "vue";
-import AlertBars from "@/components/base/AlertBars.vue";
+import { onMounted, watch, ref } from "vue";
 import AppLoader from "@/components/base/AppLoader.vue";
 import type { Localhost } from "@/types/localhosts";
 import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
@@ -79,6 +73,7 @@ import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
 import type { Alert } from "@/types/alerts";
 import HostStats from "@/components/host-details/HostStats.vue";
 import HostActions from "@/components/host-details/HostActions.vue";
+import AlertBarChart from "@/components/host-details/AlertBarChart.vue";
 
 const route = useRoute();
 const ip_address = ref(route.params.ip_address as string);
