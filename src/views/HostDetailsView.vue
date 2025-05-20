@@ -13,7 +13,7 @@
             <div class="d-flex align-center justify-space-between">
               <div class="host-title me-4">
                 <h2 class="text-h4 text-grey custom-heading">
-                  {{ localHostDetail.local_description || "Unclassified" }}
+                  {{ localHostDetail.local_description || "Unnamed" }}
                 </h2>
                 <div class="text-subtitle-1 text-green">
                   IP Address: {{ ip_address }}
@@ -139,6 +139,9 @@ const fetchRecentHostAlerts = async (ip_address: string) => {
 const updateData = async (ip_address: string) => {
   isLoading.value = true;
   try {
+    // Scroll to top when data updates
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     await fetchLocalhostDetail(ip_address);
     await fetchAlertDetail(ip_address);
     await fetchTrafficStats(ip_address);
@@ -160,6 +163,8 @@ watch(
 );
 
 onMounted(async () => {
+  // Scroll to top when component mounts
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   await updateData(ip_address.value);
 });
 </script>
