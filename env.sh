@@ -1,5 +1,5 @@
 #!/bin/sh
-for i in $(env | grep MY_)
+for i in $(env | grep HOMELABIDS_)
 do
     key=$(echo $i | cut -d '=' -f 1)
     value=$(echo $i | cut -d '=' -f 2-)

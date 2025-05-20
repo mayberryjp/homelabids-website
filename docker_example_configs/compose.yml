@@ -10,4 +10,4 @@ services:
       - /docker/homelabids-website:/database
     environment: 
       - TZ=Asia/Tokyo
-      - MY_API_BASE_URL=http://192.168.49.80:8044
+      - HOMELABIDS_API_BASE_URL=http://192.168.49.80:8044
