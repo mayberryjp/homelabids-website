@@ -1,16 +1,13 @@
-import {
-  getAlertSummary,
-  getRecentAlerts,
-} from "@/services/alerts";
+import { getAlertSummary, getRecentAlerts } from "@/services/alerts";
 import type { Localhost } from "@/types/localhosts";
-import type { AlertsSummary, Alert } from "@/types/alerts";
+import type { Alert, AlertsSummaryStore } from "@/types/alerts";
 import { defineStore } from "pinia";
 import { ref, onMounted } from "vue";
 import { getLocalhosts } from "@/services/hosts";
 
 export const useHostsStore = defineStore("hosts", () => {
   const localhosts = ref<Localhost[]>([]);
-  const alertsSummary = ref<AlertsSummary>([]);
+  const alertsSummary = ref<AlertsSummaryStore>({});
   const alertsRecent = ref<Alert[]>([]);
 
   const fetchLocalhosts = async () => {

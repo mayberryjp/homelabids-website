@@ -2,12 +2,18 @@ export interface AlertInterval {
   [hour: number]: number; // hour index -> number of alerts
 }
 
-export interface AlertSummaryItem {
-  ip: string;
-  alert_interval: AlertInterval;
+export interface AlertSummary {
+  alert_intervals: number[];
 }
 
-export type AlertsSummary = AlertSummaryItem[];
+export interface AlertsSummaryStore {
+  [key: string]: AlertSummary;
+}
+
+export interface AlertDetail {
+  ip_address: string;
+  alert_intervals: number[];
+}
 
 export type AlertSeverity =
   | "alert-none"

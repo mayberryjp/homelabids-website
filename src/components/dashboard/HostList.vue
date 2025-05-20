@@ -19,7 +19,7 @@
               host.local_description || host.ip_address
             }}
           </div>
-          <AlertBars :ip-address="host.ip_address" class="ml-auto" />
+          <AlertBars :alert-intervals="getAlertIntervals(host.ip_address)" class="ml-auto" />
         </div>
       </v-list-item>
     </v-list>
@@ -31,15 +31,20 @@ import { useHostsStore } from "@/stores/hosts";
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import AlertBars from "@/components/base/AlertBars.vue";
+import type { Localhost } from "@/types/localhosts";
 
 const router = useRouter();
 const hosts = useHostsStore();
 
-const hostClickHandler = (host: any) => {
+const hostClickHandler = (host: Localhost) => {
   router.push({
     name: "host",
     params: { ip_address: host.ip_address },
   });
+};
+
+const getAlertIntervals = (ip_address: string): number[] => {
+  return hosts.alertsSummary[ip_address]?.alert_intervals || [];
 };
 </script>
 

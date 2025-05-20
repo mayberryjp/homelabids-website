@@ -24,8 +24,13 @@
               <HostActions :ip-address="ip_address" />
             </div>
 
-            <div style="max-width: 500px;">
-              <AlertBarChart v-if="alertDetail" :alert-data="alertDetail" />
+            <div v-if="alertDetail">
+              <AlertBars 
+                :alert-intervals="alertDetail.alert_intervals" 
+                class="ml-auto" 
+                :height="26" 
+                :width="7"
+              />
             </div>
           </div>
         </v-card-text>
@@ -70,15 +75,15 @@ import type { Localhost } from "@/types/localhosts";
 import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
 import HostAlertsChart from "@/components/host-details/HostAlertsChart.vue";
 import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
-import type { Alert } from "@/types/alerts";
+import type { Alert, AlertDetail } from "@/types/alerts";
 import HostStats from "@/components/host-details/HostStats.vue";
 import HostActions from "@/components/host-details/HostActions.vue";
-import AlertBarChart from "@/components/host-details/AlertBarChart.vue";
+import AlertBars from "@/components/base/AlertBars.vue";
 
 const route = useRoute();
 const ip_address = ref(route.params.ip_address as string);
 const localHostDetail = ref<Localhost | null>(null);
-const alertDetail = ref(null);
+const alertDetail = ref<AlertDetail | null>(null);
 const trafficStats = ref(null);
 const isLoading = ref(true);
 const recentHostAlerts = ref<Alert[]>([]);
@@ -140,8 +145,8 @@ const updateData = async (ip_address: string) => {
   isLoading.value = true;
   try {
     // Scroll to top when data updates
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
     await fetchLocalhostDetail(ip_address);
     await fetchAlertDetail(ip_address);
     await fetchTrafficStats(ip_address);
@@ -164,7 +169,7 @@ watch(
 
 onMounted(async () => {
   // Scroll to top when component mounts
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: "smooth" });
   await updateData(ip_address.value);
 });
 </script>

@@ -1,32 +1,24 @@
 <template>
   <div class="alert-bars">
     <div
-      v-for="i in barCount"
-      :key="i"
+      v-for="(count, index) in alertIntervals"
+      :key="index"
       class="alert-bar"
-      :class="getAlertClass(ipAddress, i)"
+      :class="getAlertClass(count)"
       :style="{
         width: `${width}px`,
         height: `${height}px`,
       }"
+      :title="`${count} alerts`"
     ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useHostsStore } from "@/stores/hosts";
-import { getAlertSeverity } from "@/types/alerts";
-import type { AlertSeverity } from "@/types/alerts";
-import { computed } from "vue";
-
 const props = defineProps({
-  ipAddress: {
-    type: String,
-    required: true,
-  },
-  barCount: {
-    type: Number,
-    default: 12,
+  alertIntervals: {
+    type: Array as () => number[],
+    default: () => [],
   },
   height: {
     type: Number,
@@ -38,22 +30,12 @@ const props = defineProps({
   },
 });
 
-const hosts = useHostsStore();
-
-// Create a map of IP addresses to alert items for O(1) lookups
-const alertsMap = computed(() => {
-  if (!hosts.alertsSummary || !Array.isArray(hosts.alertsSummary))
-    return new Map();
-
-  return new Map(hosts.alertsSummary?.map((alert) => [alert.ip, alert]));
-});
-
-const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
-  const alertItem = alertsMap.value.get(ipAddress);
-  if (!alertItem) return "alert-none";
-
-  const alertCount = alertItem.alert_interval[hourIndex - 1] || 0;
-  return getAlertSeverity(alertCount);
+const getAlertClass = (alertCount: number): string => {
+  if (alertCount === 0) return "alert-none";
+  if (alertCount <= 10) return "alert-low";
+  if (alertCount <= 25) return "alert-medium";
+  if (alertCount <= 100) return "alert-high";
+  return "alert-critical";
 };
 </script>
 
@@ -68,15 +50,15 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
   border-radius: 50rem;
   display: inline-block;
   box-sizing: border-box;
-  --hover-scale: 1.5;
+  transition: transform 0.2s ease;
 }
 
 .alert-none {
-  background-color: #5cdd8b;
+  background-color: #00c853;
 }
 
 .alert-low {
-  background-color: #ffeb3b;
+  background-color: #ffd600;
 }
 
 .alert-medium {
@@ -89,5 +71,9 @@ const getAlertClass = (ipAddress: string, hourIndex: number): AlertSeverity => {
 
 .alert-critical {
   background-color: #b71c1c;
+}
+
+.alert-bar:hover {
+  transform: scale(1.5);
 }
 </style>
