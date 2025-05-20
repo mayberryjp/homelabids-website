@@ -39,3 +39,43 @@ export const getHostRecentAlerts = async (ip_address: string) => {
     throw error;
   }
 };
+
+export const acknowledgeAlert = async (alertId: string) => {
+  try {
+    const response = await api.put(`/alerts/${alertId}`, {
+      acknowledged: 1,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error acknowledging alert ${alertId}:`, error);
+    throw error;
+  }
+};
+
+export const deleteAlert = async (alertId: string) => {
+  try {
+    const response = await api.delete(`/alerts/${alertId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting alert ${alertId}:`, error);
+    throw error;
+  }
+};
+
+export interface WhitelistPayload {
+  whitelist_id: string;
+  src_ip: string;
+  dst_ip: string;
+  dst_port: string | number;
+  protocol: string;
+}
+
+export const addToWhitelist = async (payload: WhitelistPayload) => {
+  try {
+    const response = await api.post("/whitelist", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding to whitelist:", error);
+    throw error;
+  }
+};

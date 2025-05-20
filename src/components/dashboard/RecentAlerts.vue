@@ -14,6 +14,15 @@
     </v-card-title>
     <v-divider></v-divider>
 
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="3000"
+      location="top"
+    >
+      {{ snackbar.text }}
+    </v-snackbar>
+
     <v-data-table
       :headers="headers"
       :items="alerts"
@@ -21,6 +30,43 @@
       class="alerts-table"
       density="compact"
     >
+      <!-- Actions Column -->
+      <template v-slot:item.actions="{ item }">
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              icon
+              variant="text"
+              size="small"
+              v-bind="props"
+              :disabled="actionInProgress"
+            >
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list density="compact">
+            <v-list-item @click="acknowledgeAlert(item)">
+              <v-list-item-title>Acknowledge Alert</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="deleteAlert(item)">
+              <v-list-item-title>Delete Alert</v-list-item-title>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item @click="whitelistExactFlow(item)">
+              <v-list-item-title>Allowlist Exact Flow</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="whitelistSourceToPort(item)">
+              <v-list-item-title>Allowlist Source to Port</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="whitelistSourceToDestination(item)">
+              <v-list-item-title
+                >Allowlist Source to Destination</v-list-item-title
+              >
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+
       <!-- Category Column -->
       <template v-slot:item.category="{ item }">
         <span class="text-caption">{{ item.category }}</span>
@@ -59,6 +105,12 @@
 import { ref } from "vue";
 import { formatDateTime } from "@/utils/date";
 import type { Alert } from "@/types/alerts";
+import {
+  acknowledgeAlert as apiAcknowledgeAlert,
+  deleteAlert as apiDeleteAlert,
+  addToWhitelist,
+  type WhitelistPayload,
+} from "@/services/alerts";
 
 // Define props for the component
 const props = defineProps<{
@@ -78,9 +130,226 @@ const emit = defineEmits<{
 const title = props.title || "Most Recent Detections";
 const loading = props.loading || false;
 const itemsPerPage = props.itemsPerPage || 50;
+const actionInProgress = ref(false);
+
+// Snackbar for action feedback
+const snackbar = ref({
+  show: false,
+  text: "",
+  color: "success",
+});
+
+// Parse flow information
+const parseFlow = (
+  flowString: string
+): {
+  src_ip: string;
+  dst_ip: string;
+  src_port: string | number;
+  dst_port: string | number;
+  protocol: string | number;
+} => {
+  try {
+    // Format: [src_ip, dst_ip, src_port, dst_port, protocol, ...]
+    // Example: "[\"192.168.60.4\", \"168.63.129.16\", 52462, 53, 17, ...]"
+    const flowArray = JSON.parse(flowString);
+
+    return {
+      src_ip: flowArray[0] || "",
+      dst_ip: flowArray[1] || "",
+      src_port: flowArray[2] || "",
+      dst_port: flowArray[3] || "",
+      protocol: flowArray[4] || "",
+    };
+  } catch (error) {
+    console.error("Error parsing flow data:", error, flowString);
+    return {
+      src_ip: "",
+      dst_ip: "",
+      src_port: "",
+      dst_port: "",
+      protocol: "",
+    };
+  }
+};
+
+// Action handlers
+const acknowledgeAlert = async (alert: Alert) => {
+  if (actionInProgress.value) return;
+  actionInProgress.value = true;
+
+  try {
+    await apiAcknowledgeAlert(alert.id);
+
+    // Update the alert in the local list
+    alert.acknowledged = true;
+
+    snackbar.value = {
+      show: true,
+      text: "Alert acknowledged successfully",
+      color: "success",
+    };
+
+    // Refresh the data
+    emit("refresh");
+  } catch (error) {
+    console.error("Error acknowledging alert:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to acknowledge alert",
+      color: "error",
+    };
+  } finally {
+    actionInProgress.value = false;
+  }
+};
+
+const deleteAlert = async (alert: Alert) => {
+  if (actionInProgress.value) return;
+  actionInProgress.value = true;
+
+  try {
+    await apiDeleteAlert(alert.id);
+
+    snackbar.value = {
+      show: true,
+      text: "Alert deleted successfully",
+      color: "success",
+    };
+
+    // Refresh the data
+    emit("refresh");
+  } catch (error) {
+    console.error("Error deleting alert:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to delete alert",
+      color: "error",
+    };
+  } finally {
+    actionInProgress.value = false;
+  }
+};
+
+const whitelistExactFlow = async (alert: Alert) => {
+  if (actionInProgress.value) return;
+  actionInProgress.value = true;
+
+  try {
+    const flowData = parseFlow(alert.flow);
+
+    const payload: WhitelistPayload = {
+      whitelist_id: `Whitelist_${alert.id}`,
+      src_ip: alert.ip_address,
+      dst_ip: flowData.dst_ip,
+      dst_port: flowData.dst_port,
+      protocol: flowData.protocol,
+    };
+
+    await addToWhitelist(payload);
+
+    snackbar.value = {
+      show: true,
+      text: "Exact flow added to allowlist",
+      color: "success",
+    };
+
+    // Refresh the data
+    emit("refresh");
+  } catch (error) {
+    console.error("Error adding to whitelist:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to add to allowlist",
+      color: "error",
+    };
+  } finally {
+    actionInProgress.value = false;
+  }
+};
+
+const whitelistSourceToPort = async (alert: Alert) => {
+  if (actionInProgress.value) return;
+  actionInProgress.value = true;
+
+  try {
+    const flowData = parseFlow(alert.flow);
+
+    const payload: WhitelistPayload = {
+      whitelist_id: `Whitelist_${alert.id}`,
+      src_ip: alert.ip_address,
+      dst_ip: "*",
+      dst_port: flowData.dst_port,
+      protocol: flowData.protocol,
+    };
+
+    await addToWhitelist(payload);
+
+    snackbar.value = {
+      show: true,
+      text: "Source to port added to allowlist",
+      color: "success",
+    };
+
+    // Refresh the data
+    emit("refresh");
+  } catch (error) {
+    console.error("Error adding to whitelist:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to add to allowlist",
+      color: "error",
+    };
+  } finally {
+    actionInProgress.value = false;
+  }
+};
+
+const whitelistSourceToDestination = async (alert: Alert) => {
+  if (actionInProgress.value) return;
+  actionInProgress.value = true;
+
+  try {
+    const flowData = parseFlow(alert.flow);
+
+    const payload: WhitelistPayload = {
+      whitelist_id: `Whitelist_${alert.id}`,
+      src_ip: alert.ip_address,
+      dst_ip: flowData.dst_ip,
+      dst_port: "*",
+      protocol: flowData.protocol,
+    };
+
+    await addToWhitelist(payload);
+
+    snackbar.value = {
+      show: true,
+      text: "Source to destination added to allowlist",
+      color: "success",
+    };
+
+    // Refresh the data
+    emit("refresh");
+  } catch (error) {
+    console.error("Error adding to whitelist:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to add to allowlist",
+      color: "error",
+    };
+  } finally {
+    actionInProgress.value = false;
+  }
+};
 
 // Table headers
 const headers = [
+  {
+    title: "Actions",
+    key: "actions",
+    sortable: false,
+    align: "start" as const,
+  },
   { title: "Detection Category", key: "category", sortable: true },
   { title: "Local Host", key: "ip_address", sortable: true },
   { title: "Details", key: "alert_enrichment_1", sortable: true },
