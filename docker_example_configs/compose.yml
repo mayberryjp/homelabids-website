@@ -1,0 +1,12 @@
+version: "3"
+services:
+  homelabids-website:
+    network_mode: host
+    container_name: homelabids-website
+    restart: "unless-stopped"
+    image: homelabids-website:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /docker/homelabids-website:/database
+    environment: 
+      - TZ=Asia/Tokyo
