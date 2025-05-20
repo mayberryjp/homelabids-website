@@ -2,7 +2,7 @@
   <v-menu rounded :close-on-content-click="false">
     <template v-slot:activator="{ props }">
       <v-btn icon v-bind="props" class="ml-2">
-        <v-avatar color="rose" size="36">
+        <v-avatar color="burgundy" size="36">
           <v-icon icon="mdi-account"></v-icon>
         </v-avatar>
       </v-btn>

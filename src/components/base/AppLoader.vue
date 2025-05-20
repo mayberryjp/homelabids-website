@@ -57,7 +57,7 @@ const props = defineProps({
   // Color of the loader
   color: {
     type: String,
-    default: '#c73e54' // Using the rose color from your theme
+    default: '#a0364d' // Using the rose color from your theme
   },
   // Display as overlay (darkens background)
   overlay: {

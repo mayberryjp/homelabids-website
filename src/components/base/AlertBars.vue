@@ -32,9 +32,9 @@ const props = defineProps({
 
 const getAlertClass = (alertCount: number): string => {
   if (alertCount === 0) return "alert-none";
-  if (alertCount <= 10) return "alert-low";
-  if (alertCount <= 25) return "alert-medium";
-  if (alertCount <= 100) return "alert-high";
+  if (alertCount <= 1) return "alert-low";
+  if (alertCount <= 5) return "alert-medium";
+  if (alertCount <= 20) return "alert-high";
   return "alert-critical";
 };
 </script>
@@ -58,19 +58,19 @@ const getAlertClass = (alertCount: number): string => {
 }
 
 .alert-low {
-  background-color: #ffd600;
+  background-color: #f0b969;
 }
 
 .alert-medium {
-  background-color: #ff9800;
+  background-color: #f86b40;
 }
 
 .alert-high {
-  background-color: #f44336;
+  background-color: #f43b63;
 }
 
 .alert-critical {
-  background-color: #b71c1c;
+  background-color: #a2344c;
 }
 
 .alert-bar:hover {

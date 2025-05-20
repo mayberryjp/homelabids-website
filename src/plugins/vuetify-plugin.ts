@@ -20,10 +20,10 @@ const vuetify = createVuetify({
       customTheme: {
         dark: true,
         colors: {
-          blush: "#f7e1e1",
-          orange: "#e18a36",
-          rose: "#c73e54",
-          burgundy: "#3a0e18",
+          blush: "#f09fa6",
+          orange: "#f86b40",
+          rose: "#f63c61",
+          burgundy: "#a0364d",
           "background-100": "#161b22",
           "background-200": "#161b22",
         },

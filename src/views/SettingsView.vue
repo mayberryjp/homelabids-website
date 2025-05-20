@@ -106,7 +106,7 @@
               <h3>Advanced Settings</h3>
               <v-divider class="my-4"></v-divider>
               
-              <v-btn color="error" class="mt-2">Reset Application</v-btn>
+              <v-btn color="#a0364d" class="mt-2">Reset Application</v-btn>
             </v-window-item>
           </v-window>
         </v-card-text>

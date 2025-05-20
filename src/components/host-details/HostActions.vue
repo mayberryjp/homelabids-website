@@ -13,7 +13,7 @@
     <v-btn
       icon
       @click="openDeleteDialog"
-      color="error"
+      color="#a0364d"
       size="small"
       variant="outlined"
     >
@@ -32,7 +32,7 @@
           <v-btn color="primary" text @click="deleteDialog = false"
             >Cancel</v-btn
           >
-          <v-btn color="error" text @click="confirmDelete" :loading="isDeleting"
+          <v-btn color="#a0364d" text @click="confirmDelete" :loading="isDeleting"
             >Delete</v-btn
           >
         </v-card-actions>

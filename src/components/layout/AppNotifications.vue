@@ -5,7 +5,7 @@
         <v-badge
           :content="unacknowledgedCount"
           :value="unacknowledgedCount"
-          color="error"
+          color="#a0364d"
         >
           <v-icon icon="mdi-bell"></v-icon>
         </v-badge>
@@ -124,7 +124,13 @@ onMounted(() => {
 
 <style scoped>
 .unacknowledged {
-  background-color: rgba(var(--v-theme-error), 0.05);
+  background-color: #a0364d !important;
+  opacity: 1 !important;
+}
+
+.acknowledged {
+  background-color: #a0364d !important;
+  opacity: 1 !important;
 }
 
 .two-line-text {
