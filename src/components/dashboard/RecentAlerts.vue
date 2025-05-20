@@ -18,7 +18,7 @@
       v-model="snackbar.show"
       :color="snackbar.color"
       :timeout="3000"
-      location="top"
+      location="bottom"
     >
       {{ snackbar.text }}
     </v-snackbar>
