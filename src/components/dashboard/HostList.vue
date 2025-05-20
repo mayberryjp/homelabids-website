@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { useHostsStore } from "@/stores/hosts";
-import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import AlertBars from "@/components/base/AlertBars.vue";
 import type { Localhost } from "@/types/localhosts";
