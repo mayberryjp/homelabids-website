@@ -26,7 +26,7 @@ COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
 # Expose custom port
 EXPOSE 3030
 
-COPY env.sh /docker-entrypoint.d/env.sh
+COPY /app/env.sh /docker-entrypoint.d/env.sh
 RUN chmod +x /docker-entrypoint.d/env.sh
 
 # Default command
