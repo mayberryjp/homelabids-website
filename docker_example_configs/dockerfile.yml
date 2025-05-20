@@ -10,7 +10,7 @@ RUN git clone https://github.com/mayberryjp/homelabids-website.git /app
 # Set working directory
 WORKDIR /app
 
-RUN ECHO "VITE_API_BASE_URL=HOMELABIDS_API_BASE_URL" >>/app/.env
+RUN echo "VITE_API_BASE_URL=HOMELABIDS_API_BASE_URL" >>/app/.env
 
 # Install dependencies and build the Vite project
 RUN npm install --silent && npx vite build
