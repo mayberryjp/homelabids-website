@@ -49,7 +49,7 @@ const quickStats = ref({
   unacknowledged_localhosts_count: 0,
   acknowledged_localhosts_count: 0,
   total_localhosts_count: 0,
-  whitelist_count: 0,
+  ignorelist_count: 0,
 });
 
 // Initialize hosts store for alerts data
@@ -85,7 +85,7 @@ const statusStats = computed(() => [
   {
     label: "IgnoreLists",
     description: "Total",
-    value: quickStats.value.whitelist_count || 0,
+    value: quickStats.value.ignorelist_count || 0,
     color: "text-grey",
   },
 ]);

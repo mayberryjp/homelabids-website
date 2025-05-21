@@ -56,11 +56,11 @@
               <v-list-item-title>Allowlist Exact Flow</v-list-item-title>
             </v-list-item>
             <v-list-item @click="whitelistSourceToPort(item)">
-              <v-list-item-title>Allowlist Source to Port</v-list-item-title>
+              <v-list-item-title>Allowlist Source to Port Any Destination</v-list-item-title>
             </v-list-item>
             <v-list-item @click="whitelistSourceToDestination(item)">
               <v-list-item-title
-                >Allowlist Source to Destination</v-list-item-title
+                >Allowlist Source to Destination Any Port</v-list-item-title
               >
             </v-list-item>
           </v-list>
@@ -239,7 +239,7 @@ const whitelistExactFlow = async (alert: Alert) => {
     const flowData = parseFlow(alert.flow);
 
     const payload: WhitelistPayload = {
-      whitelist_id: `Whitelist_${alert.id}`,
+      ignorelist_id: `IgnoreList_${alert.id}_Flow`,
       src_ip: alert.ip_address,
       dst_ip: flowData.dst_ip,
       dst_port: flowData.dst_port,
@@ -276,7 +276,7 @@ const whitelistSourceToPort = async (alert: Alert) => {
     const flowData = parseFlow(alert.flow);
 
     const payload: WhitelistPayload = {
-      whitelist_id: `Whitelist_${alert.id}`,
+      ignorelist_id: `IgnoreList_${alert.id}_Port`,
       src_ip: alert.ip_address,
       dst_ip: "*",
       dst_port: flowData.dst_port,
@@ -294,7 +294,7 @@ const whitelistSourceToPort = async (alert: Alert) => {
     // Refresh the data
     emit("refresh");
   } catch (error) {
-    console.error("Error adding to whitelist:", error);
+    console.error("Error adding to ignorelist:", error);
     snackbar.value = {
       show: true,
       text: "Failed to add to allowlist",
@@ -313,7 +313,7 @@ const whitelistSourceToDestination = async (alert: Alert) => {
     const flowData = parseFlow(alert.flow);
 
     const payload: WhitelistPayload = {
-      whitelist_id: `Whitelist_${alert.id}`,
+      ignorelist_id: `IgnoreList_${alert.id}_Destination`,
       src_ip: alert.ip_address,
       dst_ip: flowData.dst_ip,
       dst_port: "*",

@@ -63,7 +63,7 @@ export const deleteAlert = async (alertId: string) => {
 };
 
 export interface WhitelistPayload {
-  whitelist_id: string;
+  ignorelist_id: string;
   src_ip: string;
   dst_ip: string;
   dst_port: string | number;
@@ -72,10 +72,10 @@ export interface WhitelistPayload {
 
 export const addToWhitelist = async (payload: WhitelistPayload) => {
   try {
-    const response = await api.post("/whitelist", payload);
+    const response = await api.post("/ignorelist", payload);
     return response.data;
   } catch (error) {
-    console.error("Error adding to whitelist:", error);
+    console.error("Error adding to ignorelist:", error);
     throw error;
   }
 };
