@@ -64,7 +64,88 @@
 
       <!-- Category Column -->
       <template v-slot:item.category="{ item }">
-        <span class="text-caption">{{ item.category }}</span>
+        <v-tooltip
+          location="top"
+          max-width="300"
+          content-class="flow-tooltip-container"
+        >
+          <template v-slot:activator="{ props }">
+            <span class="text-caption cursor-pointer" v-bind="props">
+              {{ item.category }}
+            </span>
+          </template>
+          <v-card
+            class="flow-tooltip pa-2"
+            color="#1E2736"
+            variant="flat"
+            elevation="4"
+            rounded="lg"
+          >
+            <v-card-title class="text-subtitle-2 pb-1 text-blue-lighten-3"
+              >Flow Details</v-card-title
+            >
+            <v-divider color="blue-lighten-4" class="mb-2"></v-divider>
+            <v-card-text class="pt-1 pb-1 px-2">
+              <template v-if="item.flow">
+                <div class="d-flex flow-item py-1">
+                  <div
+                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
+                  >
+                    Source IP:
+                  </div>
+                  <div class="text-white">
+                    {{ parseFlow(item.flow).src_ip || "N/A" }}
+                  </div>
+                </div>
+                <div class="d-flex flow-item py-1">
+                  <div
+                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
+                  >
+                    Destination IP:
+                  </div>
+                  <div class="text-white">
+                    {{ parseFlow(item.flow).dst_ip || "N/A" }}
+                  </div>
+                </div>
+                <div class="d-flex flow-item py-1">
+                  <div
+                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
+                  >
+                    Source Port:
+                  </div>
+                  <div class="text-white">
+                    {{ parseFlow(item.flow).src_port || "N/A" }}
+                  </div>
+                </div>
+                <div class="d-flex flow-item py-1">
+                  <div
+                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
+                  >
+                    Destination Port:
+                  </div>
+                  <div class="text-white">
+                    {{ parseFlow(item.flow).dst_port || "N/A" }}
+                  </div>
+                </div>
+                <div class="d-flex flow-item py-1">
+                  <div
+                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
+                  >
+                    Protocol:
+                  </div>
+                  <div class="text-white">
+                    {{
+                      getProtocolName(parseFlow(item.flow).protocol) || "N/A"
+                    }}
+                  </div>
+                </div>
+              </template>
+              <div v-else class="text-caption text-grey">
+                No flow data available
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-tooltip>
       </template>
 
       <!-- IP Address Column -->
@@ -93,7 +174,7 @@
           :loading="actionInProgress && processingItemId === item.id"
           class="text-caption cursor-pointer"
         >
-          {{ item.acknowledged ? "Acknowledged" : "Not Acknowledged" }}
+          {{ item.acknowledged ? "Acknowledged" : "Unacknowledged" }}
         </v-chip>
       </template>
 
@@ -130,6 +211,7 @@ import {
   addToWhitelist,
   type WhitelistPayload,
 } from "@/services/alerts";
+import { protocols } from "@/constants/AppConstants";
 
 // Define props for the component
 const props = defineProps<{
@@ -191,6 +273,14 @@ const parseFlow = (
       protocol: "",
     };
   }
+};
+
+const getProtocolName = (protocol: string | number): string => {
+  if (!protocol) return "Unknown";
+
+  const protocolNum = Number(protocol);
+
+  return protocols[protocolNum] || `Protocol ${protocol}`;
 };
 
 // Action handlers
@@ -442,5 +532,30 @@ const headers = [
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* Flow tooltip styling */
+:deep(.flow-tooltip-container) {
+  opacity: 1 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.flow-tooltip {
+  max-width: 300px;
+  border: 1px solid rgba(97, 163, 254, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.flow-label {
+  min-width: 120px;
+}
+
+.flow-item {
+  border-bottom: 1px dashed rgba(97, 163, 254, 0.15);
+}
+
+.flow-item:last-child {
+  border-bottom: none;
 }
 </style>
