@@ -1,47 +1,48 @@
 <template>
-  <div>
-    <div v-if="isLoading">
-      <AppLoader v-if="true" type="logo" label="Loading..." />
-    </div>
-
-    <div v-else-if="localHostDetail" class="host-details">
-      <!-- Host Header Section -->
-      <v-card color="#0d1117" class="mb-4">
-        <v-card-text>
-          <div class="d-flex flex-column flex-wrap">
-            <!-- Host Title -->
-            <div class="d-flex align-center justify-space-between">
-              <div class="host-title me-4">
-                <h2 class="text-h4 text-grey custom-heading">
-                  {{ localHostDetail.local_description || "Unnamed" }}
-                </h2>
-                <div class="text-subtitle-1 text-green">
-                  IP Address: {{ ip_address }}
-                </div>
+  <div class="host-details">
+    <!-- Host Header Section -->
+    <v-card color="#0d1117" class="mb-4">
+      <v-card-text v-if="localHostDetail">
+        <div class="d-flex flex-column flex-wrap">
+          <!-- Host Title -->
+          <div class="d-flex align-center justify-space-between">
+            <div class="host-title me-4">
+              <h2 class="text-h4 text-grey custom-heading">
+                {{ localHostDetail.local_description || "Unnamed" }}
+              </h2>
+              <div class="text-subtitle-1 text-green">
+                IP Address: {{ ip_address }}
               </div>
-
-              <!-- Add HostActions component here -->
-              <HostActions :ip-address="ip_address" />
             </div>
 
-            <div v-if="alertDetail">
-              <AlertBars 
-                :alert-intervals="alertDetail.alert_intervals" 
-                class="ml-auto" 
-                :height="26" 
-                :width="7"
-              />
-            </div>
+            <!-- Add HostActions component here -->
+            <HostActions :ip-address="ip_address" />
           </div>
-        </v-card-text>
-      </v-card>
 
-      <v-card color="#0d1117" class="mb-4">
-        <HostStats :host-detail="localHostDetail" />
-      </v-card>
+          <div v-if="alertDetail">
+            <AlertBars
+              :alert-intervals="alertDetail.alert_intervals"
+              class="ml-auto"
+              :height="26"
+              :width="7"
+            />
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-text v-else>
+        <AppSkeleton type="text@2" color="#0d1117" />
+      </v-card-text>
+    </v-card>
 
-      <!-- Traffic Stats -->
-      <v-card color="#0d1117" v-if="trafficStats" class="pa-2 mb-4">
+    <v-card color="#0d1117" class="mb-4">
+      <AppSkeleton v-if="hostStatsLoading" type="article" color="#0d1117" />
+      <HostStats v-else-if="localHostDetail" :host-detail="localHostDetail" />
+    </v-card>
+
+    <!-- Traffic Stats -->
+    <v-card color="#0d1117" class="pa-2 mb-4">
+      <AppSkeleton v-if="trafficStatsLoading" type="image" color="#0d1117" />
+      <div v-else-if="trafficStats">
         <v-card-title class="text-white"
           >Network Traffic Statistics</v-card-title
         >
@@ -49,20 +50,31 @@
           >Displaying total bytes and packets over time</v-card-subtitle
         >
         <HostAlertsChart :traffic-stats="trafficStats" />
-      </v-card>
+      </div>
+      <v-card-text v-else class="text-center text-grey"
+        >No traffic data available</v-card-text
+      >
+    </v-card>
 
-      <!-- Host-specific Alerts -->
-      <v-card color="#0d1117" v-if="recentHostAlerts.length" class="mb-4">
-        <RecentAlerts
-          :alerts="recentHostAlerts"
-          title="Host Alerts"
-          :items-per-page="10"
-          :showRefreshButton="true"
-          :loading="recentAlertsLoading"
-          @refresh="fetchRecentHostAlerts(ip_address)"
-        />
-      </v-card>
-    </div>
+    <!-- Host-specific Alerts -->
+    <v-card color="#0d1117" class="mb-4">
+      <AppSkeleton v-if="recentAlertsLoading" type="table" color="#0d1117" />
+      <RecentAlerts
+        v-else
+        :alerts="recentHostAlerts"
+        title="Host Alerts"
+        :items-per-page="10"
+        :showRefreshButton="true"
+        :loading="recentAlertsLoading"
+        @refresh="fetchRecentHostAlerts(ip_address)"
+      />
+      <v-card-text
+        v-if="!recentAlertsLoading && !recentHostAlerts.length"
+        class="text-center text-grey"
+      >
+        No alerts found for this host
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -70,7 +82,6 @@
 import { getLocalhostDetail, getLocalhostTraffic } from "@/services/hosts";
 import { useRoute } from "vue-router";
 import { onMounted, watch, ref } from "vue";
-import AppLoader from "@/components/base/AppLoader.vue";
 import type { Localhost } from "@/types/localhosts";
 import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
 import HostAlertsChart from "@/components/host-details/HostAlertsChart.vue";
@@ -79,18 +90,20 @@ import type { Alert, AlertDetail } from "@/types/alerts";
 import HostStats from "@/components/host-details/HostStats.vue";
 import HostActions from "@/components/host-details/HostActions.vue";
 import AlertBars from "@/components/base/AlertBars.vue";
+import AppSkeleton from "@/components/base/AppSkeleton.vue";
 
 const route = useRoute();
 const ip_address = ref(route.params.ip_address as string);
 const localHostDetail = ref<Localhost | null>(null);
 const alertDetail = ref<AlertDetail | null>(null);
 const trafficStats = ref(null);
-const isLoading = ref(true);
+const hostStatsLoading = ref(true);
+const trafficStatsLoading = ref(true);
 const recentHostAlerts = ref<Alert[]>([]);
-const recentAlertsLoading = ref(false);
+const recentAlertsLoading = ref(true);
 
 const fetchLocalhostDetail = async (ip_address: string) => {
-  isLoading.value = true;
+  hostStatsLoading.value = true;
   localHostDetail.value = null;
   try {
     const { data } = await getLocalhostDetail(ip_address);
@@ -98,33 +111,30 @@ const fetchLocalhostDetail = async (ip_address: string) => {
   } catch (error) {
     console.error("Error fetching localhost details:", error);
   } finally {
-    isLoading.value = false;
+    hostStatsLoading.value = false;
   }
 };
 
 const fetchAlertDetail = async (ip_address: string) => {
-  isLoading.value = true;
   alertDetail.value = null;
   try {
     const { data } = await getHostAlertDetails(ip_address);
     alertDetail.value = data;
   } catch (error) {
-    console.error("Error fetching localhost details:", error);
-  } finally {
-    isLoading.value = false;
+    console.error("Error fetching alert details:", error);
   }
 };
 
 const fetchTrafficStats = async (ip_address: string) => {
-  isLoading.value = true;
+  trafficStatsLoading.value = true;
   trafficStats.value = null;
   try {
     const { data } = await getLocalhostTraffic(ip_address);
     trafficStats.value = data;
   } catch (error) {
-    console.error("Error fetching localhost details:", error);
+    console.error("Error fetching traffic stats:", error);
   } finally {
-    isLoading.value = false;
+    trafficStatsLoading.value = false;
   }
 };
 
@@ -135,26 +145,36 @@ const fetchRecentHostAlerts = async (ip_address: string) => {
     const { data } = await getHostRecentAlerts(ip_address);
     recentHostAlerts.value = data;
   } catch (error) {
-    console.error("Error fetching localhost details:", error);
+    console.error("Error fetching host alerts:", error);
   } finally {
     recentAlertsLoading.value = false;
   }
 };
 
 const updateData = async (ip_address: string) => {
-  isLoading.value = true;
   try {
     // Scroll to top when data updates
     window.scrollTo({ top: 0, behavior: "smooth" });
 
+    // Reset loading states
+    hostStatsLoading.value = true;
+    trafficStatsLoading.value = true;
+    recentAlertsLoading.value = true;
+
+    // Start all fetches in parallel
+
     await fetchLocalhostDetail(ip_address);
-    await fetchAlertDetail(ip_address);
-    await fetchTrafficStats(ip_address);
-    await fetchRecentHostAlerts(ip_address);
+
+    const promises = [
+      fetchAlertDetail(ip_address),
+      fetchTrafficStats(ip_address),
+      fetchRecentHostAlerts(ip_address),
+    ];
+
+    // Let all promises complete in the background
+    await Promise.all(promises);
   } catch (error) {
     console.error("Error updating data:", error);
-  } finally {
-    isLoading.value = false;
   }
 };
 
