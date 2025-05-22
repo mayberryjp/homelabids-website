@@ -45,18 +45,13 @@
             </v-btn>
           </template>
           <v-list density="compact">
-            <v-list-item @click="acknowledgeAlert(item)">
-              <v-list-item-title>Acknowledge Alert</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="deleteAlert(item)">
-              <v-list-item-title>Delete Alert</v-list-item-title>
-            </v-list-item>
-            <v-divider></v-divider>
             <v-list-item @click="whitelistExactFlow(item)">
               <v-list-item-title>Allowlist Exact Flow</v-list-item-title>
             </v-list-item>
             <v-list-item @click="whitelistSourceToPort(item)">
-              <v-list-item-title>Allowlist Source to Port Any Destination</v-list-item-title>
+              <v-list-item-title
+                >Allowlist Source to Port Any Destination</v-list-item-title
+              >
             </v-list-item>
             <v-list-item @click="whitelistSourceToDestination(item)">
               <v-list-item-title
@@ -82,20 +77,44 @@
         </div>
       </template>
 
+      <!-- Times Seen Column -->
+      <template v-slot:item.times_seen="{ item }">
+        {{ item.times_seen }}
+      </template>
+
       <!-- Acknowledged Column -->
       <template v-slot:item.acknowledged="{ item }">
         <v-chip
           size="small"
           :color="item.acknowledged ? 'green' : 'red'"
           text-color="white"
+          @click="acknowledgeAlert(item)"
+          :disabled="actionInProgress"
+          :loading="actionInProgress && processingItemId === item.id"
+          class="text-caption cursor-pointer"
         >
-          {{ item.acknowledged ? "Yes" : "No" }}
+          {{ item.acknowledged ? "Acknowledged" : "Not Acknowledged" }}
         </v-chip>
       </template>
 
       <!-- Last Seen Column -->
       <template v-slot:item.last_seen="{ item }">
         {{ formatDateTime(item.last_seen) }}
+      </template>
+
+      <!-- Delete Column -->
+      <template v-slot:item.delete="{ item }">
+        <v-btn
+          icon
+          variant="text"
+          size="small"
+          color="error"
+          @click="deleteAlert(item)"
+          :disabled="actionInProgress"
+          title="Delete Alert"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
   </v-sheet>
@@ -131,6 +150,7 @@ const title = props.title || "Most Recent Detections";
 const loading = props.loading || false;
 const itemsPerPage = props.itemsPerPage || 50;
 const actionInProgress = ref(false);
+const processingItemId = ref<string | null>(null);
 
 // Snackbar for action feedback
 const snackbar = ref({
@@ -177,30 +197,36 @@ const parseFlow = (
 const acknowledgeAlert = async (alert: Alert) => {
   if (actionInProgress.value) return;
   actionInProgress.value = true;
+  processingItemId.value = alert.id;
 
   try {
-    await apiAcknowledgeAlert(alert.id);
+    // Toggle the acknowledged state
+    const currentState = alert.acknowledged;
+    await apiAcknowledgeAlert(alert.id, !currentState);
 
     // Update the alert in the local list
-    alert.acknowledged = true;
+    alert.acknowledged = !currentState;
 
     snackbar.value = {
       show: true,
-      text: "Alert acknowledged successfully",
+      text: alert.acknowledged
+        ? "Alert acknowledged successfully"
+        : "Alert unacknowledged successfully",
       color: "success",
     };
 
     // Refresh the data
     emit("refresh");
   } catch (error) {
-    console.error("Error acknowledging alert:", error);
+    console.error("Error toggling alert acknowledgement:", error);
     snackbar.value = {
       show: true,
-      text: "Failed to acknowledge alert",
+      text: "Failed to update alert acknowledgement",
       color: "error",
     };
   } finally {
     actionInProgress.value = false;
+    processingItemId.value = null;
   }
 };
 
@@ -354,13 +380,22 @@ const headers = [
   { title: "Local Host", key: "ip_address", sortable: true },
   { title: "Details", key: "alert_enrichment_1", sortable: true },
   { title: "Details", key: "alert_enrichment_2", sortable: true },
+  { title: "Times Seen", key: "times_seen", sortable: true, width: "130px" },
   {
     title: "Acknowledged",
     key: "acknowledged",
     align: "center" as const,
     sortable: true,
+    width: "180px",
   },
   { title: "Last Seen", key: "last_seen", sortable: true },
+  {
+    title: "",
+    key: "delete",
+    align: "center" as const,
+    sortable: false,
+    width: "50px",
+  },
 ];
 </script>
 
@@ -403,5 +438,9 @@ const headers = [
 .text-h6 {
   color: #b1b8c0;
   font-size: 32px !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

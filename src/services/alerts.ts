@@ -40,14 +40,20 @@ export const getHostRecentAlerts = async (ip_address: string) => {
   }
 };
 
-export const acknowledgeAlert = async (alertId: string) => {
+export const acknowledgeAlert = async (
+  alertId: string,
+  acknowledge: boolean = true
+) => {
   try {
     const response = await api.put(`/alerts/${alertId}`, {
-      acknowledged: 1,
+      acknowledged: acknowledge ? 1 : 0,
     });
     return response.data;
   } catch (error) {
-    console.error(`Error acknowledging alert ${alertId}:`, error);
+    console.error(
+      `Error updating acknowledgement for alert ${alertId}:`,
+      error
+    );
     throw error;
   }
 };
