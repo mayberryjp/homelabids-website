@@ -77,7 +77,7 @@
 import { ref, computed, onMounted } from "vue";
 import { getActions, acknowledgeAction } from "@/services/actions";
 import type { Action } from "@/types/actions";
-import { formatDateTime, formatRelativeTime } from "@/utils/date";
+import { formatRelativeTime } from "@/utils/date";
 
 // Notifications data
 const actions = ref<Action[]>([]);

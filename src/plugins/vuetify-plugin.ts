@@ -1,3 +1,4 @@
+// @ts-expect-error - Import for Vuetify styles lacks type definitions
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";

@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
-const props = defineProps({
+defineProps({
   // Type of loader animation
   type: {
     type: String,

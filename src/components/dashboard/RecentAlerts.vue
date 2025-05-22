@@ -243,18 +243,23 @@ const snackbar = ref({
 
 // Parse flow information
 const parseFlow = (
-  flowString: string
+  flowString: string | string[]
 ): {
   src_ip: string;
   dst_ip: string;
   src_port: string | number;
   dst_port: string | number;
-  protocol: string | number;
+  protocol: string;
 } => {
   try {
     // Format: [src_ip, dst_ip, src_port, dst_port, protocol, ...]
     // Example: "[\"192.168.60.4\", \"168.63.129.16\", 52462, 53, 17, ...]"
-    const flowArray = JSON.parse(flowString);
+
+    // some-times the data is in array format, some-times in string format
+
+    const flowArray = Array.isArray(flowString)
+      ? flowString
+      : JSON.parse(flowString);
 
     return {
       src_ip: flowArray[0] || "",

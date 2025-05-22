@@ -10,8 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import VueApexCharts from "vue3-apexcharts";
+import { computed } from "vue";
 
 interface TrafficStat {
   ip_address: string;
