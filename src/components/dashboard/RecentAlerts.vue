@@ -29,6 +29,7 @@
       :items-per-page="itemsPerPage"
       class="alerts-table"
       density="compact"
+      show-expand
     >
       <!-- Actions Column -->
       <template v-slot:item.actions="{ item }">
@@ -64,88 +65,7 @@
 
       <!-- Category Column -->
       <template v-slot:item.category="{ item }">
-        <v-tooltip
-          location="top"
-          max-width="300"
-          content-class="flow-tooltip-container"
-        >
-          <template v-slot:activator="{ props }">
-            <span class="text-caption cursor-pointer" v-bind="props">
-              {{ item.category }}
-            </span>
-          </template>
-          <v-card
-            class="flow-tooltip pa-2"
-            color="#1E2736"
-            variant="flat"
-            elevation="4"
-            rounded="lg"
-          >
-            <v-card-title class="text-subtitle-2 pb-1 text-blue-lighten-3"
-              >Flow Details</v-card-title
-            >
-            <v-divider color="blue-lighten-4" class="mb-2"></v-divider>
-            <v-card-text class="pt-1 pb-1 px-2">
-              <template v-if="item.flow">
-                <div class="d-flex flow-item py-1">
-                  <div
-                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
-                  >
-                    Source IP:
-                  </div>
-                  <div class="text-white">
-                    {{ parseFlow(item.flow).src_ip || "N/A" }}
-                  </div>
-                </div>
-                <div class="d-flex flow-item py-1">
-                  <div
-                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
-                  >
-                    Destination IP:
-                  </div>
-                  <div class="text-white">
-                    {{ parseFlow(item.flow).dst_ip || "N/A" }}
-                  </div>
-                </div>
-                <div class="d-flex flow-item py-1">
-                  <div
-                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
-                  >
-                    Source Port:
-                  </div>
-                  <div class="text-white">
-                    {{ parseFlow(item.flow).src_port || "N/A" }}
-                  </div>
-                </div>
-                <div class="d-flex flow-item py-1">
-                  <div
-                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
-                  >
-                    Destination Port:
-                  </div>
-                  <div class="text-white">
-                    {{ parseFlow(item.flow).dst_port || "N/A" }}
-                  </div>
-                </div>
-                <div class="d-flex flow-item py-1">
-                  <div
-                    class="font-weight-medium text-blue-lighten-4 mr-2 flow-label"
-                  >
-                    Protocol:
-                  </div>
-                  <div class="text-white">
-                    {{
-                      getProtocolName(parseFlow(item.flow).protocol) || "N/A"
-                    }}
-                  </div>
-                </div>
-              </template>
-              <div v-else class="text-caption text-grey">
-                No flow data available
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-tooltip>
+        <span class="text-caption">{{ item.category }}</span>
       </template>
 
       <!-- IP Address Column -->
@@ -196,6 +116,84 @@
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
+      </template>
+
+      <!-- Expanded Row for Flow Details -->
+      <template v-slot:expanded-row="{ columns, item }">
+        <tr>
+          <td :colspan="columns.length" class="flow-details-row">
+            <div class="flow-details-container pa-4">
+              <!-- <v-divider color="blue-lighten-4" class="mb-3"></v-divider> -->
+
+              <div v-if="item.flow" class="flow-details-text selectable">
+                <div class="d-flex flex-wrap flow-row">
+                  <div class="d-flex align-center flow-field mr-4">
+                    <h4 class="text-subtitle-2 text-blue-lighten-3 mr-2">
+                      Flow Details
+                    </h4>
+                    <v-btn
+                      icon="mdi-content-copy"
+                      density="compact"
+                      variant="text"
+                      size="small"
+                      color="blue-lighten-3"
+                      @click="copyFlowDetails(item)"
+                      title="Copy Flow Details"
+                    ></v-btn>
+                  </div>
+
+                  <div class="flow-field mr-4">
+                    <span class="font-weight-medium text-blue-lighten-4 mr-1"
+                      >Source IP:</span
+                    >
+                    <span class="text-white">{{
+                      parseFlow(item.flow).src_ip || "N/A"
+                    }}</span>
+                  </div>
+
+                  <div class="flow-field mr-4">
+                    <span class="font-weight-medium text-blue-lighten-4 mr-1"
+                      >Destination IP:</span
+                    >
+                    <span class="text-white">{{
+                      parseFlow(item.flow).dst_ip || "N/A"
+                    }}</span>
+                  </div>
+
+                  <div class="flow-field mr-4">
+                    <span class="font-weight-medium text-blue-lighten-4 mr-1"
+                      >Source Port:</span
+                    >
+                    <span class="text-white">{{
+                      parseFlow(item.flow).src_port || "N/A"
+                    }}</span>
+                  </div>
+
+                  <div class="flow-field mr-4">
+                    <span class="font-weight-medium text-blue-lighten-4 mr-1"
+                      >Destination Port:</span
+                    >
+                    <span class="text-white">{{
+                      parseFlow(item.flow).dst_port || "N/A"
+                    }}</span>
+                  </div>
+
+                  <div class="flow-field">
+                    <span class="font-weight-medium text-blue-lighten-4 mr-1"
+                      >Protocol:</span
+                    >
+                    <span class="text-white">{{
+                      getProtocolName(parseFlow(item.flow).protocol) || "N/A"
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-caption text-grey">
+                No flow data available
+              </div>
+            </div>
+          </td>
+        </tr>
       </template>
     </v-data-table>
   </v-sheet>
@@ -278,6 +276,38 @@ const parseFlow = (
       protocol: "",
     };
   }
+};
+
+// Function to copy flow details to clipboard
+const copyFlowDetails = (alert: Alert) => {
+  if (!alert.flow) return;
+
+  const flow = parseFlow(alert.flow);
+  const protocol = getProtocolName(flow.protocol);
+
+  const text = `Source IP: ${flow.src_ip}
+Destination IP: ${flow.dst_ip}
+Source Port: ${flow.src_port}
+Destination Port: ${flow.dst_port}
+Protocol: ${protocol}`;
+
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      snackbar.value = {
+        show: true,
+        text: "Flow details copied to clipboard",
+        color: "success",
+      };
+    })
+    .catch((err) => {
+      console.error("Failed to copy flow details: ", err);
+      snackbar.value = {
+        show: true,
+        text: "Failed to copy flow details",
+        color: "error",
+      };
+    });
 };
 
 const getProtocolName = (protocol: string | number): string => {
@@ -513,17 +543,17 @@ const headers = [
 
 /* Change the entire table background */
 :deep(.v-table) {
-  background-color: #0d1117 !important; /* Replace with your desired color */
+  background-color: #0d1117 !important;
 }
 
 /* Ensure the inner wrapper also has the background color */
 :deep(.v-table .v-table__wrapper) {
-  background-color: #0d1117 !important; /* Use the same color */
+  background-color: #0d1117 !important;
 }
 
 /* Style for table header */
 :deep(.v-data-table .v-data-table-header) {
-  background-color: #0d1117 !important; /* Use the same or slightly different color */
+  background-color: #0d1117 !important;
 }
 
 .alerts-table {
@@ -562,5 +592,27 @@ const headers = [
 
 .flow-item:last-child {
   border-bottom: none;
+}
+
+.flow-details-container {
+  border-radius: 8px;
+  border: 1px solid rgba(97, 163, 254, 0.3);
+  background-color: #1e2736;
+}
+
+.flow-field {
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.selectable {
+  user-select: all;
+}
+
+.flow-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>
