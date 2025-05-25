@@ -59,6 +59,11 @@
                 >Allowlist Source to Destination Any Port</v-list-item-title
               >
             </v-list-item>
+            <v-list-item @click="whitelistAsLocalServerExposed(item)">
+              <v-list-item-title
+                >Allowlist As Local Server Exposed To Internet</v-list-item-title
+              >
+            </v-list-item>
           </v-list>
         </v-menu>
       </template>
@@ -483,6 +488,43 @@ const whitelistSourceToDestination = async (alert: Alert) => {
     emit("refresh");
   } catch (error) {
     console.error("Error adding to whitelist:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to add to allowlist",
+      color: "error",
+    };
+  } finally {
+    actionInProgress.value = false;
+  }
+};
+
+const whitelistAsLocalServerExposed = async (alert: Alert) => {
+  if (actionInProgress.value) return;
+  actionInProgress.value = true;
+
+  try {
+    const flowData = parseFlow(alert.flow);
+
+    const payload: WhitelistPayload = {
+      ignorelist_id: `IgnoreList_${alert.id}_LocalServerExposed`,
+      src_ip: "*",
+      dst_ip: flowData.dst_ip,
+      dst_port: flowData.dst_port,
+      protocol: flowData.protocol,
+    };
+
+    await addToWhitelist(payload);
+
+    snackbar.value = {
+      show: true,
+      text: "Local server exposed to internet added to allowlist",
+      color: "success",
+    };
+
+    // Refresh the data
+    emit("refresh");
+  } catch (error) {
+    console.error("Error adding to allowlist:", error);
     snackbar.value = {
       show: true,
       text: "Failed to add to allowlist",
