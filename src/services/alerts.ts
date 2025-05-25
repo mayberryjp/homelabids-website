@@ -85,3 +85,18 @@ export const addToWhitelist = async (payload: WhitelistPayload) => {
     throw error;
   }
 };
+
+export const updateAlertsEnabled = async (
+  ip_address: string,
+  alerts_enabled: boolean
+) => {
+  try {
+    const response = await api.put(`/localhosts/${ip_address}/alerts-enabled`, {
+      alerts_enabled,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating alerts enabled status:", error);
+    throw error;
+  }
+};

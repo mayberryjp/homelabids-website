@@ -14,4 +14,5 @@ export interface Localhost {
   icon: string;
   tags: string | null;
   acknowledged: number;
+  alerts_enabled: number;
 }

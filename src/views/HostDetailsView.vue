@@ -1,6 +1,13 @@
 <template>
   <div class="host-details">
     <!-- Host Header Section -->
+
+    <HostActions
+      :ip-address="ip_address"
+      class="mb-4"
+      :alerts_enabled="localHostDetail?.alerts_enabled"
+    />
+
     <v-card color="#0d1117" class="mb-4">
       <v-card-text v-if="localHostDetail">
         <div class="d-flex flex-column flex-wrap">
@@ -14,9 +21,6 @@
                 IP Address: {{ ip_address }}
               </div>
             </div>
-
-            <!-- Add HostActions component here -->
-            <HostActions :ip-address="ip_address" />
           </div>
 
           <div v-if="alertDetail">
