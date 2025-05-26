@@ -18,7 +18,7 @@
         class="text-body-2"
       >
         <v-icon icon="mdi-pencil" class="mr-2"></v-icon>
-        Edit
+        Edit Host
       </v-btn>
       <v-btn
         color="error"
@@ -27,7 +27,7 @@
         class="text-body-2"
       >
         <v-icon icon="mdi-delete" class="mr-2"></v-icon>
-        Delete
+        Delete Host
       </v-btn>
     </v-btn-group>
 
