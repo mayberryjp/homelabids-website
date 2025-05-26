@@ -103,6 +103,11 @@
         </v-chip>
       </template>
 
+     <!-- First Seen Column -->
+      <template v-slot:item.first_seen="{ item }">
+        {{ formatDateTime(item.first_seen) }}
+      </template>
+      
       <!-- Last Seen Column -->
       <template v-slot:item.last_seen="{ item }">
         {{ formatDateTime(item.last_seen) }}

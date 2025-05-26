@@ -82,12 +82,7 @@ const statusStats = computed(() => [
     value: quickStats.value.unacknowledged_alerts || 0,
     color: "text-red",
   },
-  {
-    label: "IgnoreLists",
-    description: "Total",
-    value: quickStats.value.ignorelist_count || 0,
-    color: "text-grey",
-  },
+
 ]);
 
 // Computed property to get recent alerts, sort and limit them
