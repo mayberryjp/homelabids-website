@@ -9,7 +9,7 @@
         class="text-body-2"
       >
         <v-icon :icon="alertsEnabled ? 'mdi-bell' : 'mdi-bell-off'" class="mr-2"></v-icon>
-        {{ alertsEnabled ? "Alerts Enabled" : "Alerts Disabled" }}
+        {{ alertsEnabled ? "Notifications Enabled" : "Notifications Disabled" }}
       </v-btn>
       <v-btn
         color="grey"
@@ -118,14 +118,14 @@ const toggleAlerts = async () => {
     
     snackbar.value = {
       show: true,
-      text: `Alerts ${newAlertsState ? 'enabled' : 'disabled'} for ${props.ipAddress}`,
+      text: `Notifications ${newAlertsState ? 'enabled' : 'disabled'} for ${props.ipAddress}`,
       color: "success",
     };
   } catch (error) {
-    console.error("Error toggling alerts:", error);
+    console.error("Error toggling notifications:", error);
     snackbar.value = {
       show: true,
-      text: "Failed to update alerts setting",
+      text: "Failed to update notifications setting",
       color: "error",
     };
   } finally {
