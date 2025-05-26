@@ -4,8 +4,8 @@
       <!-- Status Cards -->
       <v-col
         cols="12"
-        sm="4"
-        md="2"
+        sm="6"
+        md="3"
         v-for="(stat, index) in statusStats"
         :key="index"
         class="bg-transparent"

@@ -105,12 +105,12 @@
 
      <!-- First Seen Column -->
       <template v-slot:item.first_seen="{ item }">
-        {{ formatDateTime(item.first_seen) }}
+        <span class="date-column">{{ new Date(item.first_seen).toISOString().split('T')[0] }}</span>
       </template>
       
       <!-- Last Seen Column -->
       <template v-slot:item.last_seen="{ item }">
-        {{ formatDateTime(item.last_seen) }}
+        <span class="date-column">{{ new Date(item.last_seen).toISOString().split('T')[0] }}</span>
       </template>
 
       <!-- Delete Column -->
@@ -211,7 +211,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { formatDateTime } from "@/utils/date";
 import type { Alert } from "@/types/alerts";
 import {
   acknowledgeAlert as apiAcknowledgeAlert,
@@ -560,14 +559,16 @@ const headers = [
     sortable: true,
     width: "180px",
   },
+  { title: "First Seen", key: "first_seen", sortable: true },
   { title: "Last Seen", key: "last_seen", sortable: true },
   {
-    title: "",
+    title: "Delete Alert",
     key: "delete",
     align: "center" as const,
     sortable: false,
     width: "50px",
   },
+
 ];
 </script>
 
@@ -661,5 +662,20 @@ const headers = [
   flex-direction: row;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.date-column {
+  color: #b1b8c0;
+  font-weight: 500;
+  white-space: nowrap;
+  display: inline-block;
+  min-width: 90px; /* Ensures consistent width */
+}
+
+/* You can also add this to control the width of the date columns */
+:deep(.v-table th:nth-child(7)),
+:deep(.v-table th:nth-child(8)) {
+  min-width: 100px;
+  white-space: nowrap;
 }
 </style>
