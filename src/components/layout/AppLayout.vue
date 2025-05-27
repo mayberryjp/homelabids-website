@@ -6,9 +6,9 @@
     <!-- Main Content -->
     <v-main>
       <v-container fluid>
-        <v-row style="min-height: 100%">
+        <v-row>
           <!-- Left Panel -->
-          <v-col cols="12" lg="3">
+          <v-col cols="12" lg="3" class="host-list-panel">
             <HostList />
           </v-col>
 
@@ -37,4 +37,20 @@ import HostList from "@/components/dashboard/HostList.vue";
   color: rgba(255, 255, 255, 0.87);
 }
 
+@media (min-width: 1280px) {
+  .host-list-panel {
+    position: sticky;
+    top: 68px;
+    align-self: flex-start;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    height: calc(100vh - 80px);
+  }
+}
+
+@media (max-width: 1279px) {
+  .host-list-panel {
+    position: relative;
+  }
+}
 </style>
