@@ -10,13 +10,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import VueApexCharts from "vue3-apexcharts";
 
 interface TrafficStat {
   ip_address: string;
   timestamp: string;
   total_packets: number;
   total_bytes: number;
+  alerts: number;
 }
 
 const props = defineProps<{
@@ -43,7 +45,13 @@ const series = computed(() => {
   const sortedData = [...props.trafficStats].reverse();
 
   return [
-    {
+     {
+      name: "Total Alerts",
+      type: 'bar',
+      data: sortedData.map((stat) => stat.alerts),
+      yAxisIndex: 2  // Use the third y-axis (index 2)
+    },
+   {  
       name: "Total Bytes",
       data: sortedData.map((stat) => stat.total_bytes),
     },
@@ -51,6 +59,7 @@ const series = computed(() => {
       name: "Total Packets",
       data: sortedData.map((stat) => stat.total_packets),
     },
+
   ];
 });
 
@@ -79,10 +88,13 @@ const chartOptions = computed(() => ({
       speed: 800,
     },
   },
-  colors: ["#5CDD8B", "#3498db"],
+  colors: ["#B71C1C", "#5CDD8B", "#3498db"],
+  fill: {
+    opacity: [0.3, 1, 1], // Make the first series (bars) transparent
+  },
   stroke: {
     curve: "smooth",
-    width: 3,
+    width: [0, 3, 3], // No stroke for bars, 3px for lines
   },
   dataLabels: {
     enabled: false,
@@ -118,6 +130,23 @@ const chartOptions = computed(() => ({
     },
   },
   yaxis: [
+    {
+      opposite: true,
+      title: {
+        text: "Alerts",
+        style: {
+          color: "#B71C1C",
+        },
+      },
+      labels: {
+        style: {
+          colors: "#B71C1C",
+        },
+        formatter: function (val: number) {
+          return Math.round(val).toString();
+        },
+      },
+    },
     {
       title: {
         text: "Total Bytes",
