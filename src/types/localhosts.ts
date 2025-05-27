@@ -15,4 +15,5 @@ export interface Localhost {
   tags: string | null;
   acknowledged: number;
   alerts_enabled: number;
+  threat_score: number;
 }

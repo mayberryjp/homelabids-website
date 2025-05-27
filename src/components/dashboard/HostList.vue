@@ -2,7 +2,7 @@
   <v-sheet rounded="lg" height="100%" color="#0d1117">
     <v-list>
       <v-list-item
-        v-for="host in hosts.localhosts"
+        v-for="host in sortedHosts"
         :key="host.ip_address"
         class="host-list-item"
         @click="hostClickHandler(host)"
@@ -10,9 +10,10 @@
         <div class="d-flex align-center w-100">
           <div
             class="status-indicator"
-            :class="host.acknowledged ? 'acknowledged' : 'unacknowledged'"
+            :style="{ backgroundColor: getThreatScoreColor(host.threat_score) }"
+            :class="host.acknowledged ? 'acknowledged-border' : 'unacknowledged-border'"
           >
-            {{ host.acknowledged ? "OK" : "NEW" }}
+            {{ host.threat_score }}
           </div>
           <div class="host-info ml-2">
             {{
@@ -31,9 +32,24 @@ import { useHostsStore } from "@/stores/hosts";
 import { useRouter } from 'vue-router';
 import AlertBars from "@/components/base/AlertBars.vue";
 import type { Localhost } from "@/types/localhosts";
+import { computed } from 'vue';
 
 const router = useRouter();
 const hosts = useHostsStore();
+
+// Computed property to sort hosts by threat score (descending)
+const sortedHosts = computed(() => {
+  return [...hosts.localhosts].sort((a, b) => b.threat_score - a.threat_score);
+});
+
+// Function to determine color based on threat score
+const getThreatScoreColor = (score: number): string => {
+  if (score === 0) return '#00C853'; // Sharp green for zero alerts
+  if (score >= 1 && score <= 10) return '#FFD600'; // Bright yellow for low alerts
+  if (score >= 11 && score <= 25) return '#FF9800'; // Orange for medium alerts
+  if (score >= 26 && score <= 100) return '#F44336'; // Bright red for high alerts
+  return '#B71C1C'; // Crimson for very high alerts (100+)
+};
 
 const hostClickHandler = (host: Localhost) => {
   router.push({
@@ -66,19 +82,12 @@ const getAlertIntervals = (ip_address: string): number[] => {
   min-width: 44px;
   height: 24px;
   border-radius: 50rem !important;
-  color: black;;
+  color: black;
   font-size: 12px;
   font-weight: bold;
-
+  border: 2px solid transparent;
 }
 
-.acknowledged {
-  background-color: #5cdd8b;
-}
-
-.unacknowledged {
-  background-color: #cf8e13;
-}
 
 .host-info {
   flex-grow: 1;
