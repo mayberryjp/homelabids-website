@@ -45,9 +45,9 @@ const sortedHosts = computed(() => {
 // Function to determine color based on threat score
 const getThreatScoreColor = (score: number): string => {
   if (score === 0) return '#00C853'; // Sharp green for zero alerts
-  if (score >= 1 && score <= 10) return '#FFD600'; // Bright yellow for low alerts
-  if (score >= 11 && score <= 25) return '#FF9800'; // Orange for medium alerts
-  if (score >= 26 && score <= 100) return '#F44336'; // Bright red for high alerts
+  if (score >= 1 && score <= 24) return '#FFD600'; // Bright yellow for low alerts
+  if (score >= 25 && score <= 50) return '#FF9800'; // Orange for medium alerts
+  if (score >= 50 && score <= 75) return '#F44336'; // Bright red for high alerts
   return '#B71C1C'; // Crimson for very high alerts (100+)
 };
 
@@ -82,10 +82,11 @@ const getAlertIntervals = (ip_address: string): number[] => {
   min-width: 44px;
   height: 24px;
   border-radius: 50rem !important;
-  color: black;
+  color: white;
   font-size: 12px;
   font-weight: bold;
   border: 2px solid transparent;
+  filter: saturate(0.7) brightness(0.8);
 }
 
 
