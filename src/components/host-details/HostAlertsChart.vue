@@ -17,6 +17,7 @@ interface TrafficStat {
   timestamp: string;
   total_packets: number;
   total_bytes: number;
+  alerts: number;
 }
 
 const props = defineProps<{
@@ -43,14 +44,25 @@ const series = computed(() => {
   const sortedData = [...props.trafficStats].reverse();
 
   return [
+    // Place alerts first so they appear in the background
+    {
+      name: "Total Alerts",
+      type: 'bar',
+      data: sortedData.map((stat) => stat.alerts),
+      yAxisIndex: 2  // Use the third y-axis (index 2)
+    },
     {
       name: "Total Bytes",
+      type: 'line',
       data: sortedData.map((stat) => stat.total_bytes),
+      yAxisIndex: 0  // Use the first y-axis (index 0)
     },
     {
-      name: "Total Packets",
+      name: "Total Packets", 
+      type: 'line',
       data: sortedData.map((stat) => stat.total_packets),
-    },
+      yAxisIndex: 1  // Use the second y-axis (index 1)
+    }
   ];
 });
 
@@ -69,6 +81,8 @@ const categories = computed(() => {
 const chartOptions = computed(() => ({
   chart: {
     id: "traffic-stats-chart",
+    type: 'line', // Default type
+    stacked: false,
     background: "#0d1117",
     toolbar: {
       show: false,
@@ -79,10 +93,19 @@ const chartOptions = computed(() => ({
       speed: 800,
     },
   },
-  colors: ["#5CDD8B", "#3498db"],
+  colors: ["#B71C1C", "#5CDD8B", "#3498db"], // Match the new series order
+  fill: {
+    opacity: [0.3, 1, 1], // Make the first series (bars) transparent
+  },
   stroke: {
     curve: "smooth",
-    width: 3,
+    width: [0, 3, 3], // No stroke for bars, 3px for lines
+  },
+  plotOptions: {
+    bar: {
+      columnWidth: '70%',
+      borderRadius: 2,
+    }
   },
   dataLabels: {
     enabled: false,
@@ -95,6 +118,25 @@ const chartOptions = computed(() => ({
         return val;
       },
     },
+    y: {
+      formatter: function (
+        value: number,
+        { seriesIndex }: { seriesIndex: number }
+      ) {
+        // Format based on series type
+        if (seriesIndex === 0) {
+          // Total Alerts (first series)
+          return Math.round(value).toString();
+        } else if (seriesIndex === 1) {
+          // Total Bytes (second series)
+          return formatBytes(value);
+        } else {
+          // Total Packets (third series)
+          return Math.round(value).toLocaleString();
+        }
+      }
+    },
+    shared: true,
   },
   grid: {
     borderColor: "#333",
@@ -127,7 +169,7 @@ const chartOptions = computed(() => ({
       },
       labels: {
         style: {
-          colors: "#b1b8c0",
+          colors: "#5CDD8B",
         },
         formatter: function (val: number) {
           return formatBytes(val);
@@ -151,6 +193,28 @@ const chartOptions = computed(() => ({
         },
       },
     },
+    {
+      opposite: true,
+      title: {
+        text: "Alerts",
+        style: {
+          color: "#B71C1C",
+        },
+      },
+      labels: {
+        style: {
+          colors: "#B71C1C",
+        },
+        formatter: function (val: number) {
+          return Math.round(val).toString();
+        },
+      },
+      min: 0,
+      
+      forceNiceScale: true,
+      floating: false,
+      seriesName: "Alerts"
+    }
   ],
   legend: {
     show: true,
@@ -164,10 +228,25 @@ const chartOptions = computed(() => ({
 
 // Format bytes to a human-readable format
 const formatBytes = (bytes: number) => {
+  // Handle edge cases
+  if (bytes === undefined || bytes === null || isNaN(bytes)) {
+    return "0 B";
+  }
+  
   if (bytes === 0) return "0 B";
+  
+  // Handle very small positive values
+  if (bytes > 0 && bytes < 1024) {
+    return bytes.toFixed(2) + " B";
+  }
 
   const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  
+  // Calculate unit index
+  let i = Math.floor(Math.log(bytes) / Math.log(1024));
+  
+  // Ensure index is within bounds
+  i = Math.max(0, Math.min(i, sizes.length - 1));
 
   return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
 };

@@ -10,7 +10,10 @@
         <div class="d-flex align-center w-100">
           <div
             class="status-indicator"
-            :style="{ backgroundColor: getThreatScoreColor(host.threat_score) }"
+            :style="{ 
+              backgroundColor: getThreatScoreColor(host.threat_score),
+              color: getTextColorForBackground(host.threat_score)
+            }"
             :class="host.acknowledged ? 'acknowledged-border' : 'unacknowledged-border'"
           >
             {{ host.threat_score }}
@@ -51,6 +54,32 @@ const getThreatScoreColor = (score: number): string => {
   return '#B71C1C'; // Crimson for very high alerts (100+)
 };
 
+// Function to determine text color for dynamic backgrounds
+const getTextColorForBackground = (score: number): string => {
+  // Get the background color first
+  const bgColor = getThreatScoreColor(score);
+  
+  // Extract RGB values (ignoring any possible alpha)
+  let r, g, b;
+  
+  if (bgColor.startsWith('#')) {
+    // Handle hex colors
+    const hex = bgColor.substring(1);
+    r = parseInt(hex.substring(0, 2), 16);
+    g = parseInt(hex.substring(2, 4), 16);
+    b = parseInt(hex.substring(4, 6), 16);
+  } else {
+    // Default to white text if color format is unknown
+    return 'rgba(255, 255, 255, 0.87)';
+  }
+  
+  // Calculate relative luminance using perceived brightness formula
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  
+  // Return semi-transparent white or black with reduced opacity for less contrast
+  return luminance > 0.6 ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.87)';
+};
+
 const hostClickHandler = (host: Localhost) => {
   router.push({
     name: "host",
@@ -82,7 +111,6 @@ const getAlertIntervals = (ip_address: string): number[] => {
   min-width: 44px;
   height: 24px;
   border-radius: 50rem !important;
-  color: white;
   font-size: 12px;
   font-weight: bold;
   border: 2px solid transparent;
