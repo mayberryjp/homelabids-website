@@ -16,4 +16,5 @@ export interface Localhost {
   acknowledged: number;
   alerts_enabled: number;
   threat_score: number;
+  management_link?: string;
 }

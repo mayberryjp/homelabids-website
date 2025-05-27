@@ -13,7 +13,7 @@
       </v-btn>
       <v-btn
         color="grey"
-        @click="openEditDialog"
+        @click="editHostDetails"
         density="comfortable"
         class="text-body-2"
       >
@@ -99,8 +99,12 @@ const snackbar = ref({
 
 const alertsEnabled = computed(() => props.alerts_enabled === 1);
 
-const openEditDialog = () => {
-  console.log("Edit host:", props.ipAddress);
+const emit = defineEmits<{
+  edit: [];
+}>();
+
+const editHostDetails = () => {
+  emit('edit');
 };
 
 const openDeleteDialog = () => {

@@ -39,3 +39,32 @@ export const deleteHost = async (ip_address: string) => {
     throw error;
   }
 };
+
+export const updateHost = async (
+  ip_address: string,
+  hostData: Partial<{
+    local_description: string;
+    tags: string;
+    icon: string;
+    alerts_enabled: number;
+    management_link: string;
+  }>
+) => {
+  try {
+    const response = await api.put(`localhosts/${ip_address}`, hostData);
+    return response;
+  } catch (error) {
+    console.error("Error updating host:", error);
+    throw error;
+  }
+};
+
+export const getDeviceCategories = async () => {
+  try {
+    const response = await api.get("devices");
+    return response;
+  } catch (error) {
+    console.error("Error fetching device categories:", error);
+    throw error;
+  }
+};

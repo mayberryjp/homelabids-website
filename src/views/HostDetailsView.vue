@@ -1,91 +1,113 @@
 <template>
   <div class="host-details">
-    <!-- Host Header Section -->
-
-
-
-    <v-card color="#0d1117" class="mb-4">
-      <v-card-text v-if="localHostDetail">
-        <div class="d-flex flex-column flex-wrap">
-          <!-- Host Title -->
-          <div class="d-flex align-center justify-space-between">
-            <div class="host-title me-4">
-              <h2 class="text-h4 text-grey custom-heading">
-                {{ localHostDetail.local_description || "Unnamed" }}
-              </h2>
-              <div class="text-subtitle-1 text-green">
-                IP Address: {{ ip_address }}
+    <!-- Main Content -->
+    <transition name="slide-up" mode="out-in">
+      <div v-if="!showEditMode" key="main-content" class="main-content">
+        <!-- Host Header Section -->
+        <v-card color="#0d1117" class="mb-4">
+          <v-card-text v-if="localHostDetail">
+            <div class="d-flex flex-column flex-wrap">
+              <!-- Host Title -->
+              <div class="d-flex align-center justify-space-between">
+                <div class="host-title me-4">
+                  <h2 class="text-h4 text-grey custom-heading">
+                    {{ localHostDetail.local_description || "Unnamed" }}
+                  </h2>
+                  <div class="text-subtitle-1 text-green">
+                    IP Address: {{ ip_address }}
+                  </div>
+                </div>
+              </div>
+              <div v-if="alertDetail">
+                <AlertBars
+                  :alert-intervals="alertDetail.alert_intervals"
+                  class="ml-auto"
+                  :height="26"
+                  :width="7"
+                />
               </div>
             </div>
-          </div>
-
-          <div v-if="alertDetail">
-            <AlertBars
-              :alert-intervals="alertDetail.alert_intervals"
-              class="ml-auto"
-              :height="26"
-              :width="7"
+            <HostActions
+              :ip-address="ip_address"
+              class="mb-4"
+              :alerts_enabled="localHostDetail?.alerts_enabled"
+              @edit="enterEditMode"
             />
+          </v-card-text>
+          <v-card-text v-else>
+            <AppSkeleton type="text@2" color="#0d1117" />
+          </v-card-text>
+        </v-card>
+
+        <v-card color="#0d1117" class="mb-4">
+          <AppSkeleton v-if="hostStatsLoading" type="article" color="#0d1117" />
+          <HostStats
+            v-else-if="localHostDetail"
+            :host-detail="localHostDetail"
+          />
+        </v-card>
+
+        <!-- Traffic Stats -->
+        <v-card color="#0d1117" class="pa-2 mb-4">
+          <AppSkeleton
+            v-if="trafficStatsLoading"
+            type="image"
+            color="#0d1117"
+          />
+          <div v-else-if="trafficStats">
+            <v-card-title class="text-white"
+              >Network Traffic Statistics</v-card-title
+            >
+            <v-card-subtitle class="text-grey"
+              >Displaying total bytes and packets over time</v-card-subtitle
+            >
+            <HostAlertsChart :traffic-stats="trafficStats" />
           </div>
-        </div>
-    <HostActions
-      :ip-address="ip_address"
-      class="mb-4"
-      :alerts_enabled="localHostDetail?.alerts_enabled"
-    />
-      </v-card-text>
-      <v-card-text v-else>
-        <AppSkeleton type="text@2" color="#0d1117" />
-      </v-card-text>
-    </v-card>
+          <v-card-text v-else class="text-center text-grey"
+            >No traffic data available</v-card-text
+          >
+        </v-card>
 
-    <v-card color="#0d1117" class="mb-4">
-      <AppSkeleton v-if="hostStatsLoading" type="article" color="#0d1117" />
-      <HostStats v-else-if="localHostDetail" :host-detail="localHostDetail" />
-    </v-card>
-
-    <!-- Traffic Stats -->
-    <v-card color="#0d1117" class="pa-2 mb-4">
-      <AppSkeleton v-if="trafficStatsLoading" type="image" color="#0d1117" />
-      <div v-else-if="trafficStats">
-        <v-card-title class="text-white"
-          >Network Traffic Statistics</v-card-title
-        >
-        <v-card-subtitle class="text-grey"
-          >Displaying total bytes and packets over time</v-card-subtitle
-        >
-        <HostAlertsChart :traffic-stats="trafficStats" />
+        <!-- Host-specific Alerts -->
+        <v-card color="#0d1117" class="mb-4">
+          <AppSkeleton
+            v-if="recentAlertsLoading"
+            type="table"
+            color="#0d1117"
+          />
+          <RecentAlerts
+            v-else
+            :alerts="recentHostAlerts"
+            title="Host Alerts"
+            :items-per-page="10"
+            :showRefreshButton="true"
+            :loading="recentAlertsLoading"
+            @refresh="fetchRecentHostAlerts(ip_address)"
+          />
+          <v-card-text
+            v-if="!recentAlertsLoading && !recentHostAlerts.length"
+            class="text-center text-grey"
+          >
+            No alerts found for this host
+          </v-card-text>
+        </v-card>
       </div>
-      <v-card-text v-else class="text-center text-grey"
-        >No traffic data available</v-card-text
-      >
-    </v-card>
 
-    <!-- Host-specific Alerts -->
-    <v-card color="#0d1117" class="mb-4">
-      <AppSkeleton v-if="recentAlertsLoading" type="table" color="#0d1117" />
-      <RecentAlerts
-        v-else
-        :alerts="recentHostAlerts"
-        title="Host Alerts"
-        :items-per-page="10"
-        :showRefreshButton="true"
-        :loading="recentAlertsLoading"
-        @refresh="fetchRecentHostAlerts(ip_address)"
-      />
-      <v-card-text
-        v-if="!recentAlertsLoading && !recentHostAlerts.length"
-        class="text-center text-grey"
-      >
-        No alerts found for this host
-      </v-card-text>
-    </v-card>
+      <!-- Edit Mode -->
+      <div v-else key="edit-content" class="edit-content">
+        <EditHostDetail
+          :host-detail="localHostDetail"
+          @close="exitEditMode"
+          @saved="handleHostSaved"
+        />
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup lang="ts">
 import { getLocalhostDetail, getLocalhostTraffic } from "@/services/hosts";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { onMounted, watch, ref } from "vue";
 import type { Localhost } from "@/types/localhosts";
 import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
@@ -96,8 +118,10 @@ import HostStats from "@/components/host-details/HostStats.vue";
 import HostActions from "@/components/host-details/HostActions.vue";
 import AlertBars from "@/components/base/AlertBars.vue";
 import AppSkeleton from "@/components/base/AppSkeleton.vue";
+import EditHostDetail from "@/components/host-details/EditHostDetail.vue";
 
 const route = useRoute();
+const router = useRouter();
 const ip_address = ref(route.params.ip_address as string);
 const localHostDetail = ref<Localhost | null>(null);
 const alertDetail = ref<AlertDetail | null>(null);
@@ -106,6 +130,13 @@ const hostStatsLoading = ref(true);
 const trafficStatsLoading = ref(true);
 const recentHostAlerts = ref<Alert[]>([]);
 const recentAlertsLoading = ref(true);
+
+// Utility function to check if edit mode should be active (0 = false, 1 = true)
+const isEditModeActive = (query: any): boolean => {
+  return query.edit === "1";
+};
+
+const showEditMode = ref(isEditModeActive(route.query));
 
 const fetchLocalhostDetail = async (ip_address: string) => {
   hostStatsLoading.value = true;
@@ -183,18 +214,52 @@ const updateData = async (ip_address: string) => {
   }
 };
 
-// Watch for changes in the route params to update the IP address
+const handleHostSaved = (updatedHost: Localhost) => {
+  localHostDetail.value = updatedHost;
+};
+
+const enterEditMode = () => {
+  showEditMode.value = true;
+  router.push({
+    name: "host",
+    params: { ip_address: ip_address.value },
+    query: { edit: "1" },
+  });
+};
+
+const exitEditMode = () => {
+  showEditMode.value = false;
+  router.push({
+    name: "host",
+    params: { ip_address: ip_address.value },
+  });
+};
+
 watch(
   () => route.params.ip_address as string,
-  (newIpAddress: string) => {
-    ip_address.value = newIpAddress;
-    updateData(newIpAddress);
+  (newIpAddress: string, oldIpAddress: string) => {
+    if (newIpAddress !== oldIpAddress) {
+      ip_address.value = newIpAddress;
+      // Reset edit mode when navigating to different host
+      if (showEditMode.value && !isEditModeActive(route.query)) {
+        showEditMode.value = false;
+      }
+      updateData(newIpAddress);
+    }
+  }
+);
+
+watch(
+  () => route.query,
+  (newQuery) => {
+    showEditMode.value = isEditModeActive(newQuery);
   }
 );
 
 onMounted(async () => {
   // Scroll to top when component mounts
   window.scrollTo({ top: 0, behavior: "smooth" });
+  showEditMode.value = isEditModeActive(route.query);
   await updateData(ip_address.value);
 });
 </script>
@@ -203,6 +268,29 @@ onMounted(async () => {
 .host-details {
   animation: fadeIn 0.3s ease-in-out;
 }
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center bottom;
+}
+
+.slide-up-enter-from {
+  transform: translateY(60px);
+  opacity: 0;
+}
+
+.slide-up-leave-to {
+  transform: translateY(-60px);
+  opacity: 0;
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 
 @keyframes fadeIn {
   from {
