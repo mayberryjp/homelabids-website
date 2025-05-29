@@ -56,3 +56,14 @@ export interface Alert {
   acknowledged: boolean;
   local_description: string;
 }
+
+export interface IgnoreListItem {
+  id: string;
+  src_ip: string;
+  dst_ip: string;
+  dst_port: number;
+  protocol: number;
+  times_seen: number;
+  first_seen: string;
+  last_seen: string;
+}

@@ -68,3 +68,23 @@ export const getDeviceCategories = async () => {
     throw error;
   }
 };
+
+export const getLocalhostIgnoreList = async (ip_address: string) => {
+  try {
+    const response = await api.get(`ignorelist/ip/${ip_address}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching host ignore list:", error);
+    throw error;
+  }
+};
+
+export const deleteIgnoreListItem = async (allowlistId: string) => {
+  try {
+    const response = await api.delete(`ignorelist/${allowlistId}`);
+    return response;
+  } catch (error) {
+    console.error("Error deleting ignore list item:", error);
+    throw error;
+  }
+};

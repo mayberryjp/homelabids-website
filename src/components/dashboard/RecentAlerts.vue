@@ -105,12 +105,12 @@
 
      <!-- First Seen Column -->
       <template v-slot:item.first_seen="{ item }">
-        <span class="date-column">{{ new Date(item.first_seen).toISOString().split('T')[0] }}</span>
+        <span class="date-column">{{ formatDate(item.first_seen) }}</span>
       </template>
       
       <!-- Last Seen Column -->
       <template v-slot:item.last_seen="{ item }">
-        <span class="date-column">{{ new Date(item.last_seen).toISOString().split('T')[0] }}</span>
+        <span class="date-column">{{ formatDate(item.last_seen) }}</span>
       </template>
 
       <!-- Delete Column -->
@@ -218,7 +218,8 @@ import {
   addToWhitelist,
   type WhitelistPayload,
 } from "@/services/alerts";
-import { protocols } from "@/constants/AppConstants";
+import { formatDate } from "@/utils/date";
+import { getProtocolName } from "@/utils/protocol";
 
 // Define props for the component
 const props = defineProps<{
@@ -317,14 +318,6 @@ Protocol: ${protocol}`;
         color: "error",
       };
     });
-};
-
-const getProtocolName = (protocol: string | number): string => {
-  if (!protocol) return "Unknown";
-
-  const protocolNum = Number(protocol);
-
-  return protocols[protocolNum] || `Protocol ${protocol}`;
 };
 
 // Action handlers
@@ -562,7 +555,7 @@ const headers = [
   { title: "First Seen", key: "first_seen", sortable: true },
   { title: "Last Seen", key: "last_seen", sortable: true },
   {
-    title: "Delete Alert",
+    title: "Delete",
     key: "delete",
     align: "center" as const,
     sortable: false,
