@@ -11,8 +11,8 @@
         <div class="d-flex align-center w-100">
           <!-- Linux Icon with dynamic color matching threat score -->
           <img 
-            src="/linux.svg" 
-            alt="Linux" 
+            :src="`/deviceicons/${host.icon}.svg`"
+            :alt="host.icon"
             class="host-icon mr-2"
             :style="{ filter: `brightness(1) invert(1) drop-shadow(0 0 1px ${getThreatScoreColor(host.threat_score)})` }"
           />
