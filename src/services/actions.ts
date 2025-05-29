@@ -12,8 +12,8 @@ export const getActions = async () => {
 
 export const acknowledgeAction = async (action_id: number) => {
   try {
-    const response = await api.put(`/actions/${action_id}`, {
-      acknowledged: 0,
+    const response = await api.put(`/actions/${action_id}/acknowledge`, {
+      acknowledged: 1,
     });
     return response.data;
   } catch (error) {

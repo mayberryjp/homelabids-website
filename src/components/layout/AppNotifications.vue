@@ -28,41 +28,27 @@
       <v-divider></v-divider>
 
       <v-card-text class="pa-0">
-        <v-list v-if="actions.length > 0">
+        <v-list v-if="sortedActions.length > 0">
           <v-list-item
-            v-for="action in actions"
+            v-for="action in sortedActions"
             :key="action.action_id"
-            :class="{ unacknowledged: action.acknowledged === 1 }"
+            class="notification-item"
           >
             <template v-slot:prepend>
               <v-icon
-                :color="action.acknowledged === 1 ? 'error' : ''"
-                :icon="
-                  action.acknowledged === 1
-                    ? 'mdi-alert-circle'
-                    : 'mdi-check-circle'
-                "
+                :color="action.acknowledged === 0 ? 'error' : 'success'"
+                icon="mdi-check-circle"
+                @click.stop="acknowledgeAlert(action)"
+                class="cursor-pointer"
+                :loading="acknowledging === action.action_id"
               ></v-icon>
             </template>
 
-            <v-list-item-title class="two-line-text">{{ action.action_text }}</v-list-item-title>
+            <v-list-item-title class="full-text">{{ action.action_text }}</v-list-item-title>
             
             <v-list-item-subtitle class="text-caption">
               {{ formatRelativeTime(action.insert_date) }}
             </v-list-item-subtitle>
-
-            <template v-slot:append>
-              <v-btn
-                v-if="action.acknowledged === 1"
-                variant="text"
-                size="small"
-                color="primary"
-                @click="acknowledgeAlert(action)"
-                :loading="acknowledging === action.action_id"
-              >
-                Acknowledge
-              </v-btn>
-            </template>
           </v-list-item>
         </v-list>
         <div v-else class="pa-4 text-center">
@@ -86,7 +72,15 @@ const acknowledging = ref<number | null>(null);
 
 // Get unacknowledged count
 const unacknowledgedCount = computed(() => {
-  return actions.value.filter((action) => action.acknowledged === 1).length;
+  return actions.value.filter((action) => action.acknowledged === 0).length;
+});
+
+// Sort actions with most recent first
+const sortedActions = computed(() => {
+  return [...actions.value].sort((a, b) => {
+    // Sort by date descending (newest first)
+    return new Date(b.insert_date).getTime() - new Date(a.insert_date).getTime();
+  });
 });
 
 // Fetch actions from API
@@ -104,11 +98,14 @@ const refreshActions = async () => {
 
 // Acknowledge an alert
 const acknowledgeAlert = async (action: Action) => {
+  // If already acknowledged, don't do anything
+  if (action.acknowledged === 1) return;
+  
   acknowledging.value = action.action_id;
   try {
     await acknowledgeAction(action.action_id);
-    // Update the local list
-    action.acknowledged = 0;
+    // Update the local list immediately without refresh
+    action.acknowledged = 1;
   } catch (error) {
     console.error("Failed to acknowledge action:", error);
   } finally {
@@ -123,25 +120,32 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Remove or comment out the unacknowledged class background styling */
+/*
 .unacknowledged {
   background-color: #a0364d !important;
   opacity: 1 !important;
 }
+*/
 
-.acknowledged {
-  background-color: #a0364d !important;
-  opacity: 1 !important;
+/* Add a subtle indicator if you still want some visual difference */
+.notification-item {
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.two-line-text {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* This will add just a small border indicator instead of full background */
+.v-icon.error {
+  filter: drop-shadow(0 0 2px rgba(244, 67, 54, 0.5));
+}
+
+.full-text {
   white-space: normal;
+  overflow: visible;
   line-height: 1.4;
-  max-height: 2.8em;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
