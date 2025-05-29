@@ -91,6 +91,30 @@
             No alerts found for this host
           </v-card-text>
         </v-card>
+
+        <!-- Host Allow List (Ignore List) -->
+        <v-card color="#0d1117" class="mb-4">
+          <AppSkeleton
+            v-if="ignoreListLoading"
+            type="table"
+            color="#0d1117"
+          />
+          <IgnoreList
+            v-else
+            :ignore-list-items="ignoreListItems"
+            title="Host Ignore List"
+            :items-per-page="10"
+            :showRefreshButton="true"
+            :loading="ignoreListLoading"
+            @refresh="fetchIgnoreList(ip_address)"
+          />
+          <v-card-text
+            v-if="!ignoreListLoading && !ignoreListItems.length"
+            class="text-center text-grey"
+          >
+            No allow list items found for this host
+          </v-card-text>
+        </v-card>
       </div>
 
       <!-- Edit Mode -->
@@ -106,14 +130,15 @@
 </template>
 
 <script setup lang="ts">
-import { getLocalhostDetail, getLocalhostTraffic } from "@/services/hosts";
+import { getLocalhostDetail, getLocalhostTraffic, getLocalhostIgnoreList } from "@/services/hosts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, watch, ref } from "vue";
 import type { Localhost } from "@/types/localhosts";
 import { getHostAlertDetails, getHostRecentAlerts } from "@/services/alerts";
 import HostAlertsChart from "@/components/host-details/HostAlertsChart.vue";
 import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
-import type { Alert, AlertDetail } from "@/types/alerts";
+import IgnoreList from "@/components/host-details/IgnoreList.vue";
+import type { Alert, AlertDetail, IgnoreListItem } from "@/types/alerts";
 import HostStats from "@/components/host-details/HostStats.vue";
 import HostActions from "@/components/host-details/HostActions.vue";
 import AlertBars from "@/components/base/AlertBars.vue";
@@ -130,6 +155,8 @@ const hostStatsLoading = ref(true);
 const trafficStatsLoading = ref(true);
 const recentHostAlerts = ref<Alert[]>([]);
 const recentAlertsLoading = ref(true);
+const ignoreListItems = ref<IgnoreListItem[]>([]);
+const ignoreListLoading = ref(false);
 
 // Utility function to check if edit mode should be active (0 = false, 1 = true)
 const isEditModeActive = (query: any): boolean => {
@@ -187,6 +214,19 @@ const fetchRecentHostAlerts = async (ip_address: string) => {
   }
 };
 
+const fetchIgnoreList = async (ip_address: string) => {
+  ignoreListLoading.value = true;
+  ignoreListItems.value = [];
+  try {
+    const { data } = await getLocalhostIgnoreList(ip_address);
+    ignoreListItems.value = data;
+  } catch (error) {
+    console.error("Error fetching ignore list:", error);
+  } finally {
+    ignoreListLoading.value = false;
+  }
+};
+
 const updateData = async (ip_address: string) => {
   try {
     // Scroll to top when data updates
@@ -196,6 +236,7 @@ const updateData = async (ip_address: string) => {
     hostStatsLoading.value = true;
     trafficStatsLoading.value = true;
     recentAlertsLoading.value = true;
+    ignoreListLoading.value = true;
 
     // Start all fetches in parallel
 
@@ -205,6 +246,7 @@ const updateData = async (ip_address: string) => {
       fetchAlertDetail(ip_address),
       fetchTrafficStats(ip_address),
       fetchRecentHostAlerts(ip_address),
+      fetchIgnoreList(ip_address),
     ];
 
     // Let all promises complete in the background

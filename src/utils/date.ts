@@ -77,3 +77,23 @@ export const formatRelativeTime = (dateString: string): string => {
     return dateString;
   }
 };
+
+export const formatMixedTimestamp = (timestamp: number | string): string => {
+  if (!timestamp) return "N/A";
+
+  if (typeof timestamp === "string" && timestamp.includes("-")) {
+    return new Date(timestamp).toISOString().split("T")[0];
+  }
+
+  const timestampNum = Number(timestamp);
+  let date;
+
+  date = new Date(timestampNum * 1000);
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  return date.toISOString().split("T")[0];
+};
