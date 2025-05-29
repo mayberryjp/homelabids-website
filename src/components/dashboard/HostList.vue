@@ -1,8 +1,22 @@
 <template>
   <v-sheet rounded="lg" height="100%" color="#0d1117" class="host-list custom-scrollbar">
+    <!-- Search Filter -->
+    <div class="search-container pa-3">
+      <v-text-field
+        v-model="searchTerm"
+        density="compact"
+        variant="outlined"
+        placeholder="Search hosts..."
+        prepend-inner-icon="mdi-magnify"
+        hide-details
+        class="search-field"
+        clearable
+      ></v-text-field>
+    </div>
+    
     <v-list>
       <v-list-item
-        v-for="host in sortedHosts"
+        v-for="host in filteredHosts"
         :key="host.ip_address"
         class="host-list-item"
         :class="{ 'selected-host': isHostSelected(host.ip_address) }"
@@ -14,7 +28,7 @@
             :src="`/deviceicons/${host.icon}.svg`"
             :alt="host.icon"
             class="host-icon mr-2"
-            :style="{ filter: `brightness(1) invert(1) drop-shadow(0 0 1px ${getThreatScoreColor(host.threat_score)})` }"
+            :style="{ filter: `brightness(0) invert(1) drop-shadow(0 0 1px ${getThreatScoreColor(host.threat_score)})` }"
           />
           
           <!-- Threat Score -->
@@ -45,7 +59,7 @@ import { useHostsStore } from "@/stores/hosts";
 import { useRouter } from 'vue-router';
 import AlertBars from "@/components/base/AlertBars.vue";
 import type { Localhost } from "@/types/localhosts";
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const router = useRouter();
@@ -106,6 +120,34 @@ const hostClickHandler = (host: Localhost) => {
 const getAlertIntervals = (ip_address: string): number[] => {
   return hosts.alertsSummary[ip_address]?.alert_intervals || [];
 };
+
+// Add a search term ref
+const searchTerm = ref('');
+
+// Add a computed property for filtered hosts
+const filteredHosts = computed(() => {
+  if (!searchTerm.value.trim()) {
+    return sortedHosts.value; // Return all sorted hosts if search is empty
+  }
+  
+  const searchLower = searchTerm.value.toLowerCase();
+  return sortedHosts.value.filter(host => {
+    // Search in IP address
+    if (host.ip_address.toLowerCase().includes(searchLower)) {
+      return true;
+    }
+    
+    // Search in description (if available)
+    if (host.local_description && 
+        host.local_description.toLowerCase().includes(searchLower)) {
+      return true;
+    }
+    
+    // Optionally search in other fields like hostname, category, etc.
+    
+    return false;
+  });
+});
 </script>
 
 <style scoped>
@@ -133,7 +175,7 @@ const getAlertIntervals = (ip_address: string): number[] => {
 .host-icon {
   width: 24px;
   height: 24px;
-  opacity: 0.8;
+  opacity: 1;
   filter: brightness(0) invert(1); /* Makes the SVG white */
 }
 
@@ -156,4 +198,59 @@ const getAlertIntervals = (ip_address: string): number[] => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.search-container {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #0d1117;
+}
+
+.search-field {
+  /* Optional: customize the search field appearance */
+  background-color: #161b22;
+}
+
+.search-field :deep(.v-field__input) {
+  color: #b1b8c0;
+}
+
+.search-field :deep(.v-field__outline) {
+  opacity: 0.3;
+}
+
+/* Subtle custom scrollbar */
+.custom-scrollbar {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  border: none;
+}
+
+/* For completely hiding the scrollbar but keeping functionality */
+/* Uncomment this if you want to hide it completely
+.custom-scrollbar::-webkit-scrollbar {
+  width: 0px;
+}
+
+.custom-scrollbar {
+  scrollbar-width: none;  
+  -ms-overflow-style: none;
+}
+*/
 </style>

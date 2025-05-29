@@ -17,6 +17,16 @@
         Notifications
         <v-spacer></v-spacer>
         <v-btn
+          variant="text"
+          size="small"
+          class="mr-2"
+          @click="acknowledgeAllAlerts"
+          :loading="acknowledgingAll"
+          :disabled="!unacknowledgedCount || loading"
+        >
+          Acknowledge All
+        </v-btn>
+        <v-btn
           icon="mdi-refresh"
           variant="text"
           size="small"
@@ -61,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { getActions, acknowledgeAction } from "@/services/actions";
+import { getActions, acknowledgeAction, acknowledgeAllActions } from "@/services/actions";
 import type { Action } from "@/types/actions";
 import { formatRelativeTime } from "@/utils/date";
 
@@ -69,6 +79,7 @@ import { formatRelativeTime } from "@/utils/date";
 const actions = ref<Action[]>([]);
 const loading = ref(false);
 const acknowledging = ref<number | null>(null);
+const acknowledgingAll = ref(false);
 
 // Get unacknowledged count
 const unacknowledgedCount = computed(() => {
@@ -110,6 +121,28 @@ const acknowledgeAlert = async (action: Action) => {
     console.error("Failed to acknowledge action:", error);
   } finally {
     acknowledging.value = null;
+  }
+};
+
+// Acknowledge all alerts
+const acknowledgeAllAlerts = async () => {
+  if (!unacknowledgedCount.value) return;
+  
+  acknowledgingAll.value = true;
+  try {
+    // Call the API endpoint to acknowledge all notifications
+    await acknowledgeAllActions();
+
+    // Update local state of all unacknowledged notifications
+    actions.value.forEach(action => {
+      if (action.acknowledged === 0) {
+        action.acknowledged = 1;
+      }
+    });
+  } catch (error) {
+    console.error("Failed to acknowledge all actions:", error);
+  } finally {
+    acknowledgingAll.value = false;
   }
 };
 

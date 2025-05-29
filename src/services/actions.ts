@@ -21,3 +21,13 @@ export const acknowledgeAction = async (action_id: number) => {
     throw error;
   }
 };
+
+export const acknowledgeAllActions = async () => {
+  try {
+    const response = await api.put('/actions/all/acknowledge');
+    return response.data;
+  } catch (error) {
+    console.error("Error acknowledging all actions:", error);
+    throw error;
+  }
+};
