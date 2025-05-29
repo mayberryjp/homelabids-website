@@ -2,12 +2,11 @@
   <v-row class="ma-0 rounded-lg">
     <!-- Status Cards -->
     <v-col
-      cols="12"
-      sm="6"
-      md="3"
+      cols="10"
+      sm="5"
+      class="bg-transparent custom-fifth-col"
       v-for="(stat, index) in statusStats"
       :key="index"
-      class="bg-transparent"
     >
       <v-card
         variant="plain"
@@ -55,6 +54,12 @@ const statusStats = computed(() => [
     label: "OS Fingerprint",
     value: getHostValue(props.hostDetail?.os_fingerprint),
   },
+  {
+    label: "MAC Address",
+    value: getHostValue(props.hostDetail?.mac_address),
+  },
+
+
 ]);
 </script>
 
@@ -62,5 +67,12 @@ const statusStats = computed(() => [
 .stat-value {
   font-size: 18px;
   font-weight: 600;
+}
+
+@media (min-width: 960px) {
+  .custom-fifth-col {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
 }
 </style>

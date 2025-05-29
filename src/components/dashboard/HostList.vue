@@ -9,21 +9,30 @@
         @click="hostClickHandler(host)"
       >
         <div class="d-flex align-center w-100">
-          <div
-            class="status-indicator"
+          <!-- Linux Icon with dynamic color matching threat score -->
+          <img 
+            src="/linux.svg" 
+            alt="Linux" 
+            class="host-icon mr-2"
+            :style="{ filter: `brightness(1) invert(1) drop-shadow(0 0 1px ${getThreatScoreColor(host.threat_score)})` }"
+          />
+          
+          <!-- Threat Score -->
+          <div 
+            class="threat-score-badge"
             :style="{ 
               backgroundColor: getThreatScoreColor(host.threat_score),
               color: getTextColorForBackground(host.threat_score)
             }"
-            :class="host.acknowledged ? 'acknowledged-border' : 'unacknowledged-border'"
           >
             {{ host.threat_score }}
           </div>
+          
+          <!-- Host Info -->
           <div class="host-info ml-2">
-            {{
-              host.local_description || host.ip_address
-            }}
+            {{ host.local_description || host.ip_address }}
           </div>
+          
           <AlertBars :alert-intervals="getAlertIntervals(host.ip_address)" class="ml-auto" />
         </div>
       </v-list-item>
@@ -121,19 +130,25 @@ const getAlertIntervals = (ip_address: string): number[] => {
   border-left: 3px solid #42a5f5;
 }
 
-.status-indicator {
+.host-icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.8;
+  filter: brightness(0) invert(1); /* Makes the SVG white */
+}
+
+.threat-score-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  height: 24px;
-  border-radius: 50rem !important;
-  font-size: 12px;
-  font-weight: bold;
-  border: 2px solid transparent;
-  filter: saturate(0.7) brightness(0.8);
+  padding: 0 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
-
 
 .host-info {
   flex-grow: 1;
