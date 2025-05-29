@@ -23,12 +23,12 @@
         @click="hostClickHandler(host)"
       >
         <div class="d-flex align-center w-100">
-          <!-- Linux Icon with dynamic color matching threat score -->
-          <img 
-            :src="`/deviceicons/${host.icon}.svg`"
-            :alt="host.icon"
-            class="host-icon mr-2"
-            :style="{ filter: `brightness(0) invert(1) drop-shadow(0 0 1px ${getThreatScoreColor(host.threat_score)})` }"
+          <!-- SVG Icon with dynamic color matching threat score -->
+          <InlineSvg 
+            :name="host.icon || 'linux'" 
+            class="mr-2"
+            :color="getThreatScoreColor(host.threat_score)"
+            :size="24"
           />
           
           <!-- Threat Score -->
@@ -58,6 +58,7 @@
 import { useHostsStore } from "@/stores/hosts";
 import { useRouter } from 'vue-router';
 import AlertBars from "@/components/base/AlertBars.vue";
+import InlineSvg from "@/components/base/InlineSvg.vue";  // Import new component
 import type { Localhost } from "@/types/localhosts";
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';

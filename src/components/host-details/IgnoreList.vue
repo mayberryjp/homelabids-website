@@ -32,7 +32,7 @@
     >
       <!-- Allow List ID Column -->
       <template v-slot:item.id="{ item }">
-        <span class="text-caption">{{ item.id }}</span>
+        <span class="text-caption truncate-id" :title="item.id">{{ item.id }}</span>
       </template>
 
       <!-- Source IP Column -->
@@ -214,5 +214,13 @@ const deleteIgnoreListItem = async (item: IgnoreListItem) => {
 :deep(.v-table th:nth-child(7)) {
   min-width: 100px;
   white-space: nowrap;
+}
+
+.truncate-id {
+  max-width: 120px; /* Adjust this value if needed for ~20 characters */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 }
 </style>

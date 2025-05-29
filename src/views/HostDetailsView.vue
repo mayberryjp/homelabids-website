@@ -12,6 +12,9 @@
                 <div class="host-title me-4">
                   <h2 class="text-h4 text-grey custom-heading">
                     {{ localHostDetail.local_description || "Unnamed" }}
+                    <span v-if="localHostDetail?.icon" class="icon-label ml-2">
+                      ({{ localHostDetail.icon }})
+                    </span>
                   </h2>
                   <div class="text-subtitle-1 text-green">
                     IP Address: {{ ip_address }}
