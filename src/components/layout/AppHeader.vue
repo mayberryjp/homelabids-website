@@ -25,6 +25,19 @@
         {{ item.title }}
       </v-btn>
 
+      <!-- GitHub Issues Link -->
+      <v-btn
+        href="https://github.com/mayberryjp/homelabids/issues"
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="text"
+        class="mx-2"
+        rounded
+      >
+        <v-icon start>mdi-github</v-icon>
+        Submit Issues or Features
+      </v-btn>
+
       <!-- Notification Bell Component -->
       <AppNotifications />
 
