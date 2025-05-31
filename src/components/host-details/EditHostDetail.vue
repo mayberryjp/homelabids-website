@@ -195,12 +195,14 @@ const loadDeviceCategories = async () => {
 
   try {
     const { data } = await getDeviceCategories();
-    // Transform the API response to the expected format
+    // Transform the API response to the expected format and sort alphabetically
     if (Array.isArray(data)) {
-      deviceCategories.value = data.map((category: any) => ({
-        name: category.name || category.label || category,
-        value: category.value || category.id || category,
-      }));
+      deviceCategories.value = data
+        .map((category: any) => ({
+          name: category.name || category.label || category,
+          value: category.value || category.id || category,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically by name
     }
   } catch (error) {
     console.error("Error loading device categories:", error);

@@ -8,8 +8,27 @@
           <v-card-text v-if="localHostDetail">
             <div class="d-flex flex-column flex-wrap">
               <!-- Host Title -->
-              <div class="d-flex align-center justify-space-between">
-                <div class="host-title me-4">
+              <div class="d-flex align-center">
+                <!-- Device Icon - Now on the left -->
+                <div class="device-icon-container me-4 position-relative">
+                  <InlineSvg
+                    :name="localHostDetail?.icon || 'DEFAULT'"
+                    :color="getThreatScoreColor(localHostDetail?.threat_score || 0)"
+                    :size="120"
+                    class="icon-with-background"
+                  />
+                  
+                  <!-- Threat Score Banner Overlay -->
+                  <div 
+                    class="threat-score-banner"
+                    :style="{ backgroundColor: getThreatScoreColor(localHostDetail?.threat_score || 0) }"
+                  >
+                    <span>{{ localHostDetail?.threat_score || 0 }}</span>
+                  </div>
+                </div>
+
+                <!-- Host Info - Now on the right of the icon -->
+                <div class="host-title">
                   <h2 class="text-h4 text-grey custom-heading">
                     {{ localHostDetail.local_description || "Unnamed" }}
                     <span v-if="localHostDetail?.icon" class="icon-label ml-2">
@@ -19,15 +38,16 @@
                   <div class="text-subtitle-1 text-green">
                     IP Address: {{ ip_address }}
                   </div>
+                  
+                  <!-- Alert Bars - Now under the host info -->
+                  <div v-if="alertDetail" class="mt-2">
+                    <AlertBars
+                      :alert-intervals="alertDetail.alert_intervals"
+                      :height="26"
+                      :width="7"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div v-if="alertDetail">
-                <AlertBars
-                  :alert-intervals="alertDetail.alert_intervals"
-                  class="ml-auto"
-                  :height="26"
-                  :width="7"
-                />
               </div>
             </div>
             <HostActions
@@ -147,6 +167,7 @@ import HostActions from "@/components/host-details/HostActions.vue";
 import AlertBars from "@/components/base/AlertBars.vue";
 import AppSkeleton from "@/components/base/AppSkeleton.vue";
 import EditHostDetail from "@/components/host-details/EditHostDetail.vue";
+import InlineSvg from "@/components/base/InlineSvg.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -307,6 +328,13 @@ onMounted(async () => {
   showEditMode.value = isEditModeActive(route.query);
   await updateData(ip_address.value);
 });
+
+const getThreatScoreColor = (score: number): string => {
+  if (score === 0) return '#00C853';  // Green for no threats
+  if (score > 0 && score <= 25) return '#FFD600';  // Yellow for low threats
+  if (score > 25 && score <= 50) return '#FF9800';  // Orange for medium threats
+  return '#F44336';  // Red for high threats
+};
 </script>
 
 <style scoped>
@@ -361,5 +389,63 @@ onMounted(async () => {
   font-size: 16px !important;
   font-weight: 700 !important;
   margin-top: 3px;
+}
+
+.device-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 120px;
+  margin-right: 16px;
+  position: relative; /* Add this for absolute positioning of banner */
+}
+
+.host-title {
+  flex: 1; /* Take remaining space */
+}
+
+.icon-with-background :deep(svg) {
+  fill: rgba(255, 255, 255, 0.07) !important; /* Match page background */
+  stroke: none; /* Remove the outline */
+  stroke-width: 0;
+}
+
+.icon-with-background :deep(path),
+.icon-with-background :deep(circle),
+.icon-with-background :deep(rect):not([width="24"][height="24"]) {
+  fill: rgba(255, 255, 255, 0.07) !important;
+  stroke: none; /* Remove the outline */
+  stroke-width: 0;
+}
+
+/* Keep the "no fill" rectangle as is */
+.icon-with-background :deep(rect[width="24"][height="24"][fill="none"]) {
+  fill: none !important;
+  stroke: none;
+}
+
+.threat-score-banner {
+  position: absolute;
+  top: 0;
+  left: 0px; /* Position it just outside the left edge */
+  padding: 4px 8px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 50px; /* Fully rounded */
+  font-size: 14px;
+  opacity: 0.95;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 28px;
+  height: 28px;
+  /* Center the badge relative to the left edge */
+}
+
+/* Add this to ensure white text on light backgrounds */
+.threat-score-banner span {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 </style>
