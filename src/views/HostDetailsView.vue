@@ -126,7 +126,7 @@
             v-else
             :ignore-list-items="ignoreListItems"
             :title="`Host Allow List ${ignoreListItems.length ? `(${ignoreListItems.length} Entries)` : ''}`"
-            :items-per-page="10"
+            :items-per-page="ignoreListItems.length || 100" 
             :showRefreshButton="true"
             :loading="ignoreListLoading"
             @refresh="fetchIgnoreList(ip_address)"
