@@ -23,31 +23,30 @@
         @click="hostClickHandler(host)"
       >
         <div class="d-flex align-center w-100">
-          <!-- SVG Icon with dynamic color matching threat score -->
-          <InlineSvg 
-            :name="host.icon || 'linux'" 
-            class="mr-2"
-            :color="getThreatScoreColor(host.threat_score)"
-            :size="24"
-          />
-          
-          <!-- Threat Score -->
-          <div 
-            class="threat-score-badge"
-            :style="{ 
-              backgroundColor: getThreatScoreColor(host.threat_score),
-              color: getTextColorForBackground(host.threat_score)
-            }"
-          >
-            {{ host.threat_score }}
+          <!-- Icon Container with fixed width for alignment -->
+          <div class="icon-container">
+            <!-- SVG Icon with dynamic color matching threat score -->
+            <InlineSvg 
+              :name="host.icon || 'DEFAULT'" 
+              :color="getThreatScoreColor(host.threat_score)"
+              :size="24"
+            />
           </div>
           
-          <!-- Host Info -->
-          <div class="host-info ml-2">
+          <!-- Host Info with consistent left margin -->
+          <div class="host-info">
             {{ host.local_description || host.ip_address }}
           </div>
           
-          <AlertBars :alert-intervals="getAlertIntervals(host.ip_address)" class="ml-auto" />
+          <AlertBars :alert-intervals="getAlertIntervals(host.ip_address)" class="ml-auto mr-2" />
+          
+          <!-- Threat Score (moved after alert bar) -->
+          <div 
+            class="threat-score-text"
+            :style="{ color: getThreatScoreColor(host.threat_score) }"
+          >
+            {{ host.threat_score }}
+          </div>
         </div>
       </v-list-item>
     </v-list>
@@ -174,8 +173,8 @@ const filteredHosts = computed(() => {
 }
 
 .host-icon {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   opacity: 1;
   filter: brightness(0) invert(1); /* Makes the SVG white */
 }
@@ -198,6 +197,16 @@ const filteredHosts = computed(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-left: 0; /* Remove any padding */
+  margin-left: 0; /* Remove any margin */
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Fixed width to ensure alignment */
+  min-width: 40px; /* Prevent shrinking */
 }
 
 .search-container {
@@ -218,6 +227,14 @@ const filteredHosts = computed(() => {
 
 .search-field :deep(.v-field__outline) {
   opacity: 0.3;
+}
+
+.threat-score-text {
+  font-size: 14px;
+  font-weight: bold;
+  width: 30px; /* Fixed width for 3 digits */
+  min-width: 30px; /* Prevent shrinking */
+  text-align: right; /* Right align the text */
 }
 
 /* Subtle custom scrollbar */
