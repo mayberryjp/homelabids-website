@@ -3,11 +3,7 @@
     <v-row no-gutters>
       <!-- Left side tabs -->
       <v-col cols="12" sm="2">
-        <v-tabs
-          v-model="activeTab"
-          direction="vertical"
-          color="primary"
-        >
+        <v-tabs v-model="activeTab" direction="vertical" color="primary">
           <v-tab value="general">General</v-tab>
           <v-tab value="notifications">Notifications</v-tab>
           <v-tab value="security">Security</v-tab>
@@ -24,21 +20,21 @@
             <v-window-item value="general">
               <h3>General Settings</h3>
               <v-divider class="my-4"></v-divider>
-              
+
               <v-form>
                 <v-text-field
                   label="Display Name"
                   variant="outlined"
                   density="comfortable"
                 ></v-text-field>
-                
+
                 <v-select
                   label="Time Zone"
                   :items="['UTC', 'UTC-5 (EST)', 'UTC+1 (CET)', 'UTC+9 (JST)']"
                   variant="outlined"
                   density="comfortable"
                 ></v-select>
-                
+
                 <v-switch
                   label="Dark Mode"
                   color="primary"
@@ -52,14 +48,14 @@
             <v-window-item value="notifications">
               <h3>Notifications</h3>
               <v-divider class="my-4"></v-divider>
-              
+
               <v-switch
                 label="Email Notifications"
                 color="primary"
                 hide-details
                 class="mb-4"
               ></v-switch>
-              
+
               <v-switch
                 label="Push Notifications"
                 color="primary"
@@ -72,9 +68,9 @@
             <v-window-item value="security">
               <h3>Security</h3>
               <v-divider class="my-4"></v-divider>
-              
+
               <v-btn color="primary" class="mb-4">Change Password</v-btn>
-              
+
               <div class="mt-4">
                 <h4 class="text-subtitle-1">Two-Factor Authentication</h4>
                 <v-switch
@@ -89,7 +85,7 @@
             <v-window-item value="api">
               <h3>API Keys</h3>
               <v-divider class="my-4"></v-divider>
-              
+
               <v-text-field
                 label="API Key"
                 variant="outlined"
@@ -97,7 +93,7 @@
                 append-inner-icon="mdi-content-copy"
                 density="comfortable"
               ></v-text-field>
-              
+
               <v-btn color="primary" class="mt-2">Generate New Key</v-btn>
             </v-window-item>
 
@@ -105,8 +101,8 @@
             <v-window-item value="advanced">
               <h3>Advanced Settings</h3>
               <v-divider class="my-4"></v-divider>
-              
-              <v-btn color="#a0364d" class="mt-2">Reset Application</v-btn>
+
+              <advanced-settings></advanced-settings>
             </v-window-item>
           </v-window>
         </v-card-text>
@@ -116,9 +112,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
+import AdvancedSettings from "@/components/settings/AdvancedSettings.vue";
 
-const activeTab = ref('general');
+const activeTab = ref("general");
 </script>
 
 <style scoped>

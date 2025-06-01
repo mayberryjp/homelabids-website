@@ -100,3 +100,23 @@ export const updateAlertsEnabled = async (
     throw error;
   }
 };
+
+export const deleteAllAlerts = async () => {
+  try {
+    const response = await api.delete(`/alerts/all`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting all alerts`, error);
+    throw error;
+  }
+};
+
+export const forceThreatCollection = async () => {
+  try {
+    const response = await api.post(`/threatscore`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error forcing threat collection`, error);
+    throw error;
+  }
+};
