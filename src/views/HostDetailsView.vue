@@ -82,7 +82,7 @@
               >Network Traffic Statistics</v-card-title
             >
             <v-card-subtitle class="text-grey"
-              >Displaying total bytes and packets over time</v-card-subtitle
+              >Displaying alerts, total bytes and packets over time</v-card-subtitle
             >
             <HostAlertsChart :traffic-stats="trafficStats" />
           </div>
@@ -101,7 +101,7 @@
           <RecentAlerts
             v-else
             :alerts="recentHostAlerts"
-            title="Host Alerts"
+            :title="`Host Alerts ${recentHostAlerts.length ? `(${recentHostAlerts.length} Entries)` : ''}`"  
             :items-per-page="10"
             :showRefreshButton="true"
             :loading="recentAlertsLoading"
@@ -125,7 +125,7 @@
           <IgnoreList
             v-else
             :ignore-list-items="ignoreListItems"
-            title="Host Ignore List"
+            :title="`Host Allow List ${ignoreListItems.length ? `(${ignoreListItems.length} Entries)` : ''}`"
             :items-per-page="10"
             :showRefreshButton="true"
             :loading="ignoreListLoading"
