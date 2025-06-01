@@ -69,6 +69,16 @@ export const getDeviceCategories = async () => {
   }
 };
 
+export const autoClassifyDevice = async (ip_address: string) => {
+  try {
+    const response = await api.get(`classify/${ip_address}`);
+    return response;
+  } catch (error) {
+    console.error("Error auto-classifying device:", error);
+    throw error;
+  }
+};
+
 export const getLocalhostIgnoreList = async (ip_address: string) => {
   try {
     const response = await api.get(`ignorelist/ip/${ip_address}`);

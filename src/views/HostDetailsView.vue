@@ -280,8 +280,8 @@ const updateData = async (ip_address: string) => {
   }
 };
 
-const handleHostSaved = (updatedHost: Localhost) => {
-  localHostDetail.value = updatedHost;
+const handleHostSaved = async () => {
+  await fetchLocalhostDetail(ip_address.value);
 };
 
 const enterEditMode = () => {

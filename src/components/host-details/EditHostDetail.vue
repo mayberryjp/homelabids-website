@@ -20,11 +20,12 @@
             label="Device Category"
             variant="outlined"
             density="comfortable"
-            class="mb-6"
+            class="mb-2"
             :loading="categoriesLoading"
             :disabled="categoriesLoading"
             clearable
             prepend-inner-icon="mdi-devices"
+            hide-details
           >
             <template #no-data>
               <v-list-item>
@@ -38,6 +39,46 @@
               </v-list-item>
             </template>
           </v-select>
+
+          <!-- Auto Classification Button -->
+          <div class="mb-6">
+            <v-btn
+              variant="outlined"
+              size="small"
+              color="info"
+              :loading="classifying"
+              :disabled="!props.hostDetail || classifying"
+              @click="attemptAutoClassify"
+              class="mb-2"
+              prepend-icon="mdi-auto-fix"
+            >
+              Attempt To Auto Classify Device
+            </v-btn>
+
+            <div
+              v-if="classificationOptions.length > 0"
+              class="mt-1 text-caption text-grey"
+            >
+              <div><strong>Possible device types:</strong></div>
+              <v-chip-group>
+                <v-chip
+                  v-for="(option, index) in classificationOptions"
+                  :key="index"
+                  size="x-small"
+                  variant="outlined"
+                  color="primary"
+                  @click="selectClassification(option)"
+                  class="chip-hover"
+                  :class="{
+                    'selected-chip': formData.category === option.value,
+                  }"
+                  elevation="0"
+                >
+                  {{ option.name }}
+                </v-chip>
+              </v-chip-group>
+            </div>
+          </div>
 
           <!-- Friendly Name -->
           <v-text-field
@@ -133,8 +174,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import type { Localhost } from "@/types/localhosts";
-import { updateHost, getDeviceCategories } from "@/services/hosts";
-import { isValidUrl, openUrlSafely, createUrlValidationRule } from "@/utils/general";
+import {
+  updateHost,
+  getDeviceCategories,
+  autoClassifyDevice,
+} from "@/services/hosts";
+import {
+  isValidUrl,
+  openUrlSafely,
+  createUrlValidationRule,
+} from "@/utils/general";
 
 // Props
 const props = defineProps<{
@@ -144,6 +193,7 @@ const props = defineProps<{
 // Emits
 const emit = defineEmits<{
   close: [];
+  saved: [];
 }>();
 
 // Reactive data
@@ -152,6 +202,8 @@ const saving = ref(false);
 const categoriesLoading = ref(false);
 const categoriesError = ref(false);
 const deviceCategories = ref<Array<{ name: string; value: string }>>([]);
+const classifying = ref(false);
+const classificationOptions = ref<Array<{ name: string; value: string }>>([]);
 
 const formData = ref({
   category: "",
@@ -183,7 +235,10 @@ const hasChanges = computed(() => {
 const urlValidationRule = createUrlValidationRule(false, true);
 
 const openManagementLink = () => {
-  if (formData.value.managementLink && isValidUrl(formData.value.managementLink)) {
+  if (
+    formData.value.managementLink &&
+    isValidUrl(formData.value.managementLink)
+  ) {
     openUrlSafely(formData.value.managementLink);
   }
 };
@@ -198,9 +253,9 @@ const loadDeviceCategories = async () => {
     // Transform the API response to the expected format and sort alphabetically
     if (Array.isArray(data)) {
       deviceCategories.value = data
-        .map((category: any) => ({
-          name: category.name || category.label || category,
-          value: category.value || category.id || category,
+        .map((category: string) => ({
+          name: category,
+          value: category,
         }))
         .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically by name
     }
@@ -210,6 +265,41 @@ const loadDeviceCategories = async () => {
   } finally {
     categoriesLoading.value = false;
   }
+};
+
+const attemptAutoClassify = async () => {
+  if (!props.hostDetail) return;
+
+  classifying.value = true;
+  classificationOptions.value = [];
+
+  try {
+    const { data } = await autoClassifyDevice(props.hostDetail.ip_address);
+
+    if (data && data.best_match && Array.isArray(data.best_match)) {
+      classificationOptions.value = data.best_match.map((category: string) => ({
+        name: category,
+        value: category,
+      }));
+
+      if (classificationOptions.value.length > 0) {
+        formData.value.category = classificationOptions.value[0].value;
+      }
+    }
+  } catch (error) {
+    console.error("Error auto-classifying device:", error);
+    snackbar.value = {
+      show: true,
+      text: "Failed to auto-classify device. Please try again.",
+      color: "error",
+    };
+  } finally {
+    classifying.value = false;
+  }
+};
+
+const selectClassification = (option: { name: string; value: string }) => {
+  formData.value.category = option.value;
 };
 
 const initializeForm = () => {
@@ -238,45 +328,27 @@ const saveHost = async () => {
   saving.value = true;
 
   try {
-    const updateData: any = {};
+    const updateData = {
+      local_description: formData.value.friendlyName,
+      management_link: formData.value.managementLink,
+      icon: formData.value.category,
+    };
 
-    // Map form fields to API fields
-    if (formData.value.friendlyName !== originalData.value.friendlyName) {
-      updateData.local_description = formData.value.friendlyName;
-    }
+    await updateHost(props.hostDetail.ip_address, updateData);
 
-    if (formData.value.managementLink !== originalData.value.managementLink) {
-      updateData.management_link = formData.value.managementLink;
-    }
+    originalData.value = { ...formData.value };
 
-    if (formData.value.category !== originalData.value.category) {
-      updateData.icon = formData.value.category; // Map category to icon field for now
-    }
+    emit("saved");
 
-    // Only send the request if there are actual changes
-    if (Object.keys(updateData).length > 0) {
-      await updateHost(props.hostDetail.ip_address, updateData);
+    snackbar.value = {
+      show: true,
+      text: "Host details updated successfully",
+      color: "success",
+    };
 
-      // Update the original data to reflect the saved state
-      originalData.value = { ...formData.value };
-
-      snackbar.value = {
-        show: true,
-        text: "Host details updated successfully",
-        color: "success",
-      };
-
-      // Close the edit form after a short delay
-      setTimeout(() => {
-        emit("close");
-      }, 1000);
-    } else {
-      snackbar.value = {
-        show: true,
-        text: "No changes to save",
-        color: "warning",
-      };
-    }
+    setTimeout(() => {
+      emit("close");
+    }, 1000);
   } catch (error) {
     console.error("Error saving host details:", error);
     snackbar.value = {
@@ -298,3 +370,19 @@ onMounted(() => {
   initializeForm();
 });
 </script>
+
+<style scoped>
+.chip-hover {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.chip-hover:hover {
+  transform: translateY(-2px);
+}
+
+.selected-chip {
+  background-color: rgba(var(--v-theme-primary), 0.15);
+  font-weight: bold;
+}
+</style>
