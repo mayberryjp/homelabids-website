@@ -54,7 +54,7 @@ import AppProfileMenu from '@/components/layout/AppProfileMenu.vue';
 
 const menuItems = ref([
   {
-    title: "Status Pages",
+    title: "Data Explorer",
     icon: "mdi-page-layout-header",
     routeName: "explore",
   },

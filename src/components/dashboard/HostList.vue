@@ -11,6 +11,7 @@
         hide-details
         class="search-field"
         clearable
+        @click:clear="searchTerm = ''"
       ></v-text-field>
     </div>
     
