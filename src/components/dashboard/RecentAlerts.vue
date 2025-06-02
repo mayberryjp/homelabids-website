@@ -61,7 +61,7 @@
             </v-list-item>
             <v-list-item @click="whitelistAsLocalServerExposed(item)">
               <v-list-item-title
-                >Allowlist As Local Server Exposed To Internet</v-list-item-title
+                >Allowlist As Local Server Port Exposed To Internet</v-list-item-title
               >
             </v-list-item>
           </v-list>
@@ -232,6 +232,7 @@ const props = defineProps<{
 
 // Define emits for the component
 const emit = defineEmits<{
+  (e: "actionComplete"): void;
   (e: "refresh"): void;
 }>();
 
@@ -343,6 +344,7 @@ const acknowledgeAlert = async (alert: Alert) => {
     };
 
     // Refresh the data
+    emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error toggling alert acknowledgement:", error);
@@ -371,6 +373,7 @@ const deleteAlert = async (alert: Alert) => {
     };
 
     // Refresh the data
+
     emit("refresh");
   } catch (error) {
     console.error("Error deleting alert:", error);
@@ -408,6 +411,7 @@ const whitelistExactFlow = async (alert: Alert) => {
     };
 
     // Refresh the data
+    emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error adding to whitelist:", error);
@@ -445,6 +449,7 @@ const whitelistSourceToPort = async (alert: Alert) => {
     };
 
     // Refresh the data
+    emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error adding to ignorelist:", error);
@@ -482,6 +487,7 @@ const whitelistSourceToDestination = async (alert: Alert) => {
     };
 
     // Refresh the data
+    emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error adding to whitelist:", error);
@@ -504,9 +510,9 @@ const whitelistAsLocalServerExposed = async (alert: Alert) => {
 
     const payload: WhitelistPayload = {
       ignorelist_id: `IgnoreList_${alert.id}_LocalServerExposed`,
-      src_ip: "*",
-      dst_ip: flowData.dst_ip,
-      dst_port: flowData.dst_port,
+      src_ip: flowData.src_ip,
+      dst_ip: "*",
+      dst_port: flowData.src_port,
       protocol: flowData.protocol,
     };
 
@@ -519,7 +525,9 @@ const whitelistAsLocalServerExposed = async (alert: Alert) => {
     };
 
     // Refresh the data
+    emit("actionComplete");
     emit("refresh");
+
   } catch (error) {
     console.error("Error adding to allowlist:", error);
     snackbar.value = {

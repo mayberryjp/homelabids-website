@@ -10,44 +10,96 @@
               <!-- Host Title -->
               <div class="d-flex align-center">
                 <!-- Device Icon - Now on the left -->
-                <div class="device-icon-container me-4 position-relative">
-                  <InlineSvg
-                    :name="localHostDetail?.icon || 'DEFAULT'"
-                    :color="getThreatScoreColor(localHostDetail?.threat_score || 0)"
-                    :size="120"
-                    class="icon-with-background"
-                  />
-                  
-                  <!-- Threat Score Banner Overlay -->
-                  <div 
-                    class="threat-score-banner"
-                    :style="{ backgroundColor: getThreatScoreColor(localHostDetail?.threat_score || 0) }"
-                  >
-                    <span>{{ localHostDetail?.threat_score || 0 }}</span>
-                  </div>
-                </div>
-
-                <!-- Host Info - Now on the right of the icon -->
-                <div class="host-title">
-                  <h2 class="text-h4 text-grey custom-heading">
-                    {{ localHostDetail.local_description || "Unnamed" }}
-                    <span v-if="localHostDetail?.icon" class="icon-label ml-2">
-                      ({{ localHostDetail.icon }})
-                    </span>
-                  </h2>
-                  <div class="text-subtitle-1 text-green">
-                    IP Address: {{ ip_address }}
-                  </div>
-                  
-                  <!-- Alert Bars - Now under the host info -->
-                  <div v-if="alertDetail" class="mt-2">
-                    <AlertBars
-                      :alert-intervals="alertDetail.alert_intervals"
-                      :height="26"
-                      :width="7"
+                <a 
+                  v-if="localHostDetail?.management_link"
+                  :href="localHostDetail.management_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="device-management-link"
+                >
+                  <!-- Device Icon -->
+                  <div class="device-icon-container me-4 position-relative">
+                    <InlineSvg
+                      :name="localHostDetail?.icon || 'DEFAULT'"
+                      :color="getThreatScoreColor(localHostDetail?.threat_score || 0)"
+                      :size="120"
+                      class="icon-with-background"
                     />
+                    
+                    <!-- Threat Score Banner Overlay -->
+                    <div 
+                      class="threat-score-banner"
+                      :style="{ backgroundColor: getThreatScoreColor(localHostDetail?.threat_score || 0) }"
+                    >
+                      <span>{{ localHostDetail?.threat_score || 0 }}</span>
+                    </div>
                   </div>
-                </div>
+
+                  <!-- Host Info -->
+                  <div class="host-title">
+                    <h2 class="text-h4 text-grey custom-heading">
+                      {{ localHostDetail.local_description || "Unnamed" }}
+                      <span v-if="localHostDetail?.icon" class="icon-label ml-2">
+                        ({{ localHostDetail.icon }})
+                      </span>
+                      <v-icon size="small" color="primary" class="ml-2">mdi-open-in-new</v-icon>
+                    </h2>
+                    <div class="text-subtitle-1 text-green">
+                      IP Address: {{ ip_address }}
+                    </div>
+                    <!-- Alert Bars - Now under the host info -->
+                    <div v-if="alertDetail" class="mt-2">
+                      <AlertBars
+                        :alert-intervals="alertDetail.alert_intervals"
+                        :height="26"
+                        :width="7"
+                      />
+                    </div>
+                  </div>
+                </a>
+
+                <!-- Fall back to non-link version if no management_link -->
+                <template v-else>
+                  <!-- Original device icon and info without the link -->
+                  <div class="device-icon-container me-4 position-relative">
+                    <InlineSvg
+                      :name="localHostDetail?.icon || 'DEFAULT'"
+                      :color="getThreatScoreColor(localHostDetail?.threat_score || 0)"
+                      :size="120"
+                      class="icon-with-background"
+                    />
+                    
+                    <!-- Threat Score Banner Overlay -->
+                    <div 
+                      class="threat-score-banner"
+                      :style="{ backgroundColor: getThreatScoreColor(localHostDetail?.threat_score || 0) }"
+                    >
+                      <span>{{ localHostDetail?.threat_score || 0 }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Host Info - Now on the right of the icon -->
+                  <div class="host-title">
+                    <h2 class="text-h4 text-grey custom-heading">
+                      {{ localHostDetail.local_description || "Unnamed" }}
+                      <span v-if="localHostDetail?.icon" class="icon-label ml-2">
+                        ({{ localHostDetail.icon }})
+                      </span>
+                    </h2>
+                    <div class="text-subtitle-1 text-green">
+                      IP Address: {{ ip_address }}
+                    </div>
+                    
+                    <!-- Alert Bars - Now under the host info -->
+                    <div v-if="alertDetail" class="mt-2">
+                      <AlertBars
+                        :alert-intervals="alertDetail.alert_intervals"
+                        :height="26"
+                        :width="7"
+                      />
+                    </div>
+                  </div>
+                </template>
               </div>
             </div>
             <HostActions
@@ -55,6 +107,7 @@
               class="mb-4"
               :alerts_enabled="localHostDetail?.alerts_enabled"
               @edit="enterEditMode"
+              @actionComplete="handleActionComplete"
             />
           </v-card-text>
           <v-card-text v-else>
@@ -106,6 +159,7 @@
             :showRefreshButton="true"
             :loading="recentAlertsLoading"
             @refresh="fetchRecentHostAlerts(ip_address)"
+            @actionComplete="handleActionComplete"
           />
           <v-card-text
             v-if="!recentAlertsLoading && !recentHostAlerts.length"
@@ -281,6 +335,7 @@ const updateData = async (ip_address: string) => {
 };
 
 const handleHostSaved = async () => {
+  // Re-fetch the latest host details from the backend
   await fetchLocalhostDetail(ip_address.value);
 };
 
@@ -334,6 +389,13 @@ const getThreatScoreColor = (score: number): string => {
   if (score > 0 && score <= 25) return '#FFD600';  // Yellow for low threats
   if (score > 25 && score <= 50) return '#FF9800';  // Orange for medium threats
   return '#F44336';  // Red for high threats
+};
+
+const handleActionComplete = (actionType?: string) => {
+  // Refresh both lists when any action completes
+  console.log(`Action completed: ${actionType}`);
+  fetchRecentHostAlerts(ip_address.value);
+  fetchIgnoreList(ip_address.value);
 };
 </script>
 
@@ -447,5 +509,23 @@ const getThreatScoreColor = (score: number): string => {
 /* Add this to ensure white text on light backgrounds */
 .threat-score-banner span {
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.device-management-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  padding: 8px;
+  margin: -8px;
+}
+
+.device-management-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.device-management-link:hover .custom-heading {
+  color: #4db6ac !important;
 }
 </style>
