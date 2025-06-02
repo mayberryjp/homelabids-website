@@ -9,6 +9,7 @@
           <v-tab value="security">Security</v-tab>
           <v-tab value="api">API Keys</v-tab>
           <v-tab value="advanced">Advanced</v-tab>
+          <v-tab value="configurations">Configurations</v-tab>
         </v-tabs>
       </v-col>
 
@@ -104,6 +105,13 @@
 
               <advanced-settings></advanced-settings>
             </v-window-item>
+
+            <!-- Configurations Settings -->
+            <v-window-item value="configurations">
+              <h3>Configurations</h3>
+              <v-divider class="my-4"></v-divider>
+              <configurations />
+            </v-window-item>
           </v-window>
         </v-card-text>
       </v-col>
@@ -114,6 +122,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import AdvancedSettings from "@/components/settings/AdvancedSettings.vue";
+import Configurations from "@/components/settings/Configurations.vue";
 
 const activeTab = ref("general");
 </script>
