@@ -1,5 +1,15 @@
 <template>
   <v-sheet rounded="lg" height="100%" color="#0d1117" class="host-list custom-scrollbar">
+    <!-- Site Risk Header -->
+    <div class="site-risk-header pa-6">
+      <div class="site-risk-header-content">
+        <span class="site-risk-label">SITE RISK: </span>
+
+        <span class="site-risk-desc" :style="{ color: getThreatScoreColor(siteRiskScore) }">
+          {{ siteRiskLevel }} ({{ siteRiskScore }})
+        </span>
+      </div>
+    </div>
     <!-- Search Filter -->
     <div class="search-container pa-3">
       <v-text-field
@@ -149,6 +159,23 @@ const filteredHosts = computed(() => {
     return false;
   });
 });
+
+// Compute the average threat score for all hosts
+const siteRiskScore = computed(() => {
+  if (!hosts.localhosts.length) return 0;
+  const sum = hosts.localhosts.reduce((acc, h) => acc + (h.threat_score || 0), 0);
+  return Math.round(sum / hosts.localhosts.length);
+});
+
+// Compute a risk level label based on the average threat score
+const siteRiskLevel = computed(() => {
+  const score = siteRiskScore.value;
+  if (score === 0) return "SAFE";
+  if (score > 0 && score <= 24) return "LOW";
+  if (score > 24 && score <= 50) return "MEDIUM";
+  if (score > 50 && score <= 75) return "HIGH";
+  return "CRITICAL";
+});
 </script>
 
 <style scoped>
@@ -272,4 +299,36 @@ const filteredHosts = computed(() => {
   -ms-overflow-style: none;
 }
 */
+
+.site-risk-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #161b22;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+  justify-content: center;
+}
+
+.site-risk-label {
+  font-size: 28px;
+  font-weight: 700;
+  color: #b1b8c0;
+  letter-spacing: 1px;
+  margin-right: 8px;
+}
+
+.site-risk-score {
+  font-size: 28px;
+  font-weight: 900;
+  margin-right: 12px;
+}
+
+.site-risk-desc {
+  font-size: 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
 </style>
