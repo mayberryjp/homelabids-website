@@ -29,6 +29,16 @@
         <v-icon icon="mdi-delete" class="mr-2"></v-icon>
         Delete Host
       </v-btn>
+      <v-btn
+        color="primary"
+        :href="exportClientUrl"
+        target="_new"
+        density="comfortable"
+        class="text-body-2"
+      >
+        <v-icon icon="mdi-download" class="mr-2"></v-icon>
+        Export Client
+      </v-btn>
     </v-btn-group>
 
     <v-dialog v-model="deleteDialog" max-width="500px">
@@ -98,6 +108,8 @@ const snackbar = ref({
 });
 
 const alertsEnabled = computed(() => props.alerts_enabled === 1);
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+const exportClientUrl = computed(() => `${apiBaseUrl}/api/client/${props.ipAddress}`);
 
 const emit = defineEmits<{
   edit: [];

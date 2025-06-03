@@ -57,7 +57,7 @@
             <v-list-item-title class="full-text">{{ action.action_text }}</v-list-item-title>
             
             <v-list-item-subtitle class="text-caption">
-              {{ formatRelativeTime(action.insert_date) }}
+              {{ action.insert_date }}
             </v-list-item-subtitle>
           </v-list-item>
         </v-list>
