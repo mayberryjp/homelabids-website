@@ -37,7 +37,7 @@
         class="text-body-2"
       >
         <v-icon icon="mdi-download" class="mr-2"></v-icon>
-        Export Client
+        Export Host
       </v-btn>
     </v-btn-group>
 
