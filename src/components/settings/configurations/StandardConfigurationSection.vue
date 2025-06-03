@@ -1,5 +1,5 @@
 <template>
-  <BaseConfigurationSection :category="category" :settings="settings">
+  <BaseConfigurationSection :category="category" :settings="settings" :standalone="standalone">
     <template #table-headers>
       <th class="text-left" style="width: 60%">Value</th>
     </template>
@@ -59,6 +59,7 @@ interface Props {
   category: string;
   settings: ConfigurationSetting[];
   updatingConfigs?: Record<string, boolean>;
+  standalone?: boolean;
 }
 
 const props = defineProps<Props>();
