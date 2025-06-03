@@ -3,6 +3,7 @@
     :category="'Processes'"
     :settings="settings"
     :updating-configs="updatingConfigs"
+    :standalone="standalone"
     @updateConfigurationValue="$emit('updateConfigurationValue', $event)"
   />
 </template>
@@ -14,6 +15,7 @@ import type { ConfigurationSetting } from "@/types/configurations";
 interface Props {
   settings: ConfigurationSetting[];
   updatingConfigs?: Record<string, boolean>;
+  standalone?: boolean;
 }
 
 defineProps<Props>();

@@ -1,27 +1,48 @@
 <template>
-  <v-expansion-panel :value="category" color="background-100">
-    <v-expansion-panel-title>
-      <h3>{{ category }}</h3>
-    </v-expansion-panel-title>
-    <v-expansion-panel-text>
-      <v-table>
-        <thead>
-          <tr>
-            <th class="text-left" style="width: 40%">Setting</th>
-            <slot name="table-headers"></slot>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="setting in settings" :key="setting.key">
-            <td>
-              <div class="font-weight-medium">{{ setting.displayName }}</div>
-            </td>
-            <slot name="setting-row" :setting="setting"></slot>
-          </tr>
-        </tbody>
-      </v-table>
-    </v-expansion-panel-text>
-  </v-expansion-panel>
+  <div>
+    <!-- Use v-expansion-panel when not in standalone mode -->
+    <v-expansion-panel v-if="!standalone" :value="category" color="background-100">
+      <v-expansion-panel-title>
+        <h3>{{ category }}</h3>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-table>
+          <thead>
+            <tr>
+              <th class="text-left" style="width: 40%">Setting</th>
+              <slot name="table-headers"></slot>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="setting in settings" :key="setting.key">
+              <td>
+                <div class="font-weight-medium">{{ setting.displayName }}</div>
+              </td>
+              <slot name="setting-row" :setting="setting"></slot>
+            </tr>
+          </tbody>
+        </v-table>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+
+    <!-- Just use the table directly when in standalone mode -->
+    <v-table v-else>
+      <thead>
+        <tr>
+          <th class="text-left" style="width: 40%">Setting</th>
+          <slot name="table-headers"></slot>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="setting in settings" :key="setting.key">
+          <td>
+            <div class="font-weight-medium">{{ setting.displayName }}</div>
+          </td>
+          <slot name="setting-row" :setting="setting"></slot>
+        </tr>
+      </tbody>
+    </v-table>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,20 +51,13 @@ import type { ConfigurationSetting } from "@/types/configurations";
 interface Props {
   category: string;
   settings: ConfigurationSetting[];
+  standalone?: boolean;
 }
 
 defineProps<Props>();
 </script>
 
 <style scoped>
-.v-expansion-panel {
-  /* background-color: #0d1117 !important; */
-}
-
-.v-expansion-panel-title {
-  /* background-color: #0d1117 !important; */
-}
-
 .v-expansion-panel-text {
   background-color: #0d1117 !important;
   padding: 0px;

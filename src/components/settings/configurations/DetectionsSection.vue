@@ -2,6 +2,7 @@
   <BaseConfigurationSection 
     :category="category" 
     :settings="settings"
+    :standalone="standalone"
   >
     <template #table-headers>
       <th class="text-center" style="width: 20%">Alert</th>
@@ -52,6 +53,7 @@ interface Props {
   category: string;
   settings: ConfigurationSetting[];
   updatingConfigs?: Record<string, boolean>;
+  standalone?: boolean;
 }
 
 const props = defineProps<Props>();
