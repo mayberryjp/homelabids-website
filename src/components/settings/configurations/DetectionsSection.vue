@@ -5,12 +5,20 @@
     :standalone="standalone"
   >
     <template #table-headers>
+      <th class="text-left" style="width: 40%">Description</th>
       <th class="text-center" style="width: 20%">Alert</th>
       <th class="text-center" style="width: 20%">Notify</th>
-      <th class="text-center" style="width: 20%">Re-Notify</th>
+      <th class="text-center" style="width: 20%">ReNotify</th>
     </template>
     
     <template #setting-row="{ setting }">
+      <td>
+        <div class="setting-meta">
+          <div class="setting-details">{{ setting.details }}</div>
+          <div class="setting-default">Default: <span>{{ setting.default }}</span></div>
+          <div class="setting-suggested">Suggested: <span>{{ setting.suggested }}</span></div>
+        </div>
+      </td>
       <td class="text-center">
         <v-checkbox
           v-model="setting.alert"
@@ -96,3 +104,22 @@ const updateDetectionValue = (setting: ConfigurationSetting) => {
   emit('updateDetectionValue', setting);
 };
 </script>
+
+<style scoped>
+.setting-meta {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.setting-details {
+  font-size: 14px;
+  color: #666;
+}
+
+.setting-default,
+.setting-suggested {
+  font-size: 12px;
+  color: #999;
+}
+</style>

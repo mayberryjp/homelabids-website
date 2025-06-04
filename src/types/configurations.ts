@@ -3,6 +3,9 @@ export interface ConfigurationDefinition {
   displayName: string;
   type: "INT" | "Text/String" | "Text/Int" | "Text Input" | "Boolean/Toggle";
   key: string;
+  details?: string;
+  default?: string;
+  suggested?: string;
 }
 
 export interface ConfigurationSetting extends ConfigurationDefinition {

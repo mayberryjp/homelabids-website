@@ -74,16 +74,8 @@ defineProps<Props>();
 }
 
 .v-table td {
-  vertical-align: middle;
+  vertical-align: top; /* Change this to middle, bottom, etc. as needed */
   /* background-color: #0d1117 !important; */
-}
-
-.v-table tbody tr {
-  /* background-color: #0d1117 !important; */
-}
-
-.v-table tbody tr:hover {
-  /* background-color: rgba(255, 255, 255, 0.05) !important; */
 }
 
 h3 {
@@ -93,5 +85,7 @@ h3 {
 
 .font-weight-medium {
   font-weight: 500;
+  vertical-align: top;
+  padding-top: 11px;
 }
 </style>

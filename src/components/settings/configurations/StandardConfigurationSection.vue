@@ -1,12 +1,7 @@
 <template>
   <BaseConfigurationSection :category="category" :settings="settings" :standalone="standalone">
-    <template #table-headers>
-      <th class="text-left" style="width: 60%">Value</th>
-    </template>
-
     <template #setting-row="{ setting }">
-      <td>
-        <!-- Boolean/Toggle settings -->
+      <div class="setting-row-flex">
         <v-switch
           v-if="setting.type === 'Boolean/Toggle'"
           :model-value="getBooleanValue(setting.value)"
@@ -16,8 +11,8 @@
           color="primary"
           :loading="props.updatingConfigs?.[setting.key]"
           :disabled="props.updatingConfigs?.[setting.key]"
+          class="ml-4"
         ></v-switch>
-        <!-- Text/String and Text/Int settings -->
         <v-text-field
           v-else-if="setting.type.includes('Text')"
           v-model="setting.value"
@@ -30,9 +25,8 @@
           hide-details
           density="compact"
           variant="outlined"
+          class="ml-4"
         ></v-text-field>
-
-        <!-- Fallback for other types -->
         <v-text-field
           v-else
           v-model="setting.value"
@@ -44,8 +38,14 @@
           hide-details
           density="compact"
           variant="outlined"
+          class="ml-4"
         ></v-text-field>
-      </td>
+      </div>
+      <div class="setting-meta">
+        <div class="setting-details">{{ setting.details }}</div>
+        <div class="setting-default">Default: <span>{{ setting.default }}</span></div>
+        <div class="setting-suggested">Suggested: <span>{{ setting.suggested }}</span></div>
+      </div>
     </template>
   </BaseConfigurationSection>
 </template>
@@ -105,5 +105,61 @@ const updateConfigurationValue = (setting: ConfigurationSetting) => {
 <style scoped>
 .v-text-field {
   max-width: 300px;
+}
+.setting-name {
+  vertical-align: top !important;
+  padding-top: 8px;
+
+}
+.setting-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #e0e6ed;
+  word-break: break-word;
+  min-width: 180px;
+
+}
+
+
+.setting-row-flex {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 48px;
+  margin-bottom: 2px;
+
+}
+.setting-meta {
+  font-size: 12px;
+  color: #b1b8c0;
+  margin-top: 2px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+
+}
+
+.setting-name-cell {
+  vertical-align: top;
+  padding-top: 11px;
+}
+
+.setting-details {
+  margin-bottom: 2px;
+  margin-left: 20px;
+}
+.setting-default,
+.setting-suggested {
+  color: #8ab4f8;
+  display: inline-block;
+  margin-right: 12px;
+  margin-left: 25px;
+}
+.setting-default span,
+.setting-suggested span {
+  color: #b1b8c0;
+}
+th.align-top,
+td.align-top {
+  vertical-align: top !important;
 }
 </style>
