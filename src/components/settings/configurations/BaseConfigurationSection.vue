@@ -29,7 +29,10 @@
     <v-table v-else>
       <thead>
         <tr>
-          <th class="text-left" style="width: 40%">Setting</th>
+          <th class="text-left" colspan="2">Setting</th>
+          
+        </tr>
+        <tr>
           <slot name="table-headers"></slot>
         </tr>
       </thead>
@@ -83,9 +86,11 @@ h3 {
   font-weight: 500;
 }
 
+
 .font-weight-medium {
   font-weight: 500;
   vertical-align: top;
+  width: 175px; 
   padding-top: 11px;
 }
 </style>

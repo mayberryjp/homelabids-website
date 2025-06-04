@@ -5,49 +5,56 @@
     :standalone="standalone"
   >
     <template #table-headers>
-      <th class="text-left" style="width: 40%">Description</th>
-      <th class="text-center" style="width: 20%">Alert</th>
-      <th class="text-center" style="width: 20%">Notify</th>
-      <th class="text-center" style="width: 20%">ReNotify</th>
+      <td></td>
+      <td>
+      <div class="detection-header-row">
+        <div class="detection-header-cell">Alert</div>
+        <div class="detection-header-cell">Notify</div>
+        <div class="detection-header-cell">ReNotify</div>
+      </div>
+      </td>
     </template>
-    
+
     <template #setting-row="{ setting }">
       <td>
-        <div class="setting-meta">
-          <div class="setting-details">{{ setting.details }}</div>
-          <div class="setting-default">Default: <span>{{ setting.default }}</span></div>
-          <div class="setting-suggested">Suggested: <span>{{ setting.suggested }}</span></div>
+      <div class="detection-setting-row">
+
+        <div class="detection-setting-cell">
+          <v-checkbox
+            v-model="setting.alert"
+            @change="handleAlertChange(setting)"
+            :disabled="props.updatingConfigs?.[setting.key]"
+            hide-details
+            density="compact"
+            class="d-flex justify-center"
+          ></v-checkbox>
         </div>
-      </td>
-      <td class="text-center">
-        <v-checkbox
-          v-model="setting.alert"
-          @change="handleAlertChange(setting)"
-          :disabled="props.updatingConfigs?.[setting.key]"
-          hide-details
-          density="compact"
-          class="d-flex justify-center"
-        ></v-checkbox>
-      </td>
-      <td class="text-center">
-        <v-checkbox
-          v-model="setting.notify"
-          @change="handleNotifyChange(setting)"
-          :disabled="props.updatingConfigs?.[setting.key]"
-          hide-details
-          density="compact"
-          class="d-flex justify-center"
-        ></v-checkbox>
-      </td>
-      <td class="text-center">
-        <v-checkbox
-          v-model="setting.reNotify"
-          @change="handleReNotifyChange(setting)"
-          :disabled="props.updatingConfigs?.[setting.key]"
-          hide-details
-          density="compact"
-          class="d-flex justify-center"
-        ></v-checkbox>
+        <div class="detection-setting-cell">
+          <v-checkbox
+            v-model="setting.notify"
+            @change="handleNotifyChange(setting)"
+            :disabled="props.updatingConfigs?.[setting.key]"
+            hide-details
+            density="compact"
+            class="d-flex justify-center"
+          ></v-checkbox>
+        </div>
+        <div class="detection-setting-cell">
+          <v-checkbox
+            v-model="setting.reNotify"
+            @change="handleReNotifyChange(setting)"
+            :disabled="props.updatingConfigs?.[setting.key]"
+            hide-details
+            density="compact"
+            class="d-flex justify-center"
+          ></v-checkbox>
+        </div>
+      </div>
+      <div class="setting-meta">
+        <div class="setting-details">{{ setting.details }}</div>
+        <div class="setting-default">Default: <span>{{ setting.default }}</span></div>
+        <div class="setting-suggested">Suggested: <span>{{ setting.suggested }}</span></div>
+      </div>
       </td>
     </template>
   </BaseConfigurationSection>
@@ -106,6 +113,37 @@ const updateDetectionValue = (setting: ConfigurationSetting) => {
 </script>
 
 <style scoped>
+.detection-header-row,
+.detection-setting-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+}
+
+.detection-header-cell,
+.detection-setting-cell {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.detection-header-cell {
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+}
+
+.detection-label-cell {
+  text-align: left;
+  font-weight: 500;
+  color: #ccc;
+}
+
+.setting-label {
+  margin-left: 8px;
+}
+
 .setting-meta {
   border-top: 1px solid #e0e0e0;
   padding-top: 8px;

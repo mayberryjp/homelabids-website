@@ -104,7 +104,7 @@ const updateConfigurationValue = (setting: ConfigurationSetting) => {
 
 <style scoped>
 .v-text-field {
-  max-width: 300px;
+  max-width: 100%;
 }
 .setting-name {
   vertical-align: top !important;
@@ -116,7 +116,6 @@ const updateConfigurationValue = (setting: ConfigurationSetting) => {
   font-size: 1rem;
   color: #e0e6ed;
   word-break: break-word;
-  min-width: 180px;
 
 }
 

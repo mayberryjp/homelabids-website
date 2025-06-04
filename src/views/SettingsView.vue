@@ -26,6 +26,24 @@
         <v-card-text>
           <v-window v-model="activeTab">
             <!-- Configuration Tabs -->
+            <!-- Home Network Settings -->
+            <v-window-item value="home-network">
+              <h3>Home Network</h3>
+              <v-divider class="my-4"></v-divider>
+              <home-network-section
+                v-if="groupedConfigurations['Home Network']"
+                :settings="groupedConfigurations['Home Network']"
+                :updating-configs="updatingConfigs"
+                @updateConfigurationValue="updateConfigurationValue"
+                standalone
+              />
+              <v-progress-circular
+                v-else
+                indeterminate
+                color="primary"
+                class="ma-4"
+              ></v-progress-circular>
+            </v-window-item>
 
             <!-- Detections Settings -->
             <v-window-item value="detections">
@@ -66,24 +84,7 @@
               ></v-progress-circular>
             </v-window-item>
 
-            <!-- Home Network Settings -->
-            <v-window-item value="home-network">
-              <h3>Home Network</h3>
-              <v-divider class="my-4"></v-divider>
-              <home-network-section
-                v-if="groupedConfigurations['Home Network']"
-                :settings="groupedConfigurations['Home Network']"
-                :updating-configs="updatingConfigs"
-                @updateConfigurationValue="updateConfigurationValue"
-                standalone
-              />
-              <v-progress-circular
-                v-else
-                indeterminate
-                color="primary"
-                class="ma-4"
-              ></v-progress-circular>
-            </v-window-item>
+
 
             <!-- Notifications Config Settings -->
             <v-window-item value="config-notifications">
@@ -242,7 +243,7 @@ import type {
   ConfigurationApiItem,
 } from "@/types/configurations";
 
-const activeTab = ref("general");
+const activeTab = ref("home-network");
 
 // Reactive data for configurations
 const configurations = ref<ConfigurationResponse>({});
