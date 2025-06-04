@@ -5,12 +5,14 @@
       <v-col cols="12" sm="3">
         <v-tabs v-model="activeTab" direction="vertical" color="primary">
           <!-- Configuration tabs -->
-          <v-tab value="detections">Detections</v-tab>
-          <v-tab value="detection-fine-tuning">Detection Fine Tuning</v-tab>
           <v-tab value="home-network">Home Network</v-tab>
-          <v-tab value="config-notifications">Notifications Config</v-tab>
           <v-tab value="processes">Processes</v-tab>
           <v-tab value="processing">Processing</v-tab>
+          <v-tab value="detections">Detections</v-tab>
+          <v-tab value="detection-fine-tuning">Detection Fine Tuning</v-tab>
+
+          <v-tab value="config-notifications">Notifications Config</v-tab>
+
           <v-tab value="discovery">Discovery</v-tab>
           <v-tab value="filtering">Filtering</v-tab>
           <v-tab value="homelab-ids">HomelabIDS Collaboration</v-tab>
@@ -559,9 +561,9 @@ const configurationDefinitions: ConfigurationDefinition[] = [
   },
   {
     category: "Processing",
-    displayName: "Processing Interval",
+    displayName: "Detection Run Interval",
     type: "Text/Int",
-    key: "ProcessingInterval",
+    key: "ProcessRunInterval",
   },
   {
     category: "Processing",
@@ -685,7 +687,7 @@ const configurationDefinitions: ConfigurationDefinition[] = [
   },
   {
     category: "HomelabIDS Collaboration",
-    displayName: "Send Device Classifications to HomelabIDS API",
+    displayName: "Send Device Classifications to Cloud API",
     type: "Boolean/Toggle",
     key: "SendDeviceClassificationsToHomelabApi",
   },

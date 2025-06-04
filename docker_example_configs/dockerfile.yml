@@ -1,5 +1,5 @@
 # 1. Build stage
-FROM node:18-alpine AS build
+FROM node:22git pull-alpine AS build
 
 # Install git
 RUN apk add --no-cache git
