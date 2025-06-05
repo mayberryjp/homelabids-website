@@ -14,6 +14,8 @@
           <thead>
             <tr>
               <th class="text-left" style="width: 40%">Setting</th>
+            </tr>
+            <tr>
               <slot name="table-headers"></slot>
             </tr>
           </thead>
@@ -34,7 +36,9 @@
       <thead>
         <tr>
           <th class="text-left" colspan="2">Setting</th>
-          <th></th>
+        </tr>
+        <tr>
+          <slot name="table-headers"></slot>
         </tr>
       </thead>
       <tbody>
