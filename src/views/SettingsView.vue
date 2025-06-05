@@ -6,6 +6,7 @@
         <v-tabs v-model="activeTab" direction="vertical" color="primary">
           <!-- Configuration tabs -->
           <v-tab value="home-network">Home Network</v-tab>
+          <v-tab value="other-networks">Other Networks</v-tab>
           <v-tab value="processes">Processes</v-tab>
           <v-tab value="processing">Processing</v-tab>
           <v-tab value="detections">Detections</v-tab>
@@ -44,6 +45,27 @@
                 class="ma-4"
               ></v-progress-circular>
             </v-window-item>
+
+            <!-- Other Networks -->
+
+            <v-window-item value="other-networks">
+              <h3>Other Networks</h3>
+              <v-divider class="my-4"></v-divider>
+              <home-network-section
+                v-if="groupedConfigurations['Other Networks']"
+                :settings="groupedConfigurations['Other Networks']"
+                :updating-configs="updatingConfigs"
+                @updateConfigurationValue="updateConfigurationValue"
+                standalone
+              />
+              <v-progress-circular
+                v-else
+                indeterminate
+                color="primary"
+                class="ma-4"
+              ></v-progress-circular>
+            </v-window-item>
+          
 
             <!-- Detections Settings -->
             <v-window-item value="detections">
@@ -889,6 +911,17 @@ const configurationDefinitions: ConfigurationDefinition[] = [
     default: "Disabled",
     suggested: "Enabled",
   },
+
+  // OTHER NETWORKS
+  {
+    category: "Other Networks",
+    displayName: "Other Networks",
+    type: "Text Input",
+    key: "OtherNetworks",
+    details: "",
+    default: "",
+    suggested: "",
+  }
 ];
 
 // Transform API array to object format

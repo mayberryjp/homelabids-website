@@ -1,7 +1,11 @@
 <template>
   <div>
     <!-- Use v-expansion-panel when not in standalone mode -->
-    <v-expansion-panel v-if="!standalone" :value="category" color="background-100">
+    <v-expansion-panel
+      v-if="!standalone"
+      :value="category"
+      color="background-100"
+    >
       <v-expansion-panel-title>
         <h3>{{ category }}</h3>
       </v-expansion-panel-title>
@@ -30,15 +34,12 @@
       <thead>
         <tr>
           <th class="text-left" colspan="2">Setting</th>
-          
-        </tr>
-        <tr>
-          <slot name="table-headers"></slot>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="setting in settings" :key="setting.key">
-          <td>
+          <td class="setting-name-cell">
             <div class="font-weight-medium">{{ setting.displayName }}</div>
           </td>
           <slot name="setting-row" :setting="setting"></slot>
@@ -86,11 +87,15 @@ h3 {
   font-weight: 500;
 }
 
+.setting-name-cell {
+  width: 175px;
+  min-width: max-content;
+}
 
 .font-weight-medium {
   font-weight: 500;
   vertical-align: top;
-  width: 175px; 
+  width: 175px;
   padding-top: 11px;
 }
 </style>

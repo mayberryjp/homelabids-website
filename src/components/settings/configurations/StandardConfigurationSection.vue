@@ -42,9 +42,9 @@
         ></v-text-field>
       </div>
       <div class="setting-meta">
-        <div class="setting-details">{{ setting.details }}</div>
-        <div class="setting-default">Default: <span>{{ setting.default }}</span></div>
-        <div class="setting-suggested">Suggested: <span>{{ setting.suggested }}</span></div>
+        <div class="setting-details" v-if="setting.details">{{ setting.details }}</div>
+        <div class="setting-default" v-if="setting.default">Default: <span>{{ setting.default }}</span></div>
+        <div class="setting-suggested" v-if="setting.suggested">Suggested: <span>{{ setting.suggested }}</span></div>
       </div>
     </template>
   </BaseConfigurationSection>
@@ -126,7 +126,7 @@ const updateConfigurationValue = (setting: ConfigurationSetting) => {
   gap: 16px;
   min-height: 48px;
   margin-bottom: 2px;
-
+  width: 100%;
 }
 .setting-meta {
   font-size: 12px;
