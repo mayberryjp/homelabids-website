@@ -43,6 +43,7 @@
         />
       </v-col>
     </v-row>
+
   </v-container>
 </template>
 
@@ -52,6 +53,7 @@ import { getExplore, getExploreSearch } from "@/services/explore";
 import ExploreTable from "@/components/explore/ExploreTable.vue";
 import { useDebounce } from "@/utils/debounce";
 import type { ExploreFlow } from "@/types/explore";
+import { useNotificationStore } from "@/stores/notification";
 
 const pageSize = ref(100);
 const currentPage = ref(0);
@@ -60,6 +62,9 @@ const loading = ref(true);
 const tableData = ref<ExploreFlow[]>([]);
 const searchQuery = ref("");
 const isSearchMode = ref(false);
+
+// Initialize notification store
+const notificationStore = useNotificationStore();
 
 const { debounce, isDebouncing } = useDebounce<string>(700);
 
@@ -81,9 +86,11 @@ const loadData = async () => {
     } else {
       tableData.value = [];
       totalItems.value = 0;
+      notificationStore.showError("Failed to load data");
     }
   } catch (error) {
     console.error("Error fetching explore data:", error);
+    notificationStore.showError("Error loading data");
   } finally {
     loading.value = false;
   }
@@ -112,12 +119,17 @@ const searchData = async (query: string) => {
       // or keep the current total if there are no results
       totalItems.value =
         response.data.length > 0 ? Math.max(response.data.length, 100) : 0;
+      if (response.data.length === 0) {
+        notificationStore.showInfo("No results found for your search");
+      }
     } else {
       tableData.value = [];
       totalItems.value = 0;
+      notificationStore.showError("Search failed");
     }
   } catch (error) {
     console.error("Error fetching search results:", error);
+    notificationStore.showError("Error performing search");
   } finally {
     loading.value = false;
   }

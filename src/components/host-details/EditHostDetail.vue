@@ -154,20 +154,6 @@
       </v-col>
     </v-row>
 
-    <!-- Success/Error Snackbar -->
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="4000"
-      location="bottom"
-    >
-      {{ snackbar.text }}
-      <template #actions>
-        <v-btn color="white" variant="text" @click="snackbar.show = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
   </v-card>
 </template>
 
@@ -184,6 +170,7 @@ import {
   openUrlSafely,
   createUrlValidationRule,
 } from "@/utils/general";
+import { useNotificationStore } from "@/stores/notification";
 
 // Props
 const props = defineProps<{
@@ -217,11 +204,7 @@ const originalData = ref({
   managementLink: "",
 });
 
-const snackbar = ref({
-  show: false,
-  text: "",
-  color: "success",
-});
+const notificationStore = useNotificationStore();
 
 // Computed
 const hasChanges = computed(() => {
@@ -288,11 +271,7 @@ const attemptAutoClassify = async () => {
     }
   } catch (error) {
     console.error("Error auto-classifying device:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to auto-classify device. Please try again.",
-      color: "error",
-    };
+    notificationStore.showError("Failed to auto-classify device. Please try again.");
   } finally {
     classifying.value = false;
   }
@@ -340,22 +319,14 @@ const saveHost = async () => {
 
     emit("saved");
 
-    snackbar.value = {
-      show: true,
-      text: "Host details updated successfully",
-      color: "success",
-    };
+    notificationStore.showSuccess("Host details updated successfully");
 
     setTimeout(() => {
       emit("close");
     }, 1000);
   } catch (error) {
     console.error("Error saving host details:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to update host details. Please try again.",
-      color: "error",
-    };
+    notificationStore.showError("Failed to update host details. Please try again.");
   } finally {
     saving.value = false;
   }

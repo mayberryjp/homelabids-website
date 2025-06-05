@@ -107,7 +107,7 @@
               class="mb-4"
               :alerts_enabled="localHostDetail?.alerts_enabled"
               @edit="enterEditMode"
-              @actionComplete="handleActionComplete"
+              @toggleAlert="fetchLocalhostDetail(ip_address)"
             />
           </v-card-text>
           <v-card-text v-else>
@@ -222,6 +222,7 @@ import AlertBars from "@/components/base/AlertBars.vue";
 import AppSkeleton from "@/components/base/AppSkeleton.vue";
 import EditHostDetail from "@/components/host-details/EditHostDetail.vue";
 import InlineSvg from "@/components/base/InlineSvg.vue";
+import { useNotificationStore } from "@/stores/notification";
 
 const route = useRoute();
 const router = useRouter();
@@ -235,6 +236,8 @@ const recentHostAlerts = ref<Alert[]>([]);
 const recentAlertsLoading = ref(true);
 const ignoreListItems = ref<IgnoreListItem[]>([]);
 const ignoreListLoading = ref(false);
+
+const notificationStore = useNotificationStore();
 
 // Utility function to check if edit mode should be active (0 = false, 1 = true)
 const isEditModeActive = (query: any): boolean => {
@@ -251,6 +254,7 @@ const fetchLocalhostDetail = async (ip_address: string) => {
     localHostDetail.value = data;
   } catch (error) {
     console.error("Error fetching localhost details:", error);
+    notificationStore.showError("Error loading host details");
   } finally {
     hostStatsLoading.value = false;
   }
@@ -263,6 +267,7 @@ const fetchAlertDetail = async (ip_address: string) => {
     alertDetail.value = data;
   } catch (error) {
     console.error("Error fetching alert details:", error);
+    notificationStore.showError("Error loading alert details");
   }
 };
 
@@ -274,6 +279,7 @@ const fetchTrafficStats = async (ip_address: string) => {
     trafficStats.value = data;
   } catch (error) {
     console.error("Error fetching traffic stats:", error);
+    notificationStore.showError("Error loading traffic statistics");
   } finally {
     trafficStatsLoading.value = false;
   }
@@ -287,6 +293,7 @@ const fetchRecentHostAlerts = async (ip_address: string) => {
     recentHostAlerts.value = data;
   } catch (error) {
     console.error("Error fetching host alerts:", error);
+    notificationStore.showError("Error loading host alerts");
   } finally {
     recentAlertsLoading.value = false;
   }
@@ -300,6 +307,7 @@ const fetchIgnoreList = async (ip_address: string) => {
     ignoreListItems.value = data;
   } catch (error) {
     console.error("Error fetching ignore list:", error);
+    notificationStore.showError("Error loading allow list items");
   } finally {
     ignoreListLoading.value = false;
   }

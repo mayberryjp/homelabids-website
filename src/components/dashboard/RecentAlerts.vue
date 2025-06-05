@@ -14,15 +14,6 @@
     </v-card-title>
     <v-divider></v-divider>
 
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="3000"
-      location="bottom"
-    >
-      {{ snackbar.text }}
-    </v-snackbar>
-
     <v-data-table
       :headers="headers"
       :items="alerts"
@@ -220,6 +211,7 @@ import {
 } from "@/services/alerts";
 import { formatDate } from "@/utils/date";
 import { getProtocolName } from "@/utils/protocol";
+import { useNotificationStore } from "@/stores/notification";
 
 // Define props for the component
 const props = defineProps<{
@@ -243,12 +235,8 @@ const itemsPerPage = props.itemsPerPage || 50;
 const actionInProgress = ref(false);
 const processingItemId = ref<string | null>(null);
 
-// Snackbar for action feedback
-const snackbar = ref({
-  show: false,
-  text: "",
-  color: "success",
-});
+// Get notification store
+const notificationStore = useNotificationStore();
 
 // Parse flow information
 const parseFlow = (
@@ -305,19 +293,11 @@ Protocol: ${protocol}`;
   navigator.clipboard
     .writeText(text)
     .then(() => {
-      snackbar.value = {
-        show: true,
-        text: "Flow details copied to clipboard",
-        color: "success",
-      };
+      notificationStore.showSuccess("Flow details copied to clipboard");
     })
     .catch((err) => {
       console.error("Failed to copy flow details: ", err);
-      snackbar.value = {
-        show: true,
-        text: "Failed to copy flow details",
-        color: "error",
-      };
+      notificationStore.showError("Failed to copy flow details");
     });
 };
 
@@ -335,24 +315,18 @@ const acknowledgeAlert = async (alert: Alert) => {
     // Update the alert in the local list
     alert.acknowledged = !currentState;
 
-    snackbar.value = {
-      show: true,
-      text: alert.acknowledged
+    notificationStore.showSuccess(
+      alert.acknowledged
         ? "Alert acknowledged successfully"
-        : "Alert unacknowledged successfully",
-      color: "success",
-    };
+        : "Alert unacknowledged successfully"
+    );
 
     // Refresh the data
     emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error toggling alert acknowledgement:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to update alert acknowledgement",
-      color: "error",
-    };
+    notificationStore.showError("Failed to update alert acknowledgement");
   } finally {
     actionInProgress.value = false;
     processingItemId.value = null;
@@ -366,22 +340,13 @@ const deleteAlert = async (alert: Alert) => {
   try {
     await apiDeleteAlert(alert.id);
 
-    snackbar.value = {
-      show: true,
-      text: "Alert deleted successfully",
-      color: "success",
-    };
+    notificationStore.showSuccess("Alert deleted successfully");
 
     // Refresh the data
-
     emit("refresh");
   } catch (error) {
     console.error("Error deleting alert:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to delete alert",
-      color: "error",
-    };
+    notificationStore.showError("Failed to delete alert");
   } finally {
     actionInProgress.value = false;
   }
@@ -404,22 +369,14 @@ const whitelistExactFlow = async (alert: Alert) => {
 
     await addToWhitelist(payload);
 
-    snackbar.value = {
-      show: true,
-      text: "Exact flow added to allowlist",
-      color: "success",
-    };
+    notificationStore.showSuccess("Exact flow added to allowlist");
 
     // Refresh the data
     emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error adding to whitelist:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to add to allowlist",
-      color: "error",
-    };
+    notificationStore.showError("Failed to add to allowlist");
   } finally {
     actionInProgress.value = false;
   }
@@ -442,22 +399,14 @@ const whitelistSourceToPort = async (alert: Alert) => {
 
     await addToWhitelist(payload);
 
-    snackbar.value = {
-      show: true,
-      text: "Source to port added to allowlist",
-      color: "success",
-    };
+    notificationStore.showSuccess("Source to port added to allowlist");
 
     // Refresh the data
     emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error adding to ignorelist:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to add to allowlist",
-      color: "error",
-    };
+    notificationStore.showError("Failed to add to allowlist");
   } finally {
     actionInProgress.value = false;
   }
@@ -480,22 +429,14 @@ const whitelistSourceToDestination = async (alert: Alert) => {
 
     await addToWhitelist(payload);
 
-    snackbar.value = {
-      show: true,
-      text: "Source to destination added to allowlist",
-      color: "success",
-    };
+    notificationStore.showSuccess("Source to destination added to allowlist");
 
     // Refresh the data
     emit("actionComplete");
     emit("refresh");
   } catch (error) {
     console.error("Error adding to whitelist:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to add to allowlist",
-      color: "error",
-    };
+    notificationStore.showError("Failed to add to allowlist");
   } finally {
     actionInProgress.value = false;
   }
@@ -518,11 +459,7 @@ const whitelistAsLocalServerExposed = async (alert: Alert) => {
 
     await addToWhitelist(payload);
 
-    snackbar.value = {
-      show: true,
-      text: "Local server exposed to internet added to allowlist",
-      color: "success",
-    };
+    notificationStore.showSuccess("Local server exposed to internet added to allowlist");
 
     // Refresh the data
     emit("actionComplete");
@@ -530,11 +467,7 @@ const whitelistAsLocalServerExposed = async (alert: Alert) => {
 
   } catch (error) {
     console.error("Error adding to allowlist:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to add to allowlist",
-      color: "error",
-    };
+    notificationStore.showError("Failed to add to allowlist");
   } finally {
     actionInProgress.value = false;
   }
