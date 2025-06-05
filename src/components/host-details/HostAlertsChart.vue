@@ -87,6 +87,9 @@ const chartOptions = computed(() => ({
       easing: "easeinout",
       speed: 800,
     },
+    zoom: {
+      enabled: false, // <--- Add this line to disable zooming
+    },
   },
   colors: ["#B71C1C", "#5CDD8B", "#3498db"],
   fill: {
