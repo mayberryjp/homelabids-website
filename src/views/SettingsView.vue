@@ -234,14 +234,6 @@
       </v-col>
     </v-row>
 
-    <!-- Save notification -->
-    <v-snackbar
-      v-model="showSaveNotification"
-      :color="saveNotificationColor"
-      timeout="3000"
-    >
-      {{ saveNotificationMessage }}
-    </v-snackbar>
   </v-sheet>
 </template>
 
@@ -264,6 +256,7 @@ import type {
   ConfigurationResponse,
   ConfigurationApiItem,
 } from "@/types/configurations";
+import { useNotificationStore } from "@/stores/notification";
 
 const activeTab = ref("home-network");
 
@@ -271,9 +264,9 @@ const activeTab = ref("home-network");
 const configurations = ref<ConfigurationResponse>({});
 const loading = ref(true);
 const updatingConfigs = ref<Record<string, boolean>>({});
-const showSaveNotification = ref(false);
-const saveNotificationMessage = ref("");
-const saveNotificationColor = ref("success");
+
+// Initialize notification store
+const notificationStore = useNotificationStore();
 
 // Configuration definitions based on your specifications
 const configurationDefinitions: ConfigurationDefinition[] = [
@@ -1014,9 +1007,15 @@ const updateConfigurationValue = async (setting: ConfigurationSetting) => {
 
 // Show notification
 const showNotification = (message: string, color: string) => {
-  saveNotificationMessage.value = message;
-  saveNotificationColor.value = color;
-  showSaveNotification.value = true;
+  if (color === 'success') {
+    notificationStore.showSuccess(message);
+  } else if (color === 'error') {
+    notificationStore.showError(message);
+  } else if (color === 'warning') {
+    notificationStore.showWarning(message);
+  } else {
+    notificationStore.showNotification(message, color);
+  }
 };
 
 onMounted(() => {

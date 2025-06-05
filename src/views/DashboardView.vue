@@ -40,6 +40,7 @@ import { ref, onMounted, computed } from "vue";
 import { getQuickStats } from "@/services/stats";
 import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
 import { useHostsStore } from "@/stores/hosts";
+import { useNotificationStore } from "@/stores/notification";
 
 // Stats data from API
 const quickStats = ref({
@@ -52,8 +53,9 @@ const quickStats = ref({
   ignorelist_count: 0,
 });
 
-// Initialize hosts store for alerts data
+// Initialize stores
 const hosts = useHostsStore();
+const notificationStore = useNotificationStore();
 const alertsLoading = ref(false);
 
 // Status stats computed from quickStats
@@ -82,7 +84,6 @@ const statusStats = computed(() => [
     value: quickStats.value.unacknowledged_alerts || 0,
     color: "text-red",
   },
-
 ]);
 
 // Computed property to get recent alerts, sort and limit them
@@ -100,8 +101,12 @@ const refreshAlerts = async () => {
   alertsLoading.value = true;
   try {
     await hosts.fetchRecentAlerts();
+    // Show success notification
+    notificationStore.showSuccess("Alerts refreshed successfully!");
   } catch (error) {
     console.error("Error refreshing alerts:", error);
+    // Show error notification
+    notificationStore.showError("Error refreshing alerts.");
   } finally {
     alertsLoading.value = false;
   }
@@ -113,8 +118,10 @@ const fetchStats = async () => {
     const response = await getQuickStats();
     console.log("Fetched stats:", response.data);
     quickStats.value = response.data;
+    // No success notification for initial load
   } catch (error) {
     console.error("Error fetching stats:", error);
+    notificationStore.showError("Error fetching dashboard stats.");
   }
 };
 

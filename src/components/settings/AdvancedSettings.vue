@@ -77,31 +77,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- Success/Error Snackbar -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="4000">
-      {{ snackbar.text }}
-      <template v-slot:actions>
-        <v-btn variant="text" @click="snackbar.show = false"> Close </v-btn>
-      </template>
-    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import { deleteAllAlerts as deleteAllAlertsService, forceThreatCollection } from "@/services/alerts";
+import { useNotificationStore } from "@/stores/notification";
 
 // State management
 const isDeleteAlertsLoading = ref(false);
 const isRecalculatingScores = ref(false);
 const deleteAlertsDialog = ref(false);
 const recalculateScoresDialog = ref(false);
-const snackbar = ref({
-  show: false,
-  text: "",
-  color: "success",
-});
+const notificationStore = useNotificationStore();
 
 // Delete all alerts
 const confirmDeleteAllAlerts = () => {
@@ -112,18 +101,10 @@ const deleteAllAlerts = async () => {
   isDeleteAlertsLoading.value = true;
   try {
     await deleteAllAlertsService();
-    snackbar.value = {
-      show: true,
-      text: "All alerts have been successfully deleted",
-      color: "success",
-    };
+    notificationStore.showSuccess("All alerts have been successfully deleted");
   } catch (error) {
     console.error("Error deleting alerts:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to delete alerts. Please try again.",
-      color: "error",
-    };
+    notificationStore.showError("Failed to delete alerts. Please try again.");
   } finally {
     isDeleteAlertsLoading.value = false;
     deleteAlertsDialog.value = false;
@@ -139,18 +120,10 @@ const recalculateThreatScores = async () => {
   isRecalculatingScores.value = true;
   try {
     await forceThreatCollection();
-    snackbar.value = {
-      show: true,
-      text: "Threat score recalculation has been initiated",
-      color: "success",
-    };
+    notificationStore.showSuccess("Threat score recalculation has been initiated");
   } catch (error) {
     console.error("Error recalculating threat scores:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to recalculate threat scores. Please try again.",
-      color: "error",
-    };
+    notificationStore.showError("Failed to recalculate threat scores. Please try again.");
   } finally {
     isRecalculatingScores.value = false;
     recalculateScoresDialog.value = false;

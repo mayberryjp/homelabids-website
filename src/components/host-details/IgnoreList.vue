@@ -14,15 +14,6 @@
     </v-card-title>
     <v-divider></v-divider>
 
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="3000"
-      location="bottom"
-    >
-      {{ snackbar.text }}
-    </v-snackbar>
-
     <v-data-table
       :headers="headers"
       :items="ignoreListItems"
@@ -94,6 +85,7 @@ import type { IgnoreListItem } from "@/types/alerts";
 import { deleteIgnoreListItem as apiDeleteIgnoreListItem } from "@/services/hosts";
 import { formatMixedTimestamp } from "@/utils/date";
 import { getProtocolName } from "@/utils/protocol";
+import { useNotificationStore } from "@/stores/notification";
 
 // Define props for the component
 const props = defineProps<{
@@ -115,12 +107,8 @@ const loading = props.loading || false;
 const itemsPerPage = props.itemsPerPage || 50;
 const actionInProgress = ref(false);
 
-// Snackbar for action feedback
-const snackbar = ref({
-  show: false,
-  text: "",
-  color: "success",
-});
+// Get notification store
+const notificationStore = useNotificationStore();
 
 // Table headers
 const headers = [
@@ -149,21 +137,13 @@ const deleteIgnoreListItem = async (item: IgnoreListItem) => {
   try {
     await apiDeleteIgnoreListItem(item.id);
 
-    snackbar.value = {
-      show: true,
-      text: "Allow list item deleted successfully",
-      color: "success",
-    };
+    notificationStore.showSuccess("Allow list item deleted successfully");
 
     // Refresh the data
     emit("refresh");
   } catch (error) {
     console.error("Error deleting allow list item:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to delete allow list item",
-      color: "error",
-    };
+    notificationStore.showError("Failed to delete allow list item");
   } finally {
     actionInProgress.value = false;
   }

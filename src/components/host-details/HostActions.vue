@@ -64,14 +64,6 @@
       </v-card>
     </v-dialog>
 
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="3000"
-      location="bottom"
-    >
-      {{ snackbar.text }}
-    </v-snackbar>
   </div>
 </template>
 
@@ -81,6 +73,7 @@ import { useRouter } from "vue-router";
 import { deleteHost } from "@/services/hosts";
 import { useHostsStore } from "@/stores/hosts";
 import { updateAlertsEnabled } from "@/services/alerts";
+import { useNotificationStore } from "@/stores/notification";
 
 
 const props = defineProps({
@@ -97,15 +90,10 @@ const props = defineProps({
 
 const router = useRouter();
 const hostsStore = useHostsStore();
+const notificationStore = useNotificationStore();
 const deleteDialog = ref(false);
 const isDeleting = ref(false);
 const isTogglingAlerts = ref(false);
-
-const snackbar = ref({
-  show: false,
-  text: "",
-  color: "success",
-});
 
 const alertsEnabled = computed(() => props.alerts_enabled === 1);
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -113,6 +101,7 @@ const exportClientUrl = computed(() => `${apiBaseUrl}/api/client/${props.ipAddre
 
 const emit = defineEmits<{
   edit: [];
+  toggleAlert: [];
 }>();
 
 const editHostDetails = () => {
@@ -129,21 +118,12 @@ const toggleAlerts = async () => {
     const newAlertsState = !alertsEnabled.value;
     
     await updateAlertsEnabled(props.ipAddress, newAlertsState);
+    emit('toggleAlert');
     
-    await hostsStore.fetchLocalhosts();
-    
-    snackbar.value = {
-      show: true,
-      text: `Notifications ${newAlertsState ? 'enabled' : 'disabled'} for ${props.ipAddress}`,
-      color: "success",
-    };
+    notificationStore.showSuccess(`Notifications ${newAlertsState ? 'enabled' : 'disabled'} for ${props.ipAddress}`);
   } catch (error) {
     console.error("Error toggling notifications:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to update notifications setting",
-      color: "error",
-    };
+    notificationStore.showError("Failed to update notifications setting");
   } finally {
     isTogglingAlerts.value = false;
   }
@@ -155,19 +135,11 @@ const confirmDelete = async () => {
     await deleteHost(props.ipAddress);
     deleteDialog.value = false;
     await hostsStore.fetchLocalhosts();
-    snackbar.value = {
-      show: true,
-      text: `Host ${props.ipAddress} deleted successfully`,
-      color: "success",
-    };
+    notificationStore.showSuccess(`Host ${props.ipAddress} deleted successfully`);
     router.push({ name: "dashboard" });
   } catch (error) {
     console.error("Error deleting host:", error);
-    snackbar.value = {
-      show: true,
-      text: "Failed to delete host",
-      color: "error",
-    };
+    notificationStore.showError("Failed to delete host");
   } finally {
     isDeleting.value = false;
   }
