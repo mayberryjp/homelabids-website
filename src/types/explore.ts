@@ -25,6 +25,9 @@ export interface ExploreFlow {
 }
 
 export interface ExploreResponse {
-  data: ExploreFlow[];
+  total: number;
+  page: number;
+  page_size: number;
   success: boolean;
+  results: ExploreFlow[];
 }

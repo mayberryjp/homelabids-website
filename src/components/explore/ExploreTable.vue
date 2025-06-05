@@ -45,11 +45,6 @@
         </div>
       </template>
 
-      <!-- Formatted date -->
-      <template v-slot:item.flow_start="{ item }">
-        {{ formatDate(item.flow_start) }}
-      </template>
-
       <template v-slot:item.last_seen="{ item }">
         {{ formatDate(item.last_seen) }}
       </template>
@@ -95,13 +90,11 @@ const emit = defineEmits<{
 }>();
 
 const headers = computed(() => [
-  { title: "Flow ID", key: "flow_id", sortable: false },
   { title: "Source IP", key: "src_ip", sortable: false },
   { title: "Destination IP", key: "dst_ip", sortable: false },
   { title: "Source Port", key: "src_port", sortable: false },
   { title: "Dest Port", key: "dst_port", sortable: false },
   { title: "Protocol", key: "protocol", sortable: false },
-  { title: "Flow Start", key: "flow_start", sortable: false },
   { title: "Last Seen", key: "last_seen", sortable: false },
   { title: "Packets", key: "packets", sortable: false },
   { title: "Bytes", key: "bytes", sortable: false },
