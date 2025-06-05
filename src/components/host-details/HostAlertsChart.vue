@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { formatBytes } from "@/utils/filesize";
 
 interface TrafficStat {
   ip_address: string;
@@ -190,15 +191,6 @@ const chartOptions = computed(() => ({
   },
 }));
 
-// Format bytes to a human-readable format
-const formatBytes = (bytes: number) => {
-  if (bytes === 0) return "0 B";
-
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-
-  return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
-};
 </script>
 
 <style scoped>
