@@ -911,9 +911,9 @@ const configurationDefinitions: ConfigurationDefinition[] = [
     displayName: "Other Networks",
     type: "Text Input",
     key: "OtherNetworks",
-    details: "",
+    details: "Key/value pairs of other private networks that you want to add geolocation data for. This is used to identify devices on other private networks that are not part of this SITE but may be parts of other SITES you manage.",
     default: "",
-    suggested: "",
+    suggested: "Other private networks that you want to add geolocation data for. Example input: FARM=192.168.1.0/24,VACATION_HOME=192.168.2.0/24",
   }
 ];
 

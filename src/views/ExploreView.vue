@@ -77,12 +77,9 @@ const loadData = async () => {
       limit: pageSize.value,
     });
 
-    if (response.success) {
-      tableData.value = response.data || [];
-      // Since total is no longer part of the response, we'll assume the total is the length of the data array
-      // or keep the current total if there are no results
-      totalItems.value =
-        response.data.length > 0 ? Math.max(response.data.length, 100) : 0;
+    if (response.success && response.data) {
+      tableData.value = response.data.results || [];
+      totalItems.value = response.data.total || 0;
     } else {
       tableData.value = [];
       totalItems.value = 0;
@@ -113,12 +110,12 @@ const searchData = async (query: string) => {
       limit: pageSize.value,
     });
 
-    if (response.success) {
+    if (response.success && response.data) {
       tableData.value = response.data || [];
       // For search results, use the data length as an estimate for total items
       // or keep the current total if there are no results
-      totalItems.value =
-        response.data.length > 0 ? Math.max(response.data.length, 100) : 0;
+      totalItems.value = response.data.total || 0;
+
       if (response.data.length === 0) {
         notificationStore.showInfo("No results found for your search");
       }
