@@ -7,13 +7,12 @@
     <v-main>
       <v-container fluid>
         <v-row>
-          <!-- Left Panel -->
-          <v-col cols="12" lg="3" class="host-list-panel">
+          <!-- Only show HostList if not on explore route -->
+          <v-col cols="12" lg="3" class="host-list-panel" v-if="$route.name !== 'explore'">
             <HostList />
           </v-col>
-
-          <!-- Right Panel (Main Content) -->
-          <v-col cols="12" lg="9">
+          <!-- Use full width if on explore route -->
+          <v-col :cols="$route.name === 'explore' ? 12 : 9" :lg="$route.name === 'explore' ? 12 : 9">
             <router-view></router-view>
           </v-col>
         </v-row>

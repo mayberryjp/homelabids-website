@@ -13,8 +13,8 @@ export interface ExploreFlow {
   packets: number;
   bytes: number;
   times_seen: number;
-  dns_query: string;
-  dns_response: string;
+  src_dns: string;
+  dst_dns: string;
   src_country: string;
   dst_country: string;
   src_asn?: number | null; 
