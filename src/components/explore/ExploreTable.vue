@@ -113,6 +113,7 @@ const headers = computed(() => [
   { title: "Last Seen", key: "last_seen", sortable: false },
   { title: "Packets", key: "packets", sortable: false },
   { title: "Bytes", key: "bytes", sortable: false },
+  { title: "Times Seen", key: "times_seen", sortable: false }, 
 ]);
 
 const handlePageChange = (page: number) => {

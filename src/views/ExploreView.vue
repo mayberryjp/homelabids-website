@@ -77,7 +77,10 @@ const loadData = async () => {
       limit: pageSize.value,
     });
 
-    if (response.success && response.data) {
+    console.log("Explore data response:", response);
+
+    if (response.success) {
+      console.log(response.data.results)
       tableData.value = response.data.results || [];
       totalItems.value = response.data.total || 0;
     } else {
@@ -110,13 +113,13 @@ const searchData = async (query: string) => {
       limit: pageSize.value,
     });
 
-    if (response.success && response.data) {
-      tableData.value = response.data || [];
+    if (response.success) {
+      tableData.value = response.data.results || [];
       // For search results, use the data length as an estimate for total items
       // or keep the current total if there are no results
       totalItems.value = response.data.total || 0;
 
-      if (response.data.length === 0) {
+      if (response.data.total === 0) {
         notificationStore.showInfo("No results found for your search");
       }
     } else {

@@ -13,21 +13,25 @@ export interface ExploreFlow {
   packets: number;
   bytes: number;
   times_seen: number;
-  src_dns?: string;
-  dst_dns?: string;
+  dns_query?: string;      // updated field
+  dns_response?: string;   // updated field
   src_country: string;
   dst_country: string;
-  src_asn?: string | number | null; // <-- allow string
-  dst_asn?: string | number | null; // <-- allow string
+  src_asn?: string | number | null;
+  dst_asn?: string | number | null;
   src_isp: string | null;
   dst_isp: string | null;
   concat?: string;
 }
 
-export interface ExploreResponse {
+export interface ExploreResponseData {
   total: number;
   page: number;
   page_size: number;
-  success: boolean;
   results: ExploreFlow[];
+}
+
+export interface ExploreResponse {
+  success: boolean;
+  data: ExploreResponseData;
 }

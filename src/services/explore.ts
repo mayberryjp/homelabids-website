@@ -11,7 +11,8 @@ export const getExplore = async (
 ): Promise<ExploreResponse> => {
   try {
     const response = await api.get("/explore", { params });
-    return response.data;
+    return response.data; // <-- Return only the data
+
   } catch (error) {
     console.error("Error fetching explore data:", error);
     throw error;
@@ -26,7 +27,7 @@ export const getExploreSearch = async (
     const response = await api.get("/explore/search", {
       params: { ...params, q },
     });
-    return response.data;
+    return response.data; // <-- Return only the data
   } catch (error) {
     console.error("Error fetching explore search data:", error);
     throw error;

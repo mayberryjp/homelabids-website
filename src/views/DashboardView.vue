@@ -102,7 +102,6 @@ const refreshAlerts = async () => {
   try {
     await hosts.fetchRecentAlerts();
     // Show success notification
-    notificationStore.showSuccess("Alerts refreshed successfully!");
   } catch (error) {
     console.error("Error refreshing alerts:", error);
     // Show error notification
