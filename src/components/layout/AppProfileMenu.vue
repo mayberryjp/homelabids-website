@@ -39,12 +39,11 @@ const profileMenuItems = ref([
     routeName: "settings",
   },
   {
-    title: "Logout",
-    icon: "mdi-logout",
+    title: "Documentation",
+    icon: "mdi-help-circle",
     action: () => {
       // Add logout logic here
-      console.log("Logging out...");
-      router.push({ name: "login" });
+      router.push({ name: "documentation" });
     },
   },
 ]);

@@ -4,6 +4,7 @@ import DashboardView from "@/views/DashboardView.vue";
 import ExploreView from "@/views/ExploreView.vue";
 import SettingsView from "@/views/SettingsView.vue";
 import HostDetailsView from "@/views/HostDetailsView.vue";
+import DocumentationView from "@/views/DocumentationView.vue";
 
 const privateRoutes: RouteRecordRaw[] = [
   {
@@ -14,6 +15,7 @@ const privateRoutes: RouteRecordRaw[] = [
       { path: "explore", name: "explore", component: ExploreView },
       { path: "settings", name: "settings", component: SettingsView },
       { path: "host/:ip_address", name: "host", component: HostDetailsView },
+      { path: "documentation", name: "documentation", component: DocumentationView },
     ],
   },
 ];
