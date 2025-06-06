@@ -18,24 +18,22 @@
     </v-card-title>
     <v-divider></v-divider>
 
-    <v-data-table
+    <v-data-table-server
+      v-model:items-per-page="itemsPerPage"
       :headers="headers"
       :items="data"
-      :items-per-page="pageSize"
-      :page="currentPage + 1"
-      :server-items-length="totalItems"
-      @update:page="handlePageChange"
-      class="explore-table"
-      density="compact"
+      :items-length="totalItems || 0"
       :loading="loading"
       :no-data-text="'No flows found'"
+      class="explore-table"
+      density="compact"
+      @update:options="handleOptionsUpdate"
+      :items-per-page-options="[itemsPerPage]"
     >
       <!-- Protocol Column -->
       <template v-slot:item.protocol="{ item }">
         <span class="text-caption">{{ getProtocolName(item.protocol) }}</span>
       </template>
-
-
 
       <!-- IP Address formatting -->
       <template v-slot:item.src_ip="{ item }">
@@ -55,13 +53,13 @@
         {{ formatBytes(item.bytes) }}
       </template>
 
-     <template v-slot:item.src_dns="{ item }">
+      <template v-slot:item.src_dns="{ item }">
         <span class="details-ellipsis" :title="getSourceDetails(item)">
           {{ getSourceDetails(item) }}
         </span>
       </template>
 
-     <template v-slot:item.dst_dns="{ item }">
+      <template v-slot:item.dst_dns="{ item }">
         <span class="details-ellipsis" :title="getDestinationDetails(item)">
           {{ getDestinationDetails(item) }}
         </span>
@@ -78,12 +76,12 @@
           {{ item.times_seen }}
         </v-chip>
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </v-sheet>
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { ExploreFlow } from "@/types/explore";
 import { getProtocolName } from "@/utils/protocol";
 import { formatDate } from "@/utils/date";
@@ -92,15 +90,16 @@ import { formatBytes } from "@/utils/filesize";
 defineProps<{
   data: ExploreFlow[];
   loading: boolean;
-  currentPage: number;
-  pageSize: number;
   totalItems?: number;
 }>();
 
 const emit = defineEmits<{
   (e: "changePage", page: number): void;
+  (e: "changeItemsPerPage", itemsPerPage: number): void;
   (e: "refresh"): void;
 }>();
+
+const itemsPerPage = ref(100);
 
 const headers = computed(() => [
   { title: "Source IP", key: "src_ip", sortable: false },
@@ -113,11 +112,21 @@ const headers = computed(() => [
   { title: "Last Seen", key: "last_seen", sortable: false },
   { title: "Packets", key: "packets", sortable: false },
   { title: "Bytes", key: "bytes", sortable: false },
-  { title: "Times Seen", key: "times_seen", sortable: false }, 
+  { title: "Times Seen", key: "times_seen", sortable: false },
 ]);
 
-const handlePageChange = (page: number) => {
-  emit("changePage", page - 1); // v-data-table uses 1-based pages, convert back to 0-based
+const handleOptionsUpdate = ({
+  page,
+  itemsPerPage: newItemsPerPage,
+}: {
+  page: number;
+  itemsPerPage: number;
+}) => {
+  if (newItemsPerPage !== itemsPerPage.value) {
+    itemsPerPage.value = newItemsPerPage;
+    emit("changeItemsPerPage", newItemsPerPage);
+  }
+  emit("changePage", page - 1); // v-data-table-server uses 1-based pages, convert to 0-based
 };
 
 // Get color based on times seen
@@ -128,17 +137,21 @@ const getTimesSeenColor = (timesSeen: number) => {
 };
 
 const getSourceDetails = (item: ExploreFlow) => {
-  return item.src_dns?.trim()
-    || item.src_isp?.trim()
-    || item.src_country?.trim()
-    || "";
+  return (
+    item.src_dns?.trim() ||
+    item.src_isp?.trim() ||
+    item.src_country?.trim() ||
+    ""
+  );
 };
 
 const getDestinationDetails = (item: ExploreFlow) => {
-  return item.dst_dns?.trim()
-    || item.dst_isp?.trim()
-    || item.dst_country?.trim()
-    || "";
+  return (
+    item.dst_dns?.trim() ||
+    item.dst_isp?.trim() ||
+    item.dst_country?.trim() ||
+    ""
+  );
 };
 </script>
 
@@ -146,7 +159,7 @@ const getDestinationDetails = (item: ExploreFlow) => {
 .explore-table-sheet {
   /* Optional: add padding or shadow for more emphasis */
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .explore-table {

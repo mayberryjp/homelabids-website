@@ -2,7 +2,7 @@ export interface ExploreFlow {
   flow_id: number;
   src_ip: string;
   dst_ip: string;
-  src_ip_int?: number; 
+  src_ip_int?: number;
   dst_ip_int?: number;
   src_port: number;
   dst_port: number;
@@ -13,8 +13,8 @@ export interface ExploreFlow {
   packets: number;
   bytes: number;
   times_seen: number;
-  dns_query?: string;      // updated field
-  dns_response?: string;   // updated field
+  dns_query?: string; // updated field
+  dns_response?: string; // updated field
   src_country: string;
   dst_country: string;
   src_asn?: string | number | null;
@@ -22,12 +22,15 @@ export interface ExploreFlow {
   src_isp: string | null;
   dst_isp: string | null;
   concat?: string;
+  dst_dns?: string;
+  src_dns?: string;
 }
 
 export interface ExploreResponseData {
+  limit: number;
   total: number;
   page: number;
-  page_size: number;
+  success: boolean;
   results: ExploreFlow[];
 }
 

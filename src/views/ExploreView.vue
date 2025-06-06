@@ -13,7 +13,6 @@
             variant="outlined"
             label="Search flows..."
             prepend-inner-icon="mdi-magnify"
-            clearable
             @input="handleSearchInput"
             hide-details
             style="max-width: 400px;"
@@ -35,10 +34,9 @@
         <ExploreTable
           :data="tableData"
           :loading="loading"
-          :currentPage="currentPage"
-          :pageSize="pageSize"
           :totalItems="totalItems"
           @changePage="handlePageChange"
+          @changeItemsPerPage="handleItemsPerPageChange"
           @refresh="refreshData"
         />
       </v-col>
@@ -55,7 +53,8 @@ import { useDebounce } from "@/utils/debounce";
 import type { ExploreFlow } from "@/types/explore";
 import { useNotificationStore } from "@/stores/notification";
 
-const pageSize = ref(100);
+const INITIAL_ITEMS_PER_PAGE = 100;
+const itemsPerPage = ref(INITIAL_ITEMS_PER_PAGE);
 const currentPage = ref(0);
 const totalItems = ref(0);
 const loading = ref(true);
@@ -68,21 +67,19 @@ const notificationStore = useNotificationStore();
 
 const { debounce, isDebouncing } = useDebounce<string>(700);
 
-// Load initial data
 const loadData = async () => {
   loading.value = true;
   try {
-    const response = await getExplore({
+    const data = await getExplore({
       page: currentPage.value,
-      limit: pageSize.value,
+      limit: itemsPerPage.value,
     });
 
-    console.log("Explore data response:", response);
+    console.log("Explore data response:", data);
 
-    if (response.success) {
-      console.log(response.data.results)
-      tableData.value = response.data.results || [];
-      totalItems.value = response.data.total || 0;
+    if (data.success) {
+      tableData.value = data.data.results || [];
+      totalItems.value = data.data.total || 0;
     } else {
       tableData.value = [];
       totalItems.value = 0;
@@ -110,7 +107,7 @@ const searchData = async (query: string) => {
   try {
     const response = await getExploreSearch(query, {
       page: currentPage.value,
-      limit: pageSize.value,
+      limit: itemsPerPage.value,
     });
 
     if (response.success) {
@@ -156,6 +153,18 @@ const handleSearchInput = () => {
 const handlePageChange = (page: number) => {
   currentPage.value = page;
 
+  if (isSearchMode.value && searchQuery.value) {
+    searchData(searchQuery.value);
+  } else {
+    loadData();
+  }
+};
+
+// Handle items per page change
+const handleItemsPerPageChange = (newItemsPerPage: number) => {
+  itemsPerPage.value = newItemsPerPage;
+  currentPage.value = 0; // Reset to first page when changing items per page
+  
   if (isSearchMode.value && searchQuery.value) {
     searchData(searchQuery.value);
   } else {
