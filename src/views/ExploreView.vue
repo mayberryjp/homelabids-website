@@ -1,12 +1,15 @@
 <template>
   <v-container fluid class="pa-4">
     <v-row>
-      <v-col cols="12">
-        <h1 class="text-h5 mb-6">Data Explorer</h1>
-      </v-col>
+
 
       <v-col cols="12">
-        <v-sheet rounded="lg" color="#090c10">
+        <v-sheet
+          rounded="lg"
+          color="#090c10"
+          class="pa-4"
+          style="display: flex; align-items: flex-start; gap: 16px; max-width: 100%;"
+        >
           <v-text-field
             v-model="searchQuery"
             density="compact"
@@ -27,15 +30,15 @@
               ></v-progress-circular>
             </template>
           </v-text-field>
-          <!-- Search instructions below the search bar -->
+          <!-- Make the alert fill the rest of the row -->
           <v-alert
             type="info"
             variant="tonal"
-            class="mt-2 mb-0"
             density="compact"
             border="start"
             color="primary"
-            style="max-width: 400px;"
+            class="pa-2"
+            style="flex: 1; margin-top: 0;"
           >
             <span>
               <strong>Search tips:</strong> You can search by IP, port, Geolocation, ISP, Allowlist name, DNS name. Only single word simple text searches are supported. Example: <code>8.8.8.8</code>, <code>China</code>, <code>Amazon</code>, <code>example.com</code>. Most specific host details are provided (e.g: domain name or ISP or country).
@@ -44,7 +47,8 @@
         </v-sheet>
       </v-col>
 
-      <v-col cols="12">
+      <!-- Remove extra margin between search and table -->
+      <v-col cols="12" class="mt-2">
         <ExploreTable
           :data="tableData"
           :loading="loading"
