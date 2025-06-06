@@ -180,6 +180,7 @@ watch(() => props.tags, () => {
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 4px;
+  padding-top: 4px
 }
 
 .tag-chip {
