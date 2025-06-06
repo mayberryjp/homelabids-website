@@ -27,6 +27,20 @@
               ></v-progress-circular>
             </template>
           </v-text-field>
+          <!-- Search instructions below the search bar -->
+          <v-alert
+            type="info"
+            variant="tonal"
+            class="mt-2 mb-0"
+            density="compact"
+            border="start"
+            color="primary"
+            style="max-width: 400px;"
+          >
+            <span>
+              <strong>Search tips:</strong> You can search by IP, port, Geolocation, ISP, Allowlist name, DNS name. Only single word simple text searches are supported. Example: <code>8.8.8.8</code>, <code>China</code>, <code>Amazon</code>, <code>example.com</code>. Most specific host details are provided (e.g: domain name or ISP or country).
+            </span>
+          </v-alert>
         </v-sheet>
       </v-col>
 

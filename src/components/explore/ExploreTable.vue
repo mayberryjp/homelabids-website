@@ -187,7 +187,7 @@ const getDestinationDetails = (item: ExploreFlow) => {
 
 .details-ellipsis {
   display: inline-block;
-  max-width: 300px; /* ~50 characters in monospace, adjust as needed */
+  max-width: 200px; /* ~50 characters in monospace, adjust as needed */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
