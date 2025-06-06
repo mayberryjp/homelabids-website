@@ -10,7 +10,7 @@
               <!-- Host Title -->
               <div class="d-flex align-center">
                 <!-- Device Icon - Now on the left -->
-                <a 
+                <a
                   v-if="localHostDetail?.management_link"
                   :href="localHostDetail.management_link"
                   target="_blank"
@@ -21,15 +21,21 @@
                   <div class="device-icon-container me-4 position-relative">
                     <InlineSvg
                       :name="localHostDetail?.icon || 'DEFAULT'"
-                      :color="getThreatScoreColor(localHostDetail?.threat_score || 0)"
+                      :color="
+                        getThreatScoreColor(localHostDetail?.threat_score || 0)
+                      "
                       :size="120"
                       class="icon-with-background"
                     />
-                    
+
                     <!-- Threat Score Banner Overlay -->
-                    <div 
+                    <div
                       class="threat-score-banner"
-                      :style="{ backgroundColor: getThreatScoreColor(localHostDetail?.threat_score || 0) }"
+                      :style="{
+                        backgroundColor: getThreatScoreColor(
+                          localHostDetail?.threat_score || 0
+                        ),
+                      }"
                     >
                       <span>{{ localHostDetail?.threat_score || 0 }}</span>
                     </div>
@@ -39,14 +45,32 @@
                   <div class="host-title">
                     <h2 class="text-h4 text-grey custom-heading">
                       {{ localHostDetail.local_description || "Unnamed" }}
-                      <span v-if="localHostDetail?.icon" class="icon-label ml-2">
+                      <span
+                        v-if="localHostDetail?.icon"
+                        class="icon-label ml-2"
+                      >
                         ({{ localHostDetail.icon }})
                       </span>
-                      <v-icon size="small" color="primary" class="ml-2">mdi-open-in-new</v-icon>
+                      <v-icon size="small" color="primary" class="ml-2"
+                        >mdi-open-in-new</v-icon
+                      >
                     </h2>
-                    <div class="text-subtitle-1 text-green">
-                      IP Address: {{ ip_address }}
+
+                    <div class="d-flex flex-row items-center ga-4 mt-1 flex-wrap">
+                      <div class="text-subtitle-1 text-green">
+                        IP Address: {{ ip_address }}
+                      </div>
+
+                      <!-- Host Tags -->
+                      <div>
+                        <HostTags
+                          :tags="localHostDetail.tags"
+                          :ip-address="ip_address"
+                          @tags-updated="handleTagsUpdated"
+                        />
+                      </div>
                     </div>
+
                     <!-- Alert Bars - Now under the host info -->
                     <div v-if="alertDetail" class="mt-2">
                       <AlertBars
@@ -64,15 +88,21 @@
                   <div class="device-icon-container me-4 position-relative">
                     <InlineSvg
                       :name="localHostDetail?.icon || 'DEFAULT'"
-                      :color="getThreatScoreColor(localHostDetail?.threat_score || 0)"
+                      :color="
+                        getThreatScoreColor(localHostDetail?.threat_score || 0)
+                      "
                       :size="120"
                       class="icon-with-background"
                     />
-                    
+
                     <!-- Threat Score Banner Overlay -->
-                    <div 
+                    <div
                       class="threat-score-banner"
-                      :style="{ backgroundColor: getThreatScoreColor(localHostDetail?.threat_score || 0) }"
+                      :style="{
+                        backgroundColor: getThreatScoreColor(
+                          localHostDetail?.threat_score || 0
+                        ),
+                      }"
                     >
                       <span>{{ localHostDetail?.threat_score || 0 }}</span>
                     </div>
@@ -82,14 +112,29 @@
                   <div class="host-title">
                     <h2 class="text-h4 text-grey custom-heading">
                       {{ localHostDetail.local_description || "Unnamed" }}
-                      <span v-if="localHostDetail?.icon" class="icon-label ml-2">
+                      <span
+                        v-if="localHostDetail?.icon"
+                        class="icon-label ml-2"
+                      >
                         ({{ localHostDetail.icon }})
                       </span>
                     </h2>
-                    <div class="text-subtitle-1 text-green">
-                      IP Address: {{ ip_address }}
+
+                    <div class="d-flex flex-row items-center ga-4 mt-1 flex-wrap">
+                      <div class="text-subtitle-1 text-green">
+                        IP Address: {{ ip_address }}
+                      </div>
+
+                      <!-- Host Tags -->
+                      <div>
+                        <HostTags
+                          :tags="localHostDetail.tags"
+                          :ip-address="ip_address"
+                          @tags-updated="handleTagsUpdated"
+                        />
+                      </div>
                     </div>
-                    
+
                     <!-- Alert Bars - Now under the host info -->
                     <div v-if="alertDetail" class="mt-2">
                       <AlertBars
@@ -135,7 +180,8 @@
               >Network Traffic Statistics</v-card-title
             >
             <v-card-subtitle class="text-grey"
-              >Displaying alerts, total bytes and packets over time</v-card-subtitle
+              >Displaying alerts, total bytes and packets over
+              time</v-card-subtitle
             >
             <HostAlertsChart :traffic-stats="trafficStats" />
           </div>
@@ -154,7 +200,11 @@
           <RecentAlerts
             v-else
             :alerts="recentHostAlerts"
-            :title="`Host Alerts ${recentHostAlerts.length ? `(${recentHostAlerts.length} Entries)` : ''}`"  
+            :title="`Host Alerts ${
+              recentHostAlerts.length
+                ? `(${recentHostAlerts.length} Entries)`
+                : ''
+            }`"
             :items-per-page="10"
             :showRefreshButton="true"
             :loading="recentAlertsLoading"
@@ -171,16 +221,16 @@
 
         <!-- Host Allow List (Ignore List) -->
         <v-card color="#0d1117" class="mb-4">
-          <AppSkeleton
-            v-if="ignoreListLoading"
-            type="table"
-            color="#0d1117"
-          />
+          <AppSkeleton v-if="ignoreListLoading" type="table" color="#0d1117" />
           <IgnoreList
             v-else
             :ignore-list-items="ignoreListItems"
-            :title="`Host Allow List ${ignoreListItems.length ? `(${ignoreListItems.length} Entries)` : ''}`"
-            :items-per-page="ignoreListItems.length || 100" 
+            :title="`Host Allow List ${
+              ignoreListItems.length
+                ? `(${ignoreListItems.length} Entries)`
+                : ''
+            }`"
+            :items-per-page="ignoreListItems.length || 100"
             :showRefreshButton="true"
             :loading="ignoreListLoading"
             @refresh="fetchIgnoreList(ip_address)"
@@ -207,7 +257,11 @@
 </template>
 
 <script setup lang="ts">
-import { getLocalhostDetail, getLocalhostTraffic, getLocalhostIgnoreList } from "@/services/hosts";
+import {
+  getLocalhostDetail,
+  getLocalhostTraffic,
+  getLocalhostIgnoreList,
+} from "@/services/hosts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, watch, ref } from "vue";
 import type { Localhost } from "@/types/localhosts";
@@ -218,6 +272,7 @@ import IgnoreList from "@/components/host-details/IgnoreList.vue";
 import type { Alert, AlertDetail, IgnoreListItem } from "@/types/alerts";
 import HostStats from "@/components/host-details/HostStats.vue";
 import HostActions from "@/components/host-details/HostActions.vue";
+import HostTags from "@/components/host-details/HostTags.vue";
 import AlertBars from "@/components/base/AlertBars.vue";
 import AppSkeleton from "@/components/base/AppSkeleton.vue";
 import EditHostDetail from "@/components/host-details/EditHostDetail.vue";
@@ -393,10 +448,10 @@ onMounted(async () => {
 });
 
 const getThreatScoreColor = (score: number): string => {
-  if (score === 0) return '#00C853';  // Green for no threats
-  if (score > 0 && score <= 25) return '#FFD600';  // Yellow for low threats
-  if (score > 25 && score <= 50) return '#FF9800';  // Orange for medium threats
-  return '#F44336';  // Red for high threats
+  if (score === 0) return "#00C853"; // Green for no threats
+  if (score > 0 && score <= 25) return "#FFD600"; // Yellow for low threats
+  if (score > 25 && score <= 50) return "#FF9800"; // Orange for medium threats
+  return "#F44336"; // Red for high threats
 };
 
 const handleActionComplete = (actionType?: string) => {
@@ -404,6 +459,12 @@ const handleActionComplete = (actionType?: string) => {
   console.log(`Action completed: ${actionType}`);
   fetchRecentHostAlerts(ip_address.value);
   fetchIgnoreList(ip_address.value);
+};
+
+const handleTagsUpdated = (newTags: string | null) => {
+  if (localHostDetail.value) {
+    localHostDetail.value.tags = newTags;
+  }
 };
 </script>
 
@@ -433,7 +494,6 @@ const handleActionComplete = (actionType?: string) => {
   transform: translateY(0);
   opacity: 1;
 }
-
 
 @keyframes fadeIn {
   from {
@@ -505,7 +565,7 @@ const handleActionComplete = (actionType?: string) => {
   border-radius: 50px; /* Fully rounded */
   font-size: 14px;
   opacity: 0.95;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -516,7 +576,7 @@ const handleActionComplete = (actionType?: string) => {
 
 /* Add this to ensure white text on light backgrounds */
 .threat-score-banner span {
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .device-management-link {

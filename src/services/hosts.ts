@@ -98,3 +98,27 @@ export const deleteIgnoreListItem = async (allowlistId: string) => {
     throw error;
   }
 };
+
+export const addLocalhostTag = async (ip_address: string, tag: string) => {
+  try {
+    const response = await api.put(`localhosttags/${ip_address}`, {
+      tag: tag,
+    });
+    return response;
+  } catch (error) {
+    console.error("Error adding tag to localhost:", error);
+    throw error;
+  }
+};
+
+export const removeLocalhostTag = async (ip_address: string, tag: string) => {
+  try {
+    const response = await api.delete(`localhosttags/${ip_address}`, {
+      data: { tag: tag },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error removing tag from localhost:", error);
+    throw error;
+  }
+};

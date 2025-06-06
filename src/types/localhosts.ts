@@ -12,7 +12,7 @@ export interface Localhost {
   lease_hwaddr: string | null;
   lease_clientid: string | null;
   icon: string;
-  tags: string | null;
+  tags: string| null;
   acknowledged: number;
   alerts_enabled: number;
   threat_score: number;
