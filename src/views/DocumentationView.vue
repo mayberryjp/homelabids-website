@@ -399,6 +399,14 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
 
+      <v-expansion-panel title="Can the website and backend be on seperate docker hosts?">
+        <v-expansion-panel-text>
+          <p>
+             Yes, it should be supported. Please review the example docker compose file in our Github repo for homelabids-website.
+          </p>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
       <v-expansion-panel title="What's the number next to the host in host listing?">
         <v-expansion-panel-text>
           <p>
