@@ -5,7 +5,7 @@
     <div class="product-branding d-flex align-center">
       <router-link to="/" class="router-link">
         <img src="/logo.png" alt="Product Logo" width="32px" height="32px" class="me-2" />
-        <span class="product-name text-h6">Homelab IDS</span>
+        <span class="product-name text-h6">HomelabIDS</span>
       </router-link>
     </div>
 

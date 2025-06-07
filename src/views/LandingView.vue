@@ -7,7 +7,7 @@
           <v-row align="center" justify="center">
             <v-col cols="12" md="8" class="text-center">
               <h1 class="text-h2 font-weight-bold white--text mb-4">
-                HomeLab IDS
+                HomeLabIDS
               </h1>
               <p class="text-h5 white--text mb-8">
                 Your complete intrusion detection system for home networks
