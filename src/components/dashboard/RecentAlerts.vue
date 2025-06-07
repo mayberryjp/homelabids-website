@@ -452,8 +452,9 @@ const whitelistAsLocalServerExposed = async (alert: Alert) => {
     const payload: WhitelistPayload = {
       ignorelist_id: `IgnoreList_${alert.id}_LocalServerExposed`,
       src_ip: flowData.src_ip,
-      dst_ip: "*",
-      dst_port: flowData.src_port,
+      dst_ip: flowData.dst_ip,
+      dst_port: flowData.dst_port,
+      src_port: flowData.src_port,
       protocol: flowData.protocol,
     };
 

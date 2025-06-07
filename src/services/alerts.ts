@@ -72,6 +72,7 @@ export interface WhitelistPayload {
   ignorelist_id: string;
   src_ip: string;
   dst_ip: string;
+  src_port?: string | number;
   dst_port: string | number;
   protocol: string;
 }

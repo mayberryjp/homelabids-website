@@ -1,5 +1,23 @@
 <template>
   <v-container class="pa-6">
+    <v-card class="mb-6" color="#181c22" variant="tonal">
+      <v-card-text>
+        <div v-if="config">
+          <div class="d-flex flex-wrap ga-4">
+            <div class="configBubble"><strong>Site Name:</strong> {{ config.SiteName }}</div>
+            <div class="configBubble"><strong>Version:</strong> {{ config.Version }}</div>
+            <div class="configBubble"><strong>DB Schema:</strong> {{ config.DatabaseSchemaVersion }}</div>
+            <div class="configBubble"><strong>Machine ID:</strong> {{ config.MachineUniqueIdentifier }}</div>
+          </div>
+        </div>
+        <div v-else-if="configError" class="text-error">{{ configError }}</div>
+        <div v-else>
+          <v-progress-circular indeterminate size="20" color="primary" />
+          <span class="ml-2">Loading configuration...</span>
+        </div>
+      </v-card-text>
+    </v-card>
+
     <h1 class="text-h4 mb-4">Help & Documentation</h1>
     <v-divider class="mb-6"></v-divider>
 
@@ -65,5 +83,39 @@
 </template>
 
 <script setup lang="ts">
-// No script needed for static documentation
+import { ref, onMounted } from "vue";
+import api from "@/services/api";
+
+type ConfigEntry = { key: string; value: string | number };
+
+const configArray = ref<ConfigEntry[] | null>(null);
+const config = ref<Record<string, string | number>>({});
+const configError = ref<string | null>(null);
+
+onMounted(async () => {
+  try {
+    const response = await api.get("/configurations");
+    configArray.value = response.data;
+    // Convert array to object for easy access
+    config.value = Object.fromEntries(
+      (configArray.value || []).map(item => [item.key, item.value])
+    );
+  } catch (e) {
+    configError.value = "Could not load configuration.";
+  }
+});
 </script>
+
+<style scoped>
+.configBubble {
+  background: #1976d2;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 4px 8px 4px 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+</style>
