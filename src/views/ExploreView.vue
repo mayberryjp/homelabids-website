@@ -41,7 +41,7 @@
             style="flex: 1; margin-top: 0;"
           >
             <span>
-<strong>Search tips:</strong> You can search by IP, port, Geolocation, ISP, Allowlist name, DNS name, and partial timestamp in YYYY-MM-DD HH:MM:SS format. Only single word simple text searches are supported. Example: <code>8.8.8.8</code>, <code>China</code>, <code>Amazon</code>, <code>example.com</code>, <code>2025-06-05 21:49:52</code>. The most specific host detail available is provided (e.g: domain name or ISP or country).
+              <strong>Search tips:</strong> You can search by IP, port, Geolocation, ISP, Allowlist name, DNS name, and partial timestamp in YYYY-MM-DD HH:MM:SS format. Only single word simple text searches are supported. Example: <code>8.8.8.8</code>, <code>China</code>, <code>Amazon</code>, <code>example.com</code>, <code>2025-06-05 21:49:52</code>. The most specific host detail available is provided (e.g: domain name or ISP or country). If you want to match a specific parameter explicitly use _parameter_. For example, "_192.168.1.1_".
             </span>
           </v-alert>
         </v-sheet>
