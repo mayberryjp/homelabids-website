@@ -909,7 +909,7 @@ const configurationDefinitions: ConfigurationDefinition[] = [
     displayName: "Write Daily Logfile for Debugging",
     type: "Boolean/Toggle",
     key: "WriteLogFile",
-    details: "Enable or disable writing a daily logfile for debugging purposes.",
+    details: "Enable or disable writing a daily logfile for debugging purposes. Log file gets written to /database volume",
     default: "Disabled",
     suggested: "Disabled",
   },
