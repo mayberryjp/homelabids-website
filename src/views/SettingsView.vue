@@ -904,7 +904,15 @@ const configurationDefinitions: ConfigurationDefinition[] = [
     default: "Disabled",
     suggested: "Enabled",
   },
-
+  {
+    category: "HomelabIDS Collaboration",
+    displayName: "Write Daily Logfile for Debugging",
+    type: "Boolean/Toggle",
+    key: "WriteLogFile",
+    details: "Enable or disable writing a daily logfile for debugging purposes.",
+    default: "Disabled",
+    suggested: "Disabled",
+  },
   // OTHER NETWORKS
   {
     category: "Other Networks",
