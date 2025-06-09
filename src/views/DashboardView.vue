@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue"; // Add onUnmounted
 import { getQuickStats } from "@/services/stats";
 import RecentAlerts from "@/components/dashboard/RecentAlerts.vue";
 import { useHostsStore } from "@/stores/hosts";
@@ -51,6 +51,15 @@ const quickStats = ref({
   acknowledged_localhosts_count: 0,
   total_localhosts_count: 0,
   ignorelist_count: 0,
+  average_threat_score: 0,
+  total_packets: 0,
+  total_flows: 0,
+  total_bytes: 0,
+  last_packets: 0,
+  last_flows: 0,
+  last_bytes: 0,
+  last_flow_seen: null,
+  is_healthy: "Down"
 });
 
 // Initialize stores
@@ -73,10 +82,10 @@ const statusStats = computed(() => [
     color: "text-red",
   },
   {
-    label: "Alerts",
-    description: "Acknowledged",
-    value: quickStats.value.acknowledged_alerts || 0,
-    color: "text-green-accent-3",
+    label: "Flows",
+    description: "Processing",
+    value: quickStats.value.last_flows || 0,
+    color: "text-blue-accent-3",
   },
   {
     label: "Alerts",
@@ -124,6 +133,9 @@ const fetchStats = async () => {
   }
 };
 
+// Store the interval ID to clear it later
+let statsRefreshInterval: number | null = null;
+
 // Initialize data on mount
 onMounted(async () => {
   // Load initial data
@@ -132,6 +144,20 @@ onMounted(async () => {
   // If alerts haven't been loaded yet, load them
   if (!hosts.alertsRecent.length) {
     refreshAlerts();
+  }
+  
+  // Set up automatic refresh every 60 seconds
+  statsRefreshInterval = window.setInterval(() => {
+    console.log("Auto-refreshing dashboard stats...");
+    fetchStats();
+  }, 60000);
+});
+
+// Clean up interval when component unmounts
+onUnmounted(() => {
+  if (statsRefreshInterval !== null) {
+    window.clearInterval(statsRefreshInterval);
+    statsRefreshInterval = null;
   }
 });
 </script>
