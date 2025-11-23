@@ -11,6 +11,19 @@
     <v-row>
       <v-col cols="12" md="8" lg="6">
         <v-form ref="form" v-model="valid" @submit.prevent="saveHost">
+          <!-- MAC Address Field -->
+          <v-text-field
+            v-model="formData.macAddress"
+            label="MAC Address"
+            variant="outlined"
+            density="comfortable"
+            class="mb-6" 
+            prepend-inner-icon="mdi-lan"
+            hint="Physical MAC address of this device"
+            persistent-hint
+            clearable
+          />
+
           <!-- Device Category Dropdown -->
           <v-select
             v-model="formData.category"
@@ -196,12 +209,14 @@ const formData = ref({
   category: "",
   friendlyName: "",
   managementLink: "",
+  macAddress: "",
 });
 
 const originalData = ref({
   category: "",
   friendlyName: "",
   managementLink: "",
+  macAddress: "",
 });
 
 const notificationStore = useNotificationStore();
@@ -211,7 +226,8 @@ const hasChanges = computed(() => {
   return (
     formData.value.category !== originalData.value.category ||
     formData.value.friendlyName !== originalData.value.friendlyName ||
-    formData.value.managementLink !== originalData.value.managementLink
+    formData.value.managementLink !== originalData.value.managementLink ||
+    formData.value.macAddress !== originalData.value.macAddress
   );
 });
 
@@ -286,17 +302,20 @@ const initializeForm = () => {
     const friendlyName = props.hostDetail.local_description || "";
     const managementLink = props.hostDetail.management_link || "";
     const category = props.hostDetail.icon || ""; // Map icon to category for now
+    const macAddress = props.hostDetail.mac_address || "";
 
     formData.value = {
       category,
       friendlyName,
       managementLink,
+      macAddress,
     };
 
     originalData.value = {
       category,
       friendlyName,
       managementLink,
+      macAddress,
     };
   }
 };
@@ -311,6 +330,7 @@ const saveHost = async () => {
       local_description: formData.value.friendlyName,
       management_link: formData.value.managementLink,
       icon: formData.value.category,
+      mac_address: formData.value.macAddress,
     };
 
     await updateHost(props.hostDetail.ip_address, updateData);
