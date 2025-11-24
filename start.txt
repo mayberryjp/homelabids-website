@@ -4,4 +4,6 @@ set VITE_API_BASE_URL=http://192.168.50.220:8044
 
 set VITE_API_BASE_URL=http://192.168.150.3:8044
 
+set VITE_API_BASE_URL=http://10.2.10.2:8044
+
 npm run dev
