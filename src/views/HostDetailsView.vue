@@ -92,11 +92,16 @@
                       IP Address: {{ ip_address }}
                     </div>
 
+                    <div class="text-subtitle-1 text-green" v-if="localHostDetail?.mac_address">
+                      MAC Address: {{ localHostDetail.mac_address?.toUpperCase() }}
+                    </div>
+
                     <!-- Host Tags -->
                     <div>
                       <HostTags
                         :tags="localHostDetail.tags"
                         :ip-address="ip_address"
+                        :mac-address="localHostDetail.mac_address"
                         @tags-updated="handleTagsUpdated"
                       />
                     </div>
