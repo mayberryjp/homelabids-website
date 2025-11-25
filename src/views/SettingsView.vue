@@ -31,19 +31,9 @@
             <v-window-item value="home-network">
               <h3>Home Network</h3>
               <v-divider class="my-4"></v-divider>
-              <home-network-section
-                v-if="groupedConfigurations['Home Network']"
-                :settings="groupedConfigurations['Home Network']"
-                :updating-configs="updatingConfigs"
-                @updateConfigurationValue="updateConfigurationValue"
-                standalone
-              />
-              <v-progress-circular
-                v-else
-                indeterminate
-                color="primary"
-                class="ma-4"
-              ></v-progress-circular>
+              <LocalNetworksConfig />
+              <!-- Optionally keep the old section below -->
+              <!-- <home-network-section ... /> -->
             </v-window-item>
 
             <!-- Other Networks -->
@@ -245,6 +235,7 @@ import DetectionFineTuningSection from "@/components/settings/configurations/Det
 import HomeNetworkSection from "@/components/settings/configurations/HomeNetworkSection.vue";
 import NotificationsSection from "@/components/settings/configurations/NotificationsSection.vue";
 import ProcessesSection from "@/components/settings/configurations/ProcessesSection.vue";
+import LocalNetworksConfig from "@/components/settings/configurations/LocalNetworksConfig.vue";
 import ProcessingSection from "@/components/settings/configurations/ProcessingSection.vue";
 import DiscoverySection from "@/components/settings/configurations/DiscoverySection.vue";
 import FilteringSection from "@/components/settings/configurations/FilteringSection.vue";
@@ -446,19 +437,19 @@ const configurationDefinitions: ConfigurationDefinition[] = [
   },
   {
     category: "Detection Fine Tuning",
-    displayName: "Approved Local NTP Server List",
+    displayName: "Additional NTP Server List",
     type: "Text/String",
     key: "ApprovedLocalNtpServersList",
-    details: "List of approved local NTP servers n your network. This is a comma separated list of IP addresses where your network devices should get time.",
+    details: "List of additional approved NTP servers n your network. NTP servers from scopes will be added automatically in detections. This is a comma separated list of IP addresses where your network devices should get time.",
     default: "",
     suggested: "At the discretion of the user, based on their network configuration.",
   },
   {
     category: "Detection Fine Tuning",
-    displayName: "Approved Local DNS Server List",
+    displayName: "Additional DNS Server List",
     type: "Text/String",
     key: "ApprovedLocalDnsServersList",
-    details: "List of approved local DNS servers in your network. This is a comma separated list of IP addresses where your network devices should resolve DNS queries.",
+    details: "List of additional approved DNS servers in your network. DNS servers from scopes will be added automaticaly in detections. This is a comma separated list of IP addresses where your network devices should resolve DNS queries.",
     default: "",
     suggested: "At the discretion of the user, based on their network configuration.",
   },
@@ -591,10 +582,10 @@ const configurationDefinitions: ConfigurationDefinition[] = [
   },
   {
     category: "Home Network",
-    displayName: "Router IP Address",
+    displayName: "Additional Router IP Addresses",
     type: "Text Input",
     key: "RouterIpAddresses",
-    details: "IP address of your router or firewall that is used to collect netflow data. This is used to identify the source of network traffic. Multiple IP addresses can be specified as a comma separated list.",
+    details: "Additional IP address of your router or firewall that is used to collect netflow data. Router IP Addresses from scopes will be added automatically. This is used to identify the source of network traffic. Multiple IP addresses can be specified as a comma separated list.",
     default: "",
     suggested: "At the discretion of the user, based on their network configuration.",
   },
@@ -654,12 +645,21 @@ const configurationDefinitions: ConfigurationDefinition[] = [
     default: "Enabled",
     suggested: "Enabled",
   },
+    {
+    category: "Processes",
+    displayName: "DHCP Server",
+    type: "Boolean/Toggle",
+    key: "DhcpDns",
+    details: "Enable or disable the DHCP Server that can be used for assigning IP addresses to local hosts on your network. You must define local network scopes for every network you want to serve. DHCP Relay is supported. Do not use this if another DHCP server operates on this host. DHCP responses will only be given for known registered hosts.",
+    default: "Disabled",
+    suggested: "Enabled",
+  },
   {
     category: "Processes",
     displayName: "Sink Hole DNS Server",
     type: "Boolean/Toggle",
     key: "SinkHoleDns",
-    details: "Enable or disable the sink hole DNS server that can be used for denying DNS queries to local hosts that you don't want to have network traffic. You must configure your DHCP server to selectively give hosts this DNS server.",
+    details: "Enable or disable the sink hole DNS server that can be used for denying DNS queries to local hosts that you don't want to have network traffic. You must configure your DHCP server to selectively give hosts this DNS server. Do not use this if another DNS server operates on this host.",
     default: "Disabled",
     suggested: "Enabled",
   },
