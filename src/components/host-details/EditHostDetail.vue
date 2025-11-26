@@ -11,13 +11,26 @@
     <v-row>
       <v-col cols="12" md="8" lg="6">
         <v-form ref="form" v-model="valid" @submit.prevent="saveHost">
+          <!-- IP Address Field -->
+          <v-text-field
+            v-model="formData.ipAddress"
+            label="IP Address"
+            variant="outlined"
+            density="comfortable"
+            class="mb-6"
+            prepend-inner-icon="mdi-ip"
+            hint="IP address of this device"
+            persistent-hint
+            clearable
+          />
+
           <!-- MAC Address Field -->
           <v-text-field
             v-model="formData.macAddress"
             label="MAC Address"
             variant="outlined"
             density="comfortable"
-            class="mb-6" 
+            class="mb-6"
             prepend-inner-icon="mdi-lan"
             hint="Physical MAC address of this device"
             persistent-hint
@@ -206,6 +219,7 @@ const classifying = ref(false);
 const classificationOptions = ref<Array<{ name: string; value: string }>>([]);
 
 const formData = ref({
+  ipAddress: "",
   category: "",
   friendlyName: "",
   managementLink: "",
@@ -213,6 +227,7 @@ const formData = ref({
 });
 
 const originalData = ref({
+  ipAddress: "",
   category: "",
   friendlyName: "",
   managementLink: "",
@@ -224,6 +239,7 @@ const notificationStore = useNotificationStore();
 // Computed
 const hasChanges = computed(() => {
   return (
+    formData.value.ipAddress !== originalData.value.ipAddress ||
     formData.value.category !== originalData.value.category ||
     formData.value.friendlyName !== originalData.value.friendlyName ||
     formData.value.managementLink !== originalData.value.managementLink ||
@@ -299,12 +315,14 @@ const selectClassification = (option: { name: string; value: string }) => {
 
 const initializeForm = () => {
   if (props.hostDetail) {
+    const ipAddress = props.hostDetail.ip_address || "";
     const friendlyName = props.hostDetail.local_description || "";
     const managementLink = props.hostDetail.management_link || "";
-    const category = props.hostDetail.icon || ""; // Map icon to category for now
+    const category = props.hostDetail.icon || "";
     const macAddress = props.hostDetail.mac_address || "";
 
     formData.value = {
+      ipAddress,
       category,
       friendlyName,
       managementLink,
@@ -312,6 +330,7 @@ const initializeForm = () => {
     };
 
     originalData.value = {
+      ipAddress,
       category,
       friendlyName,
       managementLink,
@@ -327,13 +346,20 @@ const saveHost = async () => {
 
   try {
     const updateData = {
+      ip_address: formData.value.ipAddress,
       local_description: formData.value.friendlyName,
       management_link: formData.value.managementLink,
       icon: formData.value.category,
       mac_address: formData.value.macAddress,
     };
 
-    await updateHost(props.hostDetail.ip_address, updateData);
+    // If IP address was changed, use MAC address as the identifier in the API call
+    const identifier =
+      formData.value.ipAddress !== originalData.value.ipAddress
+        ? formData.value.macAddress
+        : props.hostDetail.ip_address;
+
+    await updateHost(identifier, updateData);
 
     originalData.value = { ...formData.value };
 

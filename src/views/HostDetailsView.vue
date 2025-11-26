@@ -89,10 +89,10 @@
 
                   <div class="d-flex flex-row items-center ga-4 mt-1 flex-wrap">
                     <div class="text-subtitle-1 text-green">
-                      IP Address: {{ ip_address }}
+                      IP Address: {{ localHostDetail.ip_address }}
                     </div>
 
-                    <div class="text-subtitle-1 text-green" v-if="localHostDetail?.mac_address">
+                    <div class="text-subtitle-1 text-green">
                       MAC Address: {{ localHostDetail.mac_address?.toUpperCase() }}
                     </div>
 

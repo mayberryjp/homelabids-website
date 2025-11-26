@@ -46,7 +46,11 @@
           
           <!-- Host Info with consistent left margin -->
           <div class="host-info">
-            {{ host.local_description || host.ip_address }}
+            {{
+              host.local_description
+              || host.ip_address
+              || (host.mac_address ? host.mac_address.toUpperCase() : "")
+            }}
           </div>
           
           <AlertBars :alert-intervals="getAlertIntervals(host.ip_address)" class="ml-auto mr-2" />
@@ -96,10 +100,13 @@ const getThreatScoreColor = (score: number): string => {
 };
 
 const hostClickHandler = (host: Localhost) => {
-  router.push({
-    name: "host",
-    params: { ip_address: host.ip_address },
-  });
+  const param = host.ip_address || host.mac_address;
+  if (param) {
+    router.push({
+      name: "host",
+      params: { ip_address: param },
+    });
+  }
 };
 
 const getAlertIntervals = (ip_address: string): number[] => {
