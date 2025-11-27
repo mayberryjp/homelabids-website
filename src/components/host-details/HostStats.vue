@@ -55,8 +55,8 @@ const statusStats = computed(() => [
     value: getHostValue(props.hostDetail?.os_fingerprint),
   },
   {
-    label: "MAC Address",
-    value: getHostValue(props.hostDetail?.mac_address),
+    label: "Last DHCP Request",
+    value: getHostValue(props.hostDetail?.last_dhcp_discover),
   },
 
 

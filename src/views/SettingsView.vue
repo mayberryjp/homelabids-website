@@ -649,7 +649,7 @@ const configurationDefinitions: ConfigurationDefinition[] = [
     category: "Processes",
     displayName: "DHCP Server",
     type: "Boolean/Toggle",
-    key: "DhcpDns",
+    key: "DhcpServer",
     details: "Enable or disable the DHCP Server that can be used for assigning IP addresses to local hosts on your network. You must define local network scopes for every network you want to serve. DHCP Relay is supported. Do not use this if another DHCP server operates on this host. DHCP responses will only be given for known registered hosts.",
     default: "Disabled",
     suggested: "Enabled",
