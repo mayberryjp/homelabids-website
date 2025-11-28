@@ -65,6 +65,21 @@
         </div>
       </v-list-item>
     </v-list>
+
+    <!-- Dialog for no hosts found -->
+    <v-dialog v-model="showNoHostsDialog" persistent width="400">
+      <v-card>
+        <v-card-title class="text-h6">No Hosts Found</v-card-title>
+        <v-card-text>
+          No local hosts were found.<br>
+          You are being redirected to the setup pages.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="primary" @click="showNoHostsDialog = false">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
 
@@ -74,12 +89,12 @@ import { useRouter } from 'vue-router';
 import AlertBars from "@/components/base/AlertBars.vue";
 import InlineSvg from "@/components/base/InlineSvg.vue";  // Import new component
 import type { Localhost } from "@/types/localhosts";
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const router = useRouter();
-const route = useRoute();
 const hosts = useHostsStore();
+const route = useRoute();
 
 // Computed property to sort hosts by threat score (descending)
 const sortedHosts = computed(() => {
@@ -156,6 +171,26 @@ const siteRiskLevel = computed(() => {
   if (score > 24 && score <= 50) return "MEDIUM";
   if (score > 50 && score <= 75) return "HIGH";
   return "CRITICAL";
+});
+
+const showNoHostsDialog = ref(false);
+
+onMounted(async () => {
+  try {
+    await hosts.fetchLocalhosts?.();
+    // If no hosts found, redirect
+    if (hosts.localhosts.length === 0) {
+      showNoHostsDialog.value = true;
+      setTimeout(() => {
+        router.push({ name: 'settings' });
+      }, 2500);
+    }
+  } catch (error) {
+    showNoHostsDialog.value = true;
+    setTimeout(() => {
+      router.push({ name: 'settings' });
+    }, 2500);
+  }
 });
 </script>
 
