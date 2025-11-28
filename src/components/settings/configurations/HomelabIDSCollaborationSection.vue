@@ -1,6 +1,6 @@
 <template>
   <StandardConfigurationSection 
-    :category="'HomelabIDS Collaboration'"
+    :category="'GalbiSando Collaboration'"
     :settings="settings"
     :updating-configs="updatingConfigs"
     :standalone="standalone"

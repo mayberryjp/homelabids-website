@@ -16,7 +16,7 @@
 
           <v-tab value="discovery">Discovery</v-tab>
           <v-tab value="filtering">Filtering</v-tab>
-          <v-tab value="homelab-ids">HomelabIDS Collaboration</v-tab>
+          <v-tab value="homelab-ids">Collaboration</v-tab>
           <!-- Advanced -->
           <v-tab value="advanced">Advanced</v-tab>
         </v-tabs>
@@ -195,7 +195,7 @@
 
             <!-- HomelabIDS Collaboration Settings -->
             <v-window-item value="homelab-ids">
-              <h3>HomelabIDS Collaboration</h3>
+              <h3>Collaboration</h3>
               <v-divider class="my-4"></v-divider>
               <homelab-i-d-s-collaboration-section
                 v-if="groupedConfigurations['HomelabIDS Collaboration']"
