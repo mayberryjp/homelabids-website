@@ -1,4 +1,4 @@
-# GalbiSando Website
+# BulgogiSando Website
 
 A Vue.js frontend for displaying IDS (Intrusion Detection System) statistics.
 

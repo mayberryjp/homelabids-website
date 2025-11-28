@@ -1,6 +1,6 @@
 <template>
   <StandardConfigurationSection 
-    :category="'GalbiSando Collaboration'"
+    :category="'BulgogiSando Collaboration'"
     :settings="settings"
     :updating-configs="updatingConfigs"
     :standalone="standalone"
